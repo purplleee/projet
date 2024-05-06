@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$
+*.pyc
+
+# Virtual environment
+venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Environment variables
+.env
+
+# PyCharm
+.idea/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+# Other unnecessary files
+*.log
+*.sqlite
+
+# You may also want to ignore specific files that are sensitive or specific to your development environment, like:
+# config_local.py
+# secret_data.py
