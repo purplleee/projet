@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Créer un ticket</h2>
+    <form method="POST" action="{{ url_for('employee.cree_ticket') }}" novalidate>
+        {{ form.hidden_tag() }} {{ form.csrf_token }}
+        <div class="form-group">
+            {{ form.titre.label(class="form-control-label") }}
+            {% if form.titre.errors %}
+                {{ form.titre(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.titre.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.titre(class="form-control") }}
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.categorie.label(class="form-control-label") }}
+            {% if form.categorie.errors %}
+                {{ form.categorie(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.categorie.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.categorie(class="form-control") }}
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.description_ticket.label(class="form-control-label") }}
+            {% if form.description_ticket.errors %}
+                {{ form.description_ticket(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.description_ticket.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.description_ticket(class="form-control", rows=3) }}
+            {% endif %}
+        </div>
+        
+        
+
+
+        <div class="form-group">
+            {{ form. materiel.label(class="form-control-label") }}
+            {{ form. materiel(class="form-control") }}
+        </div>
+
+
+        
+        <div class="text-right">
+            <button type="reset" class="btn btn-secondary">Annuler</button>
+            <button type="submit" class="btn btn-success">Valider</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

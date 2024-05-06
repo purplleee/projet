@@ -1,0 +1,187 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+.navbar-collapse {
+    justify-content: center;
+}
+.navbar-nav {
+    flex-direction: row;
+}
+#nav{
+ background-color: #184e77 !important;
+}
+.nav-item {
+    margin: 0 10px;
+}
+.form-inline {
+    margin-left: auto;
+}
+.dropdown-toggle::after {
+    display: none;
+}
+.dropdown-toggle {
+    position: relative;
+}
+.dropdown-toggle::after {
+    content: '▼';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+    color: white !important;
+    vertical-align: middle;
+    margin-right: 8px;
+    margin-left: 20px;
+}
+.dropdown-menu {
+    background-color: #ffffff !important;
+    color: white !important;
+    font-size: 14px;
+}
+.dropdown-item:hover {
+    background-color: #f3941c !important;
+    color: rgb(252, 251, 251) !important;
+}
+.navbar-dark .navbar-nav .nav-link {
+    color: white !important;
+    width: auto;
+    white-space: nowrap;
+    font-size: 20px;
+}
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #acaaa8 !important;
+}
+.dropdown-menu {
+    position: absolute;
+}
+#navbarDropdownMenuLink:hover{
+    color: #ffffff !important;
+}
+#navbarDropdownMenuLink{
+    color: #184e77 !important;
+}
+.logo {
+    height: 50px; /* Adjust this value as needed */
+    width: auto; /* Keeps the aspect ratio of the image */
+   /* background-color: #f3941c;*/
+    padding: none; /* Ensures padding does not affect size */
+    margin: none; /* Ensures margin does not affect size */
+    vertical-align: middle; /* Centers the logo vertically if the navbar's height is greater */
+}
+.centerise {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* This will vertically center the items in the container */
+    flex-direction: column; /* Stack flex items vertically */
+    height: 90vh; /* Make the container full height */
+    gap: 50px; /* This adds space between the rows */
+    margin-right: 150px;
+}
+
+.ticket-status {
+    width: 250px; /* Set a fixed width */
+    border-radius: 10px;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    /* Removed the flex and max-width properties */
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    gap: 150px; /* This adds space between the boxes in a row */
+    /* This will make sure that there are always two boxes per row */
+}
+
+.ticket-status button {
+    width: 150%;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 20px;
+    padding-left: 30px; /* Adjust this value as needed for padding on the left */
+    text-align: left;
+    font-size:xx-large;
+    cursor: pointer;
+    outline: none;
+    height: 200px;
+}
+
+
+
+.nouveau button { background-color: #17a2b8; }
+.en-cours button { background-color: #28a745; }
+.en-reparation button { background-color: #ffc107; }
+.clos button { background-color: #dc3545; }
+
+
+
+
+/* Cree un ticket */
+
+.container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.btn-success {
+    background-color: #4CAF50;
+}
+
+.btn-secondary {
+    background-color: #c0c0c0;
+}
+
+.is-invalid {
+    border-color: #dc3545;
+    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.invalid-feedback {
+    display: block;
+    font-size: 80%;
+    color: #dc3545;
+    margin-top: .25rem;
+}
+
+
+/*tickets.html css*/
+.edit-btn {
+    display: inline-flex;      /* Use flexbox for easy centering */
+    align-items: center;       /* Center the content vertically */
+    justify-content: center;   /* Center the content horizontally */
+    width: 40px;               /* Square dimensions */
+    height: 40px;              /* Square dimensions */
+    color: white;              /* Icon color */
+    background-color: #007bff; /* Background color, change as needed */
+    border: none;
+    border-radius: 4px;        /* Optional: rounds the corners */
+    cursor: pointer;
+    text-decoration: none;     /* Remove underline from the link */
+}
+
+.material-symbols-outlined {
+    font-size: 20px;           /* Icon size */
+    color: inherit;            /* Ensures the icon uses the button's text color */
+}
+
+

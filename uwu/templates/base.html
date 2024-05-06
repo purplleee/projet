@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %} - Sonelgaz</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/sonelgaz.png') }}" type="image/x-icon">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style1.css') }}">   
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="nav">
+  <a class="navbar-brand" href="{% if 'super_admin' in current_user.roles %}{{ url_for('super_admin.index') }}
+  {% elif 'admin' in current_user.roles %}{{ url_for('admin.index') }}
+  {% else %}{{ url_for('employee.index') }}
+  {% endif %}">
+<img class="logo" src="{{ url_for('static', filename='img/sonelgaz.png') }}" alt="sonelgaz_logo">
+</a>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      {% if 'super_admin' in current_user.roles %}
+        <a class="nav-item nav-link" href="{{ url_for('super_admin.index') }}">Accueil</a>
+        <a class="nav-item nav-link" href="{{ url_for('super_admin.super_admin_users') }}">Users</a>
+        <a class="nav-item nav-link" href="{{ url_for('super_admin.stats') }}">Stats</a>
+        <a class="nav-item nav-link" href="#">FAQ</a>
+      {% elif 'admin' in current_user.roles %}
+        <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Accueil</a>
+        <a class="nav-item nav-link" href="{{ url_for('admin.admin_users') }}">Users</a>
+        <a class="nav-item nav-link" href="{{ url_for('admin.organigramme') }}">Organigramme</a>
+        <a class="nav-item nav-link" href="#">FAQ</a>
+      {% else %}
+        <a class="nav-item nav-link" href="{{ url_for('employee.index') }}">Accueil</a>
+        <a class="nav-item nav-link" href="{{ url_for('employee.cree_ticket') }}">Créer un ticket</a>
+        <a class="nav-item nav-link" href="{{ url_for('employee.materiel') }}">Matériel</a>
+        <a class="nav-item nav-link" href="#">FAQ</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="nav-item dropdown form-inline my-2 my-lg-0">
+
+    <!-- Add this part inside the <nav> or appropriate section of your base.html -->
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          nom prénom  <span class="material-symbols-outlined">account_circle</span> 
+      </a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{{ url_for('auth.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;"></form>
+            <a class="dropdown-item" href="{{ url_for('auth.switch_role') }}">Switch Role</a>
+        </div>
+    </div>
+    
+  </div>
+
+
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+{% block content %} {% endblock %}
+
+</body>
+</html>

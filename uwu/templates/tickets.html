@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Tickets</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Type of Material</th>
+                <th>Actions</th> <!-- Column for actions such as edit -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets_list %}
+            <tr>
+                <td>{{ ticket.titre }}</td>
+                <td>{{ ticket.description_ticket }}</td>
+                <td>{{ ticket.categorie }}</td>
+                <td>{{ ticket.materiel }}</td>
+                <td>
+                    {% if ticket.statut == 'nouveau' %}
+                        <!-- Material Icon Button for Edit -->
+                        <a href="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="Edit">
+                            <span class="material-symbols-outlined">edit</span>
+                        </a>
+                    {% else %}
+                        <!-- Optionally, display nothing or some status information -->
+                        No actions available
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

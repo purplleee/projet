@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Materiel</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Marque</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for materiel in materiel_list %}
+            <tr>
+                <td>{{ materiel.id_mat }}</td>
+                <td>{{ materiel.marque }}</td>
+                <td>{{ materiel.typeMat }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
