@@ -7,8 +7,11 @@ from .blueprints.super_admin.routes import super_admin_bp
 from .blueprints.auth.routes import auth_bp
 from .blueprints.common.errors import register_error_handlers
 from uwu.models import Ticket, Materiel, User
-from .database import db
+from .database import db, init_app as init_db
 import logging
+from flask_wtf import CSRFProtect
+
+
 
 def create_app(config_class=DevelopmentConfig):
     app = Flask(__name__)
@@ -18,11 +21,11 @@ def create_app(config_class=DevelopmentConfig):
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['SESSION_COOKIE_SECURE'] = True  
     app.config['SESSION_COOKIE_HTTPONLY'] = True  
+    csrf = CSRFProtect(app)
+    
 
-
-
-    # Database setup
-    db.init_app(app)
+    # Initialize database and migrations
+    init_db(app)
 
     # Logging setup
     handler = logging.StreamHandler()

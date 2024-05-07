@@ -15,7 +15,7 @@ def index():
     # Fetch tickets in different statuses excluding 'nouveau'
     in_progress_tickets = Ticket.query.filter(Ticket.statut == 'en_cours').count()
     in_repair_tickets = Ticket.query.filter(Ticket.statut == 'en_reparation').count()
-    closed_tickets = Ticket.query.filter(Ticket.statut == 'ferme').count()
+    closed_tickets = Ticket.query.filter(Ticket.statut == 'clos').count()
 
     # Render the admin dashboard template with the ticket counts
     return render_template('index.html',

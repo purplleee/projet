@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash ,current_app
+from flask import Blueprint, request, render_template, redirect, url_for, flash ,current_app , abort,session
 from flask_login import login_user, logout_user, current_user, login_required
 from uwu.models import Ticket, Materiel, User
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,12 +10,6 @@ from ...database import db
 auth_bp = Blueprint('auth', __name__, static_folder='static',template_folder='template')
 
 
-# # Mock database of users (replace with your actual user validation logic)
-# users = {
-#     'admin': User('admin', ['admin', 'employee']),
-#     'employee': User('employee', ['employee']),
-#     'superadmin': User('superadmin', ['super_admin', 'admin', 'employee'])
-# }
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -23,10 +17,12 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
+        # Retrieve user by username
         user = User.query.filter_by(username=username).first()
 
         if user:
-            current_app.logger.info(f"Checking login for {username}. Stored hash: {user.password_hash}")
+            current_app.logger.info(f"Checking login for {username}. Stored hash: {user.password_hash} \n{user.check_password(password)}")
             if user.check_password(password):
                 login_user(user)
                 flash('Logged in successfully.')
@@ -44,6 +40,7 @@ def login():
 
 
 
+
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
@@ -53,16 +50,23 @@ def logout():
 
 
 
-@auth_bp.route('/switch_role', methods=['GET', 'POST'])
+
+
+@auth_bp.route('/switch_role', methods=['POST'])
 @login_required
 def switch_role():
-    if request.method == 'POST':
-        new_role = request.form['role']
-        if current_user.switch_role(new_role):
-            flash(f'Switched to {new_role} role.')
-            return redirect(url_for('main.index'))
-        flash('Invalid role switch attempt.')
-    return render_template('switch_role.html', roles=current_user.roles)
+    new_role = request.form.get('role')
+    print(f"Received role switch request to: {new_role}")
+    if new_role and current_user.switch_role(new_role):
+        flash(f'Successfully switched to {new_role} role', 'success')
+        # Re-login the user to refresh session data
+        login_user(current_user, remember=True)
+        return redirect(url_for(f'{current_user.active_role}.index'))
+    else:
+        flash('Invalid role selected or insufficient permissions', 'error')
+        abort(403)
+
+
 
 
 

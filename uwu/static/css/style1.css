@@ -184,4 +184,31 @@ body{
     color: inherit;            /* Ensures the icon uses the button's text color */
 }
 
+/* switching roles */
+/* .dropdown-menu li {
+    position: relative;
+}
+.dropdown-menu .dropdown-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+}
+/* .dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+}
+.dropdown-menu > li:hover > .dropdown-submenu {
+    display: block;
+} */ 
+.dropdown-item {
+    display: block; /* Ensure dropdown items are always displayed as block */
+    width: 100%; /* Full width to ensure it fills the dropdown */
+    clear: both; /* Clear floats if any */
+}
+.dropdown-menu, .dropdown-item, .dropdown-submenu {
+    border: 1px solid red; /* Temporarily add borders to see the elements */
+}
+
+
 

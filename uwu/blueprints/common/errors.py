@@ -14,6 +14,13 @@ def register_error_handlers(app):
     def error500():
         abort(500)
 
+    @app.errorhandler(403)
+    def forbidden(error):
+        return render_template('403.html'), 403
+
+    @app.route('/403')
+    def error403():
+        abort(403)
 
 
 

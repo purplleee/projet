@@ -16,7 +16,7 @@ def index():
     new_tickets = Ticket.query.filter_by(statut='nouveau').count()
     in_progress_tickets = Ticket.query.filter_by(statut='en_cours').count()
     in_repair_tickets = Ticket.query.filter_by(statut='en_reparation').count()
-    closed_tickets = Ticket.query.filter_by(statut='ferme').count()
+    closed_tickets = Ticket.query.filter_by(statut='clos').count()
     return render_template('index.html',
                            new_tickets=new_tickets,
                            in_progress_tickets=in_progress_tickets,
@@ -32,8 +32,10 @@ def cree_ticket():
             id_ticket=generate_unique_id(),
             titre=form.titre.data,
             description_ticket=form.description_ticket.data,
-            categorie=form.categorie.data,
-            materiel=form.materiel.data
+            urgent=form.urgent.data,
+            category=form.category.data,
+            # creator_user_id=form.creator_user_id.data,
+            material_id=form.materiel.data
         )
         try:
             db.session.add(new_ticket)
