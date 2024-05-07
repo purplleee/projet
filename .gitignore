@@ -29,3 +29,5 @@ Thumbs.db
 # You may also want to ignore specific files that are sensitive or specific to your development environment, like:
 # config_local.py
 # secret_data.py
+
+/migrations
