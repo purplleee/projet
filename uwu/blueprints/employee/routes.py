@@ -53,16 +53,42 @@ def cree_ticket():
     return render_template('creat_ticket.html', form=form)
 
 
+# @employee_bp.route('/tickets/<status>')
+# @login_required
+# def view_tickets_by_status(status):
+#     try:
+#         tickets_list = Ticket.query.filter_by(statut=status).all()
+#         return render_template('tickets.html', tickets_list=tickets_list, status=status)
+#     except Exception as e:
+#         flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
+#         current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')  # Corrected logger usage
+#         return render_template('tickets.html', tickets_list=[], status=status)
+    
+
 @employee_bp.route('/tickets/<status>')
 @login_required
 def view_tickets_by_status(status):
     try:
-        tickets_list = Ticket.query.filter_by(statut=status).all()
+        # Join the Tickets table with Categories and optionally with Materials
+        tickets_list = db.session.query(
+            Ticket.titre.label('titre'),
+            Category.category_name.label('category_name'),
+            Ticket.urgent.label('urgent'),
+            Materiel.name.label('material_name'),
+            Ticket.statut.label('statut'),
+            Ticket.id_ticket.label('id_ticket')  
+        ).join(
+            Category, Category.category_id == Ticket.category_id
+        ).outerjoin(
+            Materiel, Materiel.material_id == Ticket.material_id
+        ).filter(Ticket.statut == status).all()
+        
         return render_template('tickets.html', tickets_list=tickets_list, status=status)
     except Exception as e:
         flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
-        current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')  # Corrected logger usage
+        current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')
         return render_template('tickets.html', tickets_list=[], status=status)
+
 
 @employee_bp.route('/cree_mat/', methods=('GET', 'POST'))
 @login_required
@@ -138,21 +164,21 @@ def edit_ticket(ticket_id):
     return render_template('edit_ticket.html', form=form, ticket=ticket)
 
 
-@employee_bp.route('/update_ticket/<int:ticket_id>', methods=['POST'])
-@login_required
-def update_ticket(ticket_id):
-    ticket = Ticket.query.get_or_404(ticket_id)
-    form = TicketForm(request.form)
-    if form.validate_on_submit():
-        ticket.titre = form.titre.data
-        ticket.description_ticket = form.description_ticket.data
-        ticket.categorie = form.categorie.data
-        ticket.materiel = form.materiel.data
-        db.session.commit()
-        flash('Ticket updated successfully!', 'success')
-        return redirect(url_for('employee.index'))  # Corrected redirect
-    else:
-        for fieldName, errorMessages in form.errors.items():
-            for err in errorMessages:
-                flash(f"Error in {fieldName}: {err}", 'error')
-        return render_template('edit_ticket.html', form=form, ticket=ticket)  # Re-render the edit page with errors
+# @employee_bp.route('/update_ticket/<int:ticket_id>', methods=['POST'])
+# @login_required
+# def update_ticket(ticket_id):
+#     ticket = Ticket.query.get_or_404(ticket_id)
+#     form = TicketForm(request.form)
+#     if form.validate_on_submit():
+#         ticket.titre = form.titre.data
+#         ticket.description_ticket = form.description_ticket.data
+#         ticket.categorie = form.categorie.data
+#         ticket.materiel = form.materiel.data
+#         db.session.commit()
+#         flash('Ticket updated successfully!', 'success')
+#         return redirect(url_for('employee.index'))  # Corrected redirect
+#     else:
+#         for fieldName, errorMessages in form.errors.items():
+#             for err in errorMessages:
+#                 flash(f"Error in {fieldName}: {err}", 'error')
+#         return render_template('edit_ticket.html', form=form, ticket=ticket)  # Re-render the edit page with errors

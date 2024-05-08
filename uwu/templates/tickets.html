@@ -2,14 +2,14 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Tickets</h2>
+    <h2>Tickets - {{ status }}</h2>
     <table class="table">
         <thead>
             <tr>
                 <th>Title</th>
-                <th>Description</th>
                 <th>Category</th>
-                <th>Type of Material</th>
+                <th>Urgency</th>
+                <th>Material</th>
                 <th>Actions</th> <!-- Column for actions such as edit -->
             </tr>
         </thead>
@@ -17,9 +17,9 @@
             {% for ticket in tickets_list %}
             <tr>
                 <td>{{ ticket.titre }}</td>
-                <td>{{ ticket.description_ticket }}</td>
-                <td>{{ ticket.categorie }}</td>
-                <td>{{ ticket.materiel }}</td>
+                <td>{{ ticket.category_name }}</td>
+                <td>{{ ticket.urgent  }}</td>
+                <td>{{ ticket.material_name or 'N/A' }}</td>
                 <td>
                     {% if ticket.statut == 'nouveau' %}
                         <!-- Material Icon Button for Edit -->
