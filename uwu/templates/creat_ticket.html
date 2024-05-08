@@ -5,6 +5,7 @@
     <h2 class="mb-4">Créer un ticket</h2>
     <form method="POST" action="{{ url_for('employee.cree_ticket') }}" novalidate>
         {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
 
         <div class="form-group">
             {{ form.titre.label(class="form-control-label") }}

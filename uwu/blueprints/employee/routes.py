@@ -38,7 +38,7 @@ def cree_ticket():
             description_ticket=form.description_ticket.data,
             urgent=form.urgent.data,
             category_id=form.categorie.data,
-            material_id=form.materiel.data
+            material_id=form.materiel.data if form.materiel.data != 0 else None
         )
         db.session.add(new_ticket)
         try:
@@ -99,22 +99,44 @@ def materiel():
         current_app.logger.error(f'Failed to fetch material: {e}')  # Corrected logger usage
         return render_template('materiel.html', materiel_list=[])
 
+
 @employee_bp.route('/edit_ticket/<int:ticket_id>', methods=['GET', 'POST'])
 @login_required
 def edit_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
-    form = TicketForm(obj=ticket)
-    if form.validate_on_submit():
-        ticket.titre = form.titre.data
-        ticket.description_ticket = form.description_ticket.data
-        ticket.categorie = form.categorie.data
-        ticket.materiel = form.materiel.data
-        db.session.commit()
-        flash('Ticket updated successfully!', 'success')
-        return redirect(url_for('employee.index'))  # Corrected redirect
-    elif request.method == 'POST':
-        flash('Error updating the ticket. Please check the form data.', 'error')
+    form = TicketForm(obj=ticket)  # Load ticket data into form on GET request
+
+    # Populate choices for category and material
+    form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
+    form.materiel.choices = [(0, 'None')] + [(m.material_id, m.name) for m in Materiel.query.order_by(Materiel.name)]
+
+    if request.method == 'POST':
+        try:
+            if form.validate_on_submit():
+                # Update ticket properties
+                ticket.titre = form.titre.data
+                ticket.description_ticket = form.description_ticket.data
+                ticket.category_id = form.categorie.data
+                ticket.urgent=form.urgent.data
+                # Handle nullable material_id
+                ticket.material_id = form.materiel.data if form.materiel.data != 0 else None
+                db.session.commit()
+                flash('Ticket updated successfully!', 'success')
+                return redirect(url_for('employee.index'))
+            else:
+                # If POST but form is not valid, flash an error
+                flash('Error updating the ticket. Please check the form data.', 'error')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating the ticket: {str(e)}', 'error')
+        finally:
+            db.session.close()
+    
+    # Ensure correct initial values for select fields are set when rendering the form
+    form.categorie.data = ticket.category_id
+    form.materiel.data = ticket.material_id if ticket.material_id is not None else 0
     return render_template('edit_ticket.html', form=form, ticket=ticket)
+
 
 @employee_bp.route('/update_ticket/<int:ticket_id>', methods=['POST'])
 @login_required

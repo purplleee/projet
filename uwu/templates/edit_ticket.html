@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2 class="mb-4">Modifier un ticket</h2>
-    <form method="POST" action="{{ url_for('employee.update_ticket', ticket_id=ticket.id_ticket) }}" novalidate>
+    <form method="POST" action="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" novalidate>
         {{ form.hidden_tag() }}
         {{ form.csrf_token }}
         
@@ -47,6 +47,17 @@
             {% else %}
                 {{ form.description_ticket(class="form-control", rows=3) }}
             {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.urgent.label(class="form-control-label") }}
+            <div>
+                {% for subfield in form.urgent %}
+                    <label class="radio-inline">
+                        {{ subfield }} {{ subfield.label }}
+                    </label>
+                {% endfor %}
+            </div>
         </div>
 
         <div class="form-group">
