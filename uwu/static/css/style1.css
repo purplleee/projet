@@ -185,30 +185,36 @@ body{
 }
 
 /* switching roles */
-/* .dropdown-menu li {
-    position: relative;
-}
-.dropdown-menu .dropdown-submenu {
-    display: none;
-    position: absolute;
-    left: 100%;
-    top: -7px;
-}
-/* .dropdown-menu .dropdown-submenu-left {
-    right: 100%;
-    left: auto;
-}
-.dropdown-menu > li:hover > .dropdown-submenu {
-    display: block;
-} */ 
+/* Dropdown item styling to ensure visibility and interactivity */
 .dropdown-item {
-    display: block; /* Ensure dropdown items are always displayed as block */
-    width: 100%; /* Full width to ensure it fills the dropdown */
-    clear: both; /* Clear floats if any */
-}
-.dropdown-menu, .dropdown-item, .dropdown-submenu {
-    border: 1px solid red; /* Temporarily add borders to see the elements */
+    display: block;
+    width: 100%;
+     /* Text color for visibility */
+    background-color: transparent; /* Clear background */
 }
 
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: #0056b3; /* Darker blue on hover/focus for better UI */
+    color: #ffffff;
+}
+
+/* Specific styles for form within dropdowns */
+form.dropdown-item {
+    padding: 0; /* Remove padding inside the form to align with other dropdown items */
+    margin: 0; /* Remove margins to prevent any layout shift */
+}
+
+button.dropdown-item {
+    border: none; /* Remove border to make it seamless within the dropdown */
+    text-align: left; /* Align text to match other dropdown links */
+    padding: 0.5rem 1.5rem; /* Adequate padding for touch targets and aesthetics */
+    width: 100%; /* Full width to align with dropdown boundary */
+    background: transparent; /* Clear background */
+}
+
+button.dropdown-item:hover {
+    background-color: #0056b3; /* Consistent with hover effect of links */
+    color: white;
+}
 
 

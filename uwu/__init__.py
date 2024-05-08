@@ -9,7 +9,7 @@ from .blueprints.common.errors import register_error_handlers
 from uwu.models import Ticket, Materiel, User
 from .database import db, init_app as init_db
 import logging
-from flask_wtf import CSRFProtect
+
 
 
 
@@ -21,7 +21,7 @@ def create_app(config_class=DevelopmentConfig):
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['SESSION_COOKIE_SECURE'] = True  
     app.config['SESSION_COOKIE_HTTPONLY'] = True  
-    csrf = CSRFProtect(app)
+
     
 
     # Initialize database and migrations

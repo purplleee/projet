@@ -17,8 +17,8 @@
   {% elif 'admin' in current_user.roles %}{{ url_for('admin.index') }}
   {% else %}{{ url_for('employee.index') }}
   {% endif %}">
-<img class="logo" src="{{ url_for('static', filename='img/sonelgaz.png') }}" alt="sonelgaz_logo">
-</a>
+    <img class="logo" src="{{ url_for('static', filename='img/sonelgaz.png') }}" alt="sonelgaz_logo">
+  </a>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -58,8 +58,8 @@
           <div class="dropdown-divider"></div>
             <!-- Check if the user is a super admin -->
             {% if current_user.is_super_admin %}
-                <form action="{{ url_for('auth.switch_role') }}" method="POST">
-                  {{ csrf_token() }} 
+                <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
+                  
                     <input type="hidden" name="role" value="super_admin">
                     <button class="dropdown-item" type="submit" {% if current_user.active_role == 'super_admin' %}disabled{% endif %}>Switch to Super Admin</button>
                 </form>
@@ -67,8 +67,8 @@
 
             <!-- Check if the user is a super admin or admin -->
             {% if current_user.is_super_admin or current_user.is_admin %}
-                <form action="{{ url_for('auth.switch_role') }}" method="POST">
-                  {{ csrf_token() }} 
+                <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
+                  
                     <input type="hidden" name="role" value="admin">
                     <button class="dropdown-item" type="submit" {% if current_user.active_role == 'admin' %}disabled{% endif %}>Switch to Admin</button>
                 </form>
@@ -76,8 +76,8 @@
 
             <!-- Check if the user is a super admin, admin, or employee -->
             {% if current_user.is_super_admin or current_user.is_admin %}
-                <form action="{{ url_for('auth.switch_role') }}" method="POST">
-                  {{ csrf_token() }} 
+                <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
+                  
                     <input type="hidden" name="role" value="employee">
                     <button class="dropdown-item" type="submit" {% if current_user.active_role == 'employee' %}disabled{% endif %}>Switch to Employee</button>
                 </form>
