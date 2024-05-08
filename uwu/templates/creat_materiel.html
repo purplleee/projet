@@ -4,49 +4,49 @@
 <div class="container mt-5">
     <h2 class="mb-4">Créer un Materiel</h2>
     <form method="POST" action="{{ url_for('employee.cree_mat') }}" novalidate>
-        {{ form.hidden_tag() }} {{ form.csrf_token }}
+        {{ form.hidden_tag() }}
+        
         <div class="form-group">
-            {{ form.id_mat.label(class="form-control-label") }}
-            {% if form.id_mat.errors %}
-                {{ form.id_mat(class="form-control is-invalid") }}
+            {{ form.type.label(class="form-control-label") }}
+            {% if form.type.errors %}
+                {{ form.type(class="form-control is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.id_mat.errors %}
+                    {% for error in form.type.errors %}
                         {{ error }}
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.id_mat(class="form-control") }}
+                {{ form.type(class="form-control") }}
             {% endif %}
         </div>
-        
+
         <div class="form-group">
-            {{ form.marque.label(class="form-control-label") }}
-            {% if form.marque.errors %}
-                {{ form.marque(class="form-control is-invalid") }}
+            {{ form.name.label(class="form-control-label") }}
+            {% if form.name.errors %}
+                {{ form.name(class="form-control is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.marque.errors %}
+                    {% for error in form.name.errors %}
                         {{ error }}
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.marque(class="form-control") }}
+                {{ form.name(class="form-control") }}
             {% endif %}
         </div>
-        
+
         <div class="form-group">
-            {{ form.typeMat.label(class="form-control-label") }}
-            {% if form.typeMat.errors %}
-                {{ form.typeMat(class="form-control is-invalid") }}
+            {{ form.important_info.label(class="form-control-label") }}
+            {% if form.important_info.errors %}
+                {{ form.important_info(class="form-control is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.typeMat.errors %}
+                    {% for error in form.important_info.errors %}
                         {{ error }}
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.typeMat(class="form-control", rows=3) }}
+                {{ form.important_info(class="form-control", rows=3) }}
             {% endif %}
         </div>
-        
 
         
         <div class="text-right">

@@ -4,7 +4,8 @@
 <div class="container mt-5">
     <h2 class="mb-4">Créer un ticket</h2>
     <form method="POST" action="{{ url_for('employee.cree_ticket') }}" novalidate>
-        {{ form.hidden_tag() }} {{ form.csrf_token }}
+        {{ form.hidden_tag() }}
+
         <div class="form-group">
             {{ form.titre.label(class="form-control-label") }}
             {% if form.titre.errors %}
@@ -46,17 +47,32 @@
                 {{ form.description_ticket(class="form-control", rows=3) }}
             {% endif %}
         </div>
-        
-        
-
 
         <div class="form-group">
-            {{ form. materiel.label(class="form-control-label") }}
-            {{ form. materiel(class="form-control") }}
+            {{ form.urgent.label(class="form-control-label") }}
+            <div>
+                {% for subfield in form.urgent %}
+                    <label class="radio-inline">
+                        {{ subfield }} {{ subfield.label }}
+                    </label>
+                {% endfor %}
+            </div>
         </div>
 
+        <div class="form-group">
+            {{ form.materiel.label(class="form-control-label") }}
+            {% if form.materiel.errors %}
+                {{ form.materiel(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.materiel.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.materiel(class="form-control") }}
+            {% endif %}
+        </div>
 
-        
         <div class="text-right">
             <button type="reset" class="btn btn-secondary">Annuler</button>
             <button type="submit" class="btn btn-success">Valider</button>

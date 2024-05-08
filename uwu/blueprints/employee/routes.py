@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app
-from uwu.models import Ticket, Materiel
+from uwu.models import Ticket, Materiel 
+from uwu.models.models import  Category
 from ...forms import TicketForm, MaterielForm
 import uuid
 from uwu.database import db
@@ -27,29 +28,30 @@ def index():
 @login_required
 def cree_ticket():
     form = TicketForm()
+    # Correct the attribute references to match your database schema
+    form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
+    form.materiel.choices = [(m.material_id, m.name) for m in Materiel.query.order_by(Materiel.name)]
+
     if form.validate_on_submit():
         new_ticket = Ticket(
-            id_ticket=generate_unique_id(),
             titre=form.titre.data,
             description_ticket=form.description_ticket.data,
             urgent=form.urgent.data,
-            category=form.category.data,
-            # creator_user_id=form.creator_user_id.data,
+            category_id=form.categorie.data,
             material_id=form.materiel.data
         )
+        db.session.add(new_ticket)
         try:
-            db.session.add(new_ticket)
             db.session.commit()
             flash('Ticket créé avec succès! Statut: nouveau', 'success')
             return redirect(url_for('employee.view_tickets_by_status', status='nouveau'))
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f'Error creating ticket: {e}')  # Corrected logger usage
             flash(f'Erreur lors de la création du ticket: {str(e)}', 'error')
-            return render_template('creat_ticket.html', form=form)
         finally:
             db.session.close()
     return render_template('creat_ticket.html', form=form)
+
 
 @employee_bp.route('/tickets/<status>')
 @login_required
