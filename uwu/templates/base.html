@@ -57,13 +57,13 @@
 
           <div class="dropdown-divider"></div>
             <!-- Check if the user is a super admin -->
-            {% if current_user.is_super_admin %}
+           
                 <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
                   
                     <input type="hidden" name="role" value="super_admin">
                     <button class="dropdown-item" type="submit" {% if current_user.active_role == 'super_admin' %}disabled{% endif %}>Switch to Super Admin</button>
                 </form>
-            {% endif %}
+          
 
             <!-- Check if the user is a super admin or admin -->
             {% if current_user.is_super_admin or current_user.is_admin %}

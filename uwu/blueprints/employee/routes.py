@@ -96,9 +96,9 @@ def cree_mat():
     form = MaterielForm()
     if form.validate_on_submit():
         new_materiel = Materiel(
-            id_mat=form.id_mat.data,
-            marque=form.marque.data,
-            typeMat=form.typeMat.data
+            name=form.name.data,
+            important_info=form.important_info.data,
+            type=form.type.data
         )
         try:
             db.session.add(new_materiel)

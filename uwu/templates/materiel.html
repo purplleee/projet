@@ -6,17 +6,17 @@
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Marque</th>
+                <th>name</th>
+                <th>important_info</th>
                 <th>Type</th>
             </tr>
         </thead>
         <tbody>
             {% for materiel in materiel_list %}
             <tr>
-                <td>{{ materiel.id_mat }}</td>
-                <td>{{ materiel.marque }}</td>
-                <td>{{ materiel.typeMat }}</td>
+                <td>{{ materiel.name }}</td>
+                <td>{{ materiel.important_info }}</td>
+                <td>{{ materiel.type }}</td>
 
             </tr>
             {% endfor %}

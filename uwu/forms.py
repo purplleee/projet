@@ -34,9 +34,9 @@ class TicketForm(FlaskForm):
 
 
 class MaterielForm(FlaskForm):
-    id_mat = StringField('ID Materiel', validators=[InputRequired(), Length( max=100)])
-    marque = StringField('Marque Materiel', validators=[InputRequired(), Length( max=100)])
-    typeMat = SelectField('type Materiel', validators=[InputRequired()], choices=[
+    name = StringField('name', validators=[InputRequired(), Length( max=100)])
+    important_info = StringField('Marque Materiel', validators=[InputRequired(), Length( max=100)])
+    type = SelectField('type Materiel', validators=[InputRequired()], choices=[
                             ('imprimante', 'imprimante'),
                             ('sourie', 'sourie'), 
                             ('cable', 'cable'),
