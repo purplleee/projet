@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash ,current_app , abort,session
 from flask_login import login_user, logout_user, login_required ,LoginManager, current_user
 from uwu.models import Ticket, Materiel, User
-from uwu.models.models import Structure
+from uwu.models.models import Structure ,Role
 from werkzeug.security import generate_password_hash, check_password_hash
 from ...database import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -62,21 +62,23 @@ def logout():
 @login_required
 def switch_role():
     new_role = request.form.get('role')
-    allowed_transitions = {
-        'employee': ['employee'],
-        'admin': ['employee', 'admin'],
-        'super_admin': ['employee', 'admin', 'super_admin']
-    }
-    current_role = current_user.active_role  # Assuming active_role attribute exists
-
-    if new_role in allowed_transitions.get(current_role, []):
-        current_user.active_role = new_role
-        db.session.commit()
-        flash('Role switched successfully!', 'success')
-        return redirect(url_for('some_function_based_on_role'))  # Redirect appropriately
+    if new_role in [role.name for role in current_user.roles]:
+        allowed_transitions = Role.query.filter_by(name=current_user.current_role).first().get_allowed_transitions()
+        if new_role in allowed_transitions:
+            if current_user.switch_role(new_role):
+                db.session.commit()
+                flash('Role switched successfully!', 'success')
+            else:
+                flash('Failed to switch role.', 'error')
+        else:
+            flash('Invalid role selected or insufficient permissions', 'error')
     else:
-        flash('Invalid role selected or insufficient permissions', 'error')
-        return redirect(url_for('current_view'))
+        flash('Role not found.', 'error')
+
+    return redirect(url_for('current_view'))  # Adjust as necessary to redirect to a relevant view
+
+
+
 
 
 
@@ -88,13 +90,21 @@ def switch_role():
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['nom'] + request.form['prenom']
+        # Combine first name and last name to create username
+        username = request.form['nom'].strip() + request.form['prenom'].strip()
         password = request.form['password']
-        roles = request.form['roles']
-        structure_id = request.form['structure_id']
-        new_user = User(username=username, roles=roles, active_role=roles[0])
-        new_user.set_password(password)  # Set password after creation
-        new_user.structure_id = structure_id
+        role_names = request.form.getlist('roles')  # Retrieve a list of selected roles
+        structure_id = int(request.form['structure_id'])  # Ensure this is an integer
+
+        # Fetch roles from the database
+        roles = Role.query.filter(Role.name.in_(role_names)).all()
+        if not roles:
+            flash('Specified roles are invalid', 'error')
+            return redirect(request.url)
+
+        # Create new user instance
+        new_user = User(username=username, password=password, role_names=[role.name for role in roles])
+        new_user.structure_id = structure_id  # Assign structure
 
         try:
             db.session.add(new_user)
@@ -103,11 +113,11 @@ def register():
             return redirect(url_for('auth.login'))
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash('An error occurred while registering the user. Please try again.')
+            flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
             current_app.logger.error(f"Error during user registration: {str(e)}")
         finally:
             db.session.close()
-    
+
     structures = Structure.query.all()
     return render_template('register.html', structures=structures)
 
