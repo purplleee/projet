@@ -6,18 +6,19 @@
     <table class="table">
         <thead>
             <tr>
-                <th>name</th>
-                <th>important_info</th>
+                <th>Code à Barre</th>
                 <th>Type</th>
+                <th>Marque</th>
+                <th>Modèle</th>
             </tr>
         </thead>
         <tbody>
             {% for materiel in materiel_list %}
             <tr>
-                <td>{{ materiel.name }}</td>
-                <td>{{ materiel.important_info }}</td>
-                <td>{{ materiel.type }}</td>
-
+                <td>{{ materiel.code_a_barre }}</td>
+                <td>{{ materiel.type.type_name if materiel.type else 'N/A' }}</td>
+                <td>{{ materiel.marque.marque_name if materiel.marque else 'N/A' }}</td>
+                <td>{{ materiel.modele.modele_name if materiel.modele else 'N/A' }}</td>
             </tr>
             {% endfor %}
         </tbody>

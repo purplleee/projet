@@ -1,12 +1,14 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app
 from uwu.models import Ticket, Materiel 
-from uwu.models.models import  Category
+from uwu.models.models import  Category,Marque,Modele,Type_m
 from ...forms import TicketForm, MaterielForm
 import uuid
 from uwu.database import db
-from flask_login import login_required
+from flask_login import login_required , LoginManager
+from flask_login import current_user
 
 employee_bp = Blueprint('employee', __name__)
+login_manager = LoginManager(employee_bp)
 
 def generate_unique_id():
     return str(uuid.uuid4())
@@ -30,15 +32,18 @@ def cree_ticket():
     form = TicketForm()
     # Correct the attribute references to match your database schema
     form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
-    form.materiel.choices = [(m.material_id, m.name) for m in Materiel.query.order_by(Materiel.name)]
+    form.materiel.choices = [(m.material_id, m.code_a_barre) for m in Materiel.query.order_by(Materiel.code_a_barre)]
 
     if form.validate_on_submit():
+        # Convert '0' or any non-valid choice to None for database storage
+        material_id = None if form.materiel.data == '0' else form.materiel.data
         new_ticket = Ticket(
             titre=form.titre.data,
             description_ticket=form.description_ticket.data,
             urgent=form.urgent.data,
             category_id=form.categorie.data,
-            material_id=form.materiel.data if form.materiel.data != 0 else None
+            material_id=form.materiel.data if form.materiel.data != 0 else None ,
+            creator_user_id=current_user.user_id  # Set the creator user ID
         )
         db.session.add(new_ticket)
         try:
@@ -74,7 +79,7 @@ def view_tickets_by_status(status):
             Ticket.titre.label('titre'),
             Category.category_name.label('category_name'),
             Ticket.urgent.label('urgent'),
-            Materiel.name.label('material_name'),
+            Materiel.code_a_barre.label('material_name'),
             Ticket.statut.label('statut'),
             Ticket.id_ticket.label('id_ticket')  
         ).join(
@@ -94,13 +99,24 @@ def view_tickets_by_status(status):
 @login_required
 def cree_mat():
     form = MaterielForm()
+    
+    # Load dropdown data
+    marques = Marque.query.all()
+    types = Type_m.query.all()
+    modeles = Modele.query.all()
+    
+    # Set dropdown choices using the correct attribute name
+    form.type_id.choices = [(t.type_id, t.type_name) for t in types]  # Adjusted to use the correct attribute
+    form.marque_id.choices = [(m.marque_id, m.marque_name) for m in marques]
+    form.modele_id.choices = [(mo.modele_id, mo.modele_name) for mo in modeles]
     if form.validate_on_submit():
-        new_materiel = Materiel(
-            name=form.name.data,
-            important_info=form.important_info.data,
-            type=form.type.data
-        )
         try:
+            new_materiel = Materiel(
+                code_a_barre=form.code_a_barre.data,
+                type_id=form.type_id.data,
+                marque_id=form.marque_id.data,
+                modele_id=form.modele_id.data
+            )
             db.session.add(new_materiel)
             db.session.commit()
             flash('Matériel créé avec succès!', 'success')
@@ -108,11 +124,19 @@ def cree_mat():
         except Exception as e:
             db.session.rollback()
             flash(f'Erreur lors de la création du matériel: {str(e)}', 'error')
-            current_app.logger.error(f'Error creating material: {e}')  # Corrected logger usage
+            current_app.logger.error(f'Error creating material: {e}')
             return render_template('creat_materiel.html', form=form)
         finally:
             db.session.close()
+    else:
+        # Load dropdown data
+        marques = Marque.query.all()
+        types = Type_m.query.all()
+        modeles = Modele.query.all()
+        return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
+
     return render_template('creat_materiel.html', form=form)
+
 
 @employee_bp.route('/materiel/')
 @login_required
@@ -164,21 +188,8 @@ def edit_ticket(ticket_id):
     return render_template('edit_ticket.html', form=form, ticket=ticket)
 
 
-# @employee_bp.route('/update_ticket/<int:ticket_id>', methods=['POST'])
-# @login_required
-# def update_ticket(ticket_id):
-#     ticket = Ticket.query.get_or_404(ticket_id)
-#     form = TicketForm(request.form)
-#     if form.validate_on_submit():
-#         ticket.titre = form.titre.data
-#         ticket.description_ticket = form.description_ticket.data
-#         ticket.categorie = form.categorie.data
-#         ticket.materiel = form.materiel.data
-#         db.session.commit()
-#         flash('Ticket updated successfully!', 'success')
-#         return redirect(url_for('employee.index'))  # Corrected redirect
-#     else:
-#         for fieldName, errorMessages in form.errors.items():
-#             for err in errorMessages:
-#                 flash(f"Error in {fieldName}: {err}", 'error')
-#         return render_template('edit_ticket.html', form=form, ticket=ticket)  # Re-render the edit page with errors
+@employee_bp.route('/edit/')
+def edit():
+    if current_user.is_authenticated:
+        return 'Welcome back, {}'.format(current_user.username)
+    return 'Hello, Guest!'

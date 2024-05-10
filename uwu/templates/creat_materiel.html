@@ -5,50 +5,48 @@
     <h2 class="mb-4">Créer un Materiel</h2>
     <form method="POST" action="{{ url_for('employee.cree_mat') }}" novalidate>
         {{ form.hidden_tag() }}
-        
+
         <div class="form-group">
-            {{ form.type.label(class="form-control-label") }}
-            {% if form.type.errors %}
-                {{ form.type(class="form-control is-invalid") }}
+            {{ form.code_a_barre.label(class="form-control-label") }}
+            {% if form.code_a_barre.errors %}
+                {{ form.code_a_barre(class="form-control is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.type.errors %}
+                    {% for error in form.code_a_barre.errors %}
                         {{ error }}
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.type(class="form-control") }}
+                {{ form.code_a_barre(class="form-control") }}
             {% endif %}
         </div>
 
         <div class="form-group">
-            {{ form.name.label(class="form-control-label") }}
-            {% if form.name.errors %}
-                {{ form.name(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.name.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% else %}
-                {{ form.name(class="form-control") }}
-            {% endif %}
+            {{ form.type_id.label(class="form-control-label") }}
+            <select name="type_id" id="type_id" class="form-control">
+                {% for type in types %}
+                <option value="{{ type.type_id }}">{{ type.type_name }}</option>
+                {% endfor %}
+            </select>
         </div>
 
         <div class="form-group">
-            {{ form.important_info.label(class="form-control-label") }}
-            {% if form.important_info.errors %}
-                {{ form.important_info(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.important_info.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% else %}
-                {{ form.important_info(class="form-control", rows=3) }}
-            {% endif %}
+            {{ form.marque_id.label(class="form-control-label") }}
+            <select name="marque_id" id="marque_id" class="form-control">
+                {% for marque in marques %}
+                <option value="{{ marque.marque_id }}">{{ marque.marque_name }}</option>
+                {% endfor %}
+            </select>
         </div>
 
-        
+        <div class="form-group">
+            {{ form.modele_id.label(class="form-control-label") }}
+            <select name="modele_id" id="modele_id" class="form-control">
+                {% for modele in modeles %}
+                <option value="{{ modele.modele_id }}">{{ modele.modele_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <div class="text-right">
             <button type="reset" class="btn btn-secondary">Annuler</button>
             <button type="submit" class="btn btn-success">Valider</button>
