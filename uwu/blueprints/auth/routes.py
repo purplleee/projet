@@ -5,6 +5,7 @@ from uwu.models.models import Structure ,Role
 from werkzeug.security import generate_password_hash, check_password_hash
 from ...database import db
 from sqlalchemy.exc import SQLAlchemyError
+from config import ROLE_ROUTE_MAP
 
 
 
@@ -23,25 +24,25 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
-        # Retrieve user by username
         user = User.query.filter_by(username=username).first()
 
-        if user:
-            current_app.logger.info(f"Checking login for {username}. Stored hash: {user.password_hash} \n{user.check_password(password)}")
-            if user.check_password(password):
-                login_user(user)
-                user.active_role=user.roles
-                flash('Logged in successfully.')
-                return redirect(url_for('employee.index'))
+        if user and user.check_password(password):
+            login_user(user)
+            current_app.logger.debug(f"User {username} roles: {user.get_role_names()}")  # Debugging line
+            
+            # Assuming the first role is the primary one for redirection
+            if user.roles:  # Check if there are any roles assigned
+                primary_role_name = user.roles[0].name  # Get the name of the first role
+                redirect_url = ROLE_ROUTE_MAP.get(primary_role_name, 'default.index')
+                return redirect(url_for(redirect_url))
             else:
-                flash('Invalid password')
-                current_app.logger.info(f"Password check failed for {username}. Received password: {password}")
+                flash('No roles assigned to this user.')
         else:
-            flash('Username does not exist')
-            current_app.logger.info(f"No user found with username {username}")
+            flash('Invalid username or password')
+            current_app.logger.info(f"Invalid login attempt for {username}")
 
     return render_template('login.html')
+
 
 
 
@@ -62,20 +63,20 @@ def logout():
 @login_required
 def switch_role():
     new_role = request.form.get('role')
-    if new_role in [role.name for role in current_user.roles]:
-        allowed_transitions = Role.query.filter_by(name=current_user.current_role).first().get_allowed_transitions()
-        if new_role in allowed_transitions:
-            if current_user.switch_role(new_role):
-                db.session.commit()
-                flash('Role switched successfully!', 'success')
-            else:
-                flash('Failed to switch role.', 'error')
-        else:
-            flash('Invalid role selected or insufficient permissions', 'error')
-    else:
-        flash('Role not found.', 'error')
+    # Correct the attribute name to 'current_role'
+    current_role_object = Role.query.filter_by(name=current_user.current_role).first()
 
-    return redirect(url_for('current_view'))  # Adjust as necessary to redirect to a relevant view
+    if current_role_object and new_role in current_role_object.get_allowed_transitions():
+        current_user.current_role = new_role  # Update the current role in the user model
+        db.session.commit()  # Commit the changes to the database
+        flash('Role switched successfully!', 'success')
+        return redirect(url_for(f"{new_role}.index"))  # Redirect to the index page for the new role
+    else:
+        flash('Transition to selected role is not allowed.', 'error')
+
+    return redirect(url_for('auth.login'))  # Redirect to login page or a more appropriate fallback
+
+
 
 
 

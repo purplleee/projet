@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app
+from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel 
 from uwu.models.models import  Category,Marque,Modele,Type_m
 from ...forms import TicketForm, MaterielForm
@@ -14,6 +14,9 @@ login_manager = LoginManager(employee_bp)
 @employee_bp.route('/')
 @login_required
 def index():
+    if 'employee' not in current_user.get_role_names():
+        abort(403)
+
     new_tickets = Ticket.query.filter_by(statut='nouveau').count()
     in_progress_tickets = Ticket.query.filter_by(statut='en_cours').count()
     in_repair_tickets = Ticket.query.filter_by(statut='en_reparation').count()

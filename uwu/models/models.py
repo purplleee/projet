@@ -59,43 +59,27 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(255))
     structure_id = db.Column(db.Integer, db.ForeignKey('structures.structure_id'))
     roles = db.relationship('Role', secondary='user_roles', backref=db.backref('users', lazy='dynamic'))
-    current_role = db.Column(db.String(50))  # Stores the current active role as a string
+    current_role = db.Column(db.String(50), nullable=True)  # Explicit column for current_role
 
-    def __init__(self, username, password, role_names):
+    def __init__(self, username, password, role_names=None):
         self.username = username
         self.set_password(password)
-        self.assign_roles(role_names)
-        self.current_role = role_names[0]  # Default to the first role assigned
+        if role_names:
+            self.assign_roles(role_names)
+            self.current_role = role_names[0]  # Default to the first role assigned
+
+
+    def assign_roles(self, role_names):
+        # Fetch role objects based on a list of role names
+        roles = Role.query.filter(Role.name.in_(role_names)).all()
+        self.roles = roles
+
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
-    def assign_roles(self, role_names):
-        roles = Role.query.filter(Role.name.in_(role_names)).all()
-        self.roles = roles
-
-    def switch_role(self, new_role):
-        if new_role in [role.name for role in self.roles]:
-            self.current_role = new_role
-            db.session.commit()
-            return True
-        return False
-    
-    def assign_roles(self, role_names):
-        roles = Role.query.filter(Role.name.in_(role_names)).all()
-        self.roles = roles
-        if roles:
-            self.current_role = roles[0].name  # Default to the first role assigned
-            self.active_role = roles[0].name
-
-    def switch_role(self, new_role):
-        if new_role in [role.name for role in self.roles]:
-            self.current_role = new_role
-            self.active_role = new_role
-            db.session.commit()
-            return True
-        return False
-
+    def get_role_names(self):
+        return [role.name for role in self.roles]
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
