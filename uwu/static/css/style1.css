@@ -68,7 +68,7 @@ body{
     color: #184e77 !important;
 }
 .logo {
-    height: 50px; /* Adjust this value as needed */
+    height: 60px; /* Adjust this value as needed */
     width: auto; /* Keeps the aspect ratio of the image */
    /* background-color: #f3941c;*/
     padding: none; /* Ensures padding does not affect size */
