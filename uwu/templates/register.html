@@ -5,8 +5,12 @@
     <h2>Register New User</h2>
     <form method="post">
         <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+            <label for="nom">Nom</label>
+            <input type="text" class="form-control" id="nom" name="nom" required>
+        </div>
+        <div class="form-group">
+            <label for="prenom">Prenom</label>
+            <input type="text" class="form-control" id="prenom" name="prenom" required>
         </div>
         <div class="form-group">
             <label for="password">Password</label>
@@ -18,6 +22,14 @@
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
                 <option value="super_admin">Super Admin</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="structure">Structure</label>
+            <select class="form-control" id="structure" name="structure_id">
+                {% for structure in structures %}
+                <option value="{{ structure.structure_id }}">{{ structure.structure_name }}</option>
+                {% endfor %}
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Register</button>
