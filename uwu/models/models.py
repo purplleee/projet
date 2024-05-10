@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(255))
     structure_id = db.Column(db.Integer, db.ForeignKey('structures.structure_id'))
     roles = db.Column(db.Enum('employee', 'admin', 'super_admin', name='roles'))
-    active_role = db.Column(db.String(128))  # Assuming roles are stored as strings
+    active_role = db.Column(db.Enum('employee', 'admin', 'super_admin', name='roles'))  # Assuming roles are stored as strings
 
     def __init__(self, username, roles, active_role=None):
         self.username = username
@@ -28,8 +28,8 @@ class User(db.Model, UserMixin):
     def switch_role(self, new_role):
         allowed_transitions = {
             'employee': ['employee'],  # Employees can't switch roles
-            'admin': ['employee', 'admin'],  # Admins can switch to employee or back to admin
-            'super_admin': ['employee', 'admin', 'super_admin']  # Super admins can switch to any role
+            'admin': ['admin','employee'],  # Admins can switch to employee or back to admin
+            'super_admin': ['super_admin','admin','employee']  # Super admins can switch to any role
         }
         if new_role in allowed_transitions.get(self.active_role, []):
             self.active_role = new_role

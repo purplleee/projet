@@ -31,6 +31,7 @@ def login():
             current_app.logger.info(f"Checking login for {username}. Stored hash: {user.password_hash} \n{user.check_password(password)}")
             if user.check_password(password):
                 login_user(user)
+                user.active_role=user.roles
                 flash('Logged in successfully.')
                 return redirect(url_for('employee.index'))
             else:
@@ -57,18 +58,26 @@ def logout():
 
 
 
-
-def switch_role(self, new_role):
+@auth_bp.route('/switch_role', methods=['POST'])
+@login_required
+def switch_role():
+    new_role = request.form.get('role')
     allowed_transitions = {
-        'employee': ['employee'],  # Employees can't switch roles
-        'admin': ['employee', 'admin'],  # Admins can switch to employee or back to admin
-        'super_admin': ['employee', 'admin', 'super_admin']  # Super admins can switch to any role
+        'employee': ['employee'],
+        'admin': ['employee', 'admin'],
+        'super_admin': ['employee', 'admin', 'super_admin']
     }
-    if new_role in allowed_transitions.get(self.active_role, []):
-        self.active_role = new_role
-        db.session.commit()  # Ensure the change is saved to the database
-        return True
-    return False
+    current_role = current_user.active_role  # Assuming active_role attribute exists
+
+    if new_role in allowed_transitions.get(current_role, []):
+        current_user.active_role = new_role
+        db.session.commit()
+        flash('Role switched successfully!', 'success')
+        return redirect(url_for('some_function_based_on_role'))  # Redirect appropriately
+    else:
+        flash('Invalid role selected or insufficient permissions', 'error')
+        return redirect(url_for('current_view'))
+
 
 
 

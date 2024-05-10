@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} {% endblock %} - Sonelgaz</title>
-    <link rel="icon" href="{{ url_for('static', filename='img/sonelgaz.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='img/sol_fav.png') }}" type="image/x-icon">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style1.css') }}">   
@@ -28,12 +28,12 @@
       {% if 'super_admin' in current_user.roles %}
         <a class="nav-item nav-link" href="{{ url_for('super_admin.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.super_admin_users') }}">Users</a>
-        <a class="nav-item nav-link" href="{{ url_for('super_admin.stats') }}">Stats</a>
+        <a class="nav-item nav-link" href="{{ url_for('super_admin.stats') }}">Statistiques</a>
         <a class="nav-item nav-link" href="#">FAQ</a>
       {% elif 'admin' in current_user.roles %}
         <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('admin.admin_users') }}">Users</a>
-        <a class="nav-item nav-link" href="{{ url_for('admin.organigramme') }}">Organigramme</a>
+        <a class="nav-item nav-link" href="{{ url_for('admin.organigramme') }}">paramétrage</a>
         <a class="nav-item nav-link" href="#">FAQ</a>
       {% else %}
         <a class="nav-item nav-link" href="{{ url_for('employee.index') }}">Accueil</a>
@@ -57,27 +57,26 @@
 
             <div class="dropdown-divider">
               <!-- Super Admin Role Switch -->
-              {% if current_user.is_super_admin %}
+              {% if 'super_admin' in current_user.roles %}
                   <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
-                      {{ form.csrf_token }}
+                      
                       <input type="hidden" name="role" value="super_admin">
                       <button class="dropdown-item" type="submit" {% if current_user.active_role == 'super_admin' %}disabled{% endif %}>Switch to Super Admin</button>
                   </form>
               {% endif %}
               
               <!-- Admin Role Switch -->
-              {% if current_user.is_super_admin or current_user.is_admin %}
+              {% if ('admin' or 'super_admin') in current_user.roles  %}
                   <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
-                      {{ form.csrf_token }}
+                     
                       <input type="hidden" name="role" value="admin">
                       <button class="dropdown-item" type="submit" {% if current_user.active_role == 'admin' %}disabled{% endif %}>Switch to Admin</button>
                   </form>
               {% endif %}
-              
               <!-- Employee Role Switch -->
-              {% if current_user.is_super_admin or current_user.is_admin %}
+              {% if ('admin' or 'super_admin') in current_user.roles  %}
                   <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
-                      {{ form.csrf_token }}
+                      
                       <input type="hidden" name="role" value="employee">
                       <button class="dropdown-item" type="submit" {% if current_user.active_role == 'employee' %}disabled{% endif %}>Switch to Employee</button>
                   </form>
