@@ -1,31 +1,8 @@
 from uwu.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-
-class Ticket(db.Model):
-    __tablename__ = 'tickets'
-    id_ticket = db.Column(db.Integer, primary_key=True)
-    titre = db.Column(db.String(100), nullable=False)
-    description_ticket = db.Column(db.Text)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'))
-    urgent = db.Column(db.Enum('Faible', 'Moyen', 'Élevé', name='ticket_urgent'),default="Faible")
-    statut = db.Column(db.Enum('nouveau', 'en_cours', 'clos', 'en_reparation', name='ticket_statut'),default="nouveau")
-    creator_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    assigned_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
-    days_in_repair = db.Column(db.Integer, nullable=True)
-    material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'), nullable=True)
-
-
-
-class Materiel(db.Model):
-    __tablename__ = 'materials'
-    material_id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(100))
-    name = db.Column(db.String(100))
-    structure_id = db.Column(db.Integer, db.ForeignKey('structures.structure_id'))
-    important_info = db.Column(db.Text)
-
-
+from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 
 class User(db.Model, UserMixin):
@@ -36,8 +13,6 @@ class User(db.Model, UserMixin):
     structure_id = db.Column(db.Integer, db.ForeignKey('structures.structure_id'))
     roles = db.Column(db.Enum('employee', 'admin', 'super_admin', name='roles'))
     active_role = db.Column(db.String(128))  # Assuming roles are stored as strings
-
-    admin_categories = db.relationship('Category', secondary='admin_categories', backref=db.backref('admins', lazy='dynamic'))
 
     def __init__(self, username, roles, active_role=None):
         self.username = username
@@ -84,13 +59,55 @@ class Structure(db.Model):
     __tablename__ = 'structures'
     structure_id = db.Column(db.Integer, primary_key=True)
     structure_name = db.Column(db.String(255))
-    users = db.relationship('User', backref='structure', lazy='dynamic')
 
 class Category(db.Model):
     __tablename__ = 'categories'
     category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(255))
-    tickets = db.relationship('Ticket', backref='category', lazy='dynamic')
+
+class Ticket(db.Model):
+    __tablename__ = 'tickets'
+    id_ticket = db.Column(db.Integer, primary_key=True)
+    titre = db.Column(db.String(100), nullable=False)
+    description_ticket = db.Column(db.Text)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'))
+    urgent = db.Column(db.Enum('Faible', 'Moyen', 'Élevé', name='ticket_urgency'), default="Faible")
+    statut = db.Column(db.Enum('nouveau', 'en_cours', 'clos', 'en_reparation', 'suspended', name='ticket_status'), default="nouveau")
+    creator_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    assigned_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
+    days_in_repair = db.Column(db.Integer, nullable=True)
+    material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'), nullable=True)
+    ticket_creation_date = db.Column(db.DateTime, server_default=func.now())
+
+class Type_m(db.Model):
+    __tablename__ = 'type_m'
+    type_id = db.Column(db.Integer, primary_key=True)
+    type_name = db.Column(db.String(100), nullable=False)
+
+
+class Materiel(db.Model):
+    __tablename__ = 'materials'
+    material_id = db.Column(db.Integer, primary_key=True)
+    code_a_barre = db.Column(db.Integer, nullable=False)
+    type_id = db.Column(db.Integer, db.ForeignKey('type_m.type_id'))
+    type = relationship('Type_m', backref='materiels')  # Establish relationship with Type_m
+    marque_id = db.Column(db.Integer, db.ForeignKey('marques.marque_id'))
+    marque = relationship('Marque', backref='materiels')  # Establish relationship with Marque
+    modele_id = db.Column(db.Integer, db.ForeignKey('modeles.modele_id'))
+    modele = relationship('Modele', backref='materiels')  # Establish relationship with Modele
+
+
+
+class Marque(db.Model):
+    __tablename__ = 'marques'
+    marque_id = db.Column(db.Integer, primary_key=True)
+    marque_name = db.Column(db.String(100))
+
+class Modele(db.Model):
+    __tablename__ = 'modeles'
+    modele_id = db.Column(db.Integer, primary_key=True)
+    modele_name = db.Column(db.String(100))
+    marque_id = db.Column(db.Integer, db.ForeignKey('marques.marque_id'))
 
 class Comment(db.Model):
     __tablename__ = 'comments'
@@ -98,16 +115,12 @@ class Comment(db.Model):
     ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id_ticket'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     comment_text = db.Column(db.Text)
-    created_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, server_default=func.now())
 
 class FAQ(db.Model):
     __tablename__ = 'faqs'
     faq_id = db.Column(db.Integer, primary_key=True)
-    question = db.Column(db.String(255))
-    answer = db.Column(db.Text)
+    objet = db.Column(db.String(255), nullable=False)
+    contenu = db.Column(db.Text, nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'))
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-
-class Admin_Category(db.Model):
-    __tablename__ = 'admin_categories'
-    admin_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), primary_key=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'), primary_key=True)
