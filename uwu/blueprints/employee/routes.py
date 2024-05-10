@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, request, url_for, flash, redirect,
 from uwu.models import Ticket, Materiel 
 from uwu.models.models import  Category,Marque,Modele,Type_m
 from ...forms import TicketForm, MaterielForm
-import uuid
 from uwu.database import db
 from flask_login import login_required , LoginManager
 from flask_login import current_user
@@ -10,8 +9,7 @@ from flask_login import current_user
 employee_bp = Blueprint('employee', __name__)
 login_manager = LoginManager(employee_bp)
 
-def generate_unique_id():
-    return str(uuid.uuid4())
+
 
 @employee_bp.route('/')
 @login_required
