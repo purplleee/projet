@@ -14,3 +14,10 @@ class ProductionConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+
+# Define a mapping of roles to their respective dashboard routes
+ROLE_ROUTE_MAP = {
+    'employee': 'employee.index',
+    'admin': 'admin.index',
+    'super_admin': 'super_admin.index'
+}
