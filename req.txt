@@ -16,6 +16,7 @@ mysql-connector-python==8.4.0
 pillow==10.3.0
 pydot==2.0.0
 pyparsing==3.1.2
+python-dotenv==1.0.1
 SQLAlchemy==2.0.30
 sqlalchemy_schemadisplay==2.0
 typing_extensions==4.11.0
