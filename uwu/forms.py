@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, TextAreaField, IntegerField, BooleanField,RadioField,FieldList, SelectField)
 from wtforms.validators import InputRequired, Length , Regexp
+from wtforms import HiddenField
 
 
 
@@ -26,3 +27,10 @@ class MaterielForm(FlaskForm):
     type_id = SelectField('Type', validators=[InputRequired()], coerce=int)
     marque_id = SelectField('Marque', validators=[InputRequired()], coerce=int)
     modele_id = SelectField('Modèle', validators=[InputRequired()], coerce=int)
+
+class FAQForm(FlaskForm):
+    objet = StringField('Subject', validators=[InputRequired(), Length(min=5, max=255)])
+    contenu = TextAreaField('Content', validators=[InputRequired(), Length(min=20)])
+    category_id = SelectField('Category', validators=[InputRequired()], coerce=int)
+    # created_by_user_id = HiddenField('Created By', validators=[InputRequired()])
+

@@ -1,11 +1,11 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm
+from ...forms import TicketForm, MaterielForm,FAQForm
 import uuid
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
-from uwu.models.models import Role,Structure
+from uwu.models.models import Role,Structure,Category, FAQ
 from flask_login import current_user
 
 admin_bp = Blueprint('admin', __name__)
@@ -65,3 +65,28 @@ def admin_users():
 @login_required
 def organigramme():
     return "organigramme"
+
+
+
+
+@admin_bp.route('/create_faq', methods=['GET', 'POST'])
+def create_faq():
+    form = FAQForm()
+    
+    # Set choices for category_id using the correct attribute name
+    form.category_id.choices = [(c.category_id, c.category_name) for c in Category.query.all()]
+    
+    if form.validate_on_submit():
+        new_faq = FAQ(
+            objet=form.objet.data,
+            contenu=form.contenu.data,
+            category_id=form.category_id.data,
+            created_by_user_id=current_user.user_id  # Assuming you have a current_user object
+        )
+        db.session.add(new_faq)
+        db.session.commit()
+        flash('FAQ created successfully!', 'success')
+        return redirect(url_for('admin.admin_users'))  # Redirect to a relevant page after creation
+
+    return render_template('create_faq.html', form=form)
+
