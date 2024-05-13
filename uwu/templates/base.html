@@ -25,12 +25,12 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav">
-      {% if 'super_admin' in current_user.roles %}
+      {% if current_user.role.name == 'super_admin' %}
         <a class="nav-item nav-link" href="{{ url_for('super_admin.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.super_admin_users') }}">Users</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.stats') }}">Statistiques</a>
         <a class="nav-item nav-link" href="#">FAQ</a>
-      {% elif 'admin' in current_user.roles %}
+      {% elif current_user.role.name == 'admin' %}
         <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('admin.admin_users') }}">Users</a>
         <a class="nav-item nav-link" href="{{ url_for('admin.organigramme') }}">paramétrage</a>

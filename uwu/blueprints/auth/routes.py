@@ -5,9 +5,6 @@ from uwu.models.models import Structure ,Role
 from werkzeug.security import generate_password_hash, check_password_hash
 from ...database import db
 from sqlalchemy.exc import SQLAlchemyError
-from config import ROLE_ROUTE_MAP
-
-
 
 
 
@@ -28,23 +25,27 @@ def login():
 
         if user and user.check_password(password):
             login_user(user)
-            current_app.logger.debug(f"User {username} roles: {user.get_role_names()}")  # Debugging line
-            
-            # Assuming the first role is the primary one for redirection
-            if user.roles:  # Check if there are any roles assigned
-                primary_role_name = user.roles[0].name  # Get the name of the first role
-                redirect_url = ROLE_ROUTE_MAP.get(primary_role_name, 'default.index')
-                return redirect(url_for(redirect_url))
+            # Ensure you reference user.role and not just role
+            if user.role:
+                current_app.logger.debug(f"User {username} logged in with role: {user.role.name}")
+                if user.role.name == 'admin':
+                    current_app.logger.debug("Redirecting to admin.index")
+                    return redirect(url_for('admin.index'))
+                elif user.role.name == 'employee':
+                    current_app.logger.debug("Redirecting to employee.index")
+                    return redirect(url_for('employee.index'))
+                elif user.role.name == 'super_admin':
+                    current_app.logger.debug("Redirecting to super_admin.index")
+                    return redirect(url_for('super_admin.index'))
             else:
-                flash('No roles assigned to this user.')
+                flash('No roles assigned to this user.', 'warning')
+                return redirect(url_for('auth.register'))
+
         else:
-            flash('Invalid username or password')
-            current_app.logger.info(f"Invalid login attempt for {username}")
+            flash('Invalid username or password', 'danger')
+            current_app.logger.info(f"Invalid login attempt for username: {username}")
 
     return render_template('login.html')
-
-
-
 
 
 
@@ -80,32 +81,23 @@ def switch_role():
 
 
 
-
-
-
-
-
-
-
-
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        # Combine first name and last name to create username
-        username = request.form['nom'].strip() + request.form['prenom'].strip()
+        username = request.form['nom'].strip() + "_" + request.form['prenom'].strip()
         password = request.form['password']
-        role_names = request.form.getlist('roles')  # Retrieve a list of selected roles
-        structure_id = int(request.form['structure_id'])  # Ensure this is an integer
+        role_name = request.form['roles']  # Single role name as string
+        structure_id = int(request.form['structure_id'])
 
-        # Fetch roles from the database
-        roles = Role.query.filter(Role.name.in_(role_names)).all()
-        if not roles:
-            flash('Specified roles are invalid', 'error')
+        # Fetch role from the database
+        role = Role.query.filter_by(name=role_name).first()
+        if not role:
+            flash('Specified role is invalid', 'error')
             return redirect(request.url)
 
-        # Create new user instance
-        new_user = User(username=username, password=password, role_names=[role.name for role in roles])
-        new_user.structure_id = structure_id  # Assign structure
+        # Create new user instance with the specified role
+        new_user = User(username=username, password=password, role=role)
+        new_user.structure_id = structure_id
 
         try:
             db.session.add(new_user)

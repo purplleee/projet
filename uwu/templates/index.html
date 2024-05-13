@@ -4,7 +4,7 @@
 {% block content %}
 <div class="centerise">
     <!-- Show all statuses for super admin -->
-    {% if 'super_admin' in current_user.roles %}
+    {% if current_user.role.name == 'super_admin' %}
     <div class="row">
         <div class="ticket-status nouveau">
             <button onclick="window.location.href='{{ url_for('employee.view_tickets_by_status', status='nouveau') }}'">{{ new_tickets }} <br>nouveau</button>
@@ -23,7 +23,7 @@
     </div>
 
     <!-- Show all statuses except 'nouveau' for admin -->
-    {% elif 'admin' in current_user.roles %}
+    {% elif current_user.role.name == 'admin' %}
     <div class="row">
         <div class="ticket-status en-cours">
             <button onclick="location.href='{{ url_for('admin.view_tickets_by_status', status='en_cours') }}'">{{ in_progress_tickets }}<br>en cours</button>
