@@ -4,24 +4,28 @@
 
 {% block content %}
 <div class="container">
-    <h1>Users </h1>
+    <h1>Users</h1>
+    {% if users %}
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Username</th>
-                <th>Roles</th>
+                <th>Role</th>
+                <th>Structure</th>
             </tr>
         </thead>
         <tbody>
             {% for user in users %}
             <tr>
-                <td>{{ user.id }}</td>
                 <td>{{ user.username }}</td>
-                <td>{{ user.roles }}</td>
+                <td>{{ user.role.name }}</td>
+                <td>{{ structure_names[user.structure_id] if user.structure_id in structure_names else 'Unknown Structure' }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <p>No users to display.</p>
+    {% endif %}
 </div>
 {% endblock %}

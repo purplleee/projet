@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app
+from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
 from ...forms import TicketForm, MaterielForm
 import uuid
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
+from uwu.models.models import Role,Structure
 from flask_login import current_user
 
 admin_bp = Blueprint('admin', __name__)
@@ -40,10 +41,23 @@ def view_tickets_by_status(status):
 @admin_bp.route('/users/')
 @login_required
 def admin_users():
-    # Exclude super_admins if the user is an admin
-    if 'admin' in current_user.roles:
-        users = User.query.filter(User.roles != 'super_admin').all()
-    return render_template('users.html', users=users, role='admin')
+    if current_user.role.name != 'admin':
+        flash('Access denied', 'error')
+        abort(403)
+
+    try:
+        # Fetch all structures and create a dictionary mapping IDs to names
+        structures = Structure.query.all()
+        structure_names = {structure.structure_id: structure.structure_name for structure in structures}
+
+        # Fetch all non-super_admin users
+        users = User.query.join(Role).filter(Role.name != 'super_admin').all()
+        return render_template('users.html', users=users, structure_names=structure_names)
+    except Exception as e:
+        current_app.logger.error(f'Failed to fetch user list: {e}')
+        flash(f'Erreur lors de la récupération des utilisateurs: {str(e)}', 'error')
+        return render_template('users.html', users=[], structure_names={})
+
 
 
 
