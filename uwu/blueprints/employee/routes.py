@@ -14,9 +14,6 @@ login_manager = LoginManager(employee_bp)
 @employee_bp.route('/')
 @login_required
 def index():
-    if 'employee' not in current_user.get_role_names():
-        abort(403)
-
     new_tickets = Ticket.query.filter_by(statut='nouveau').count()
     in_progress_tickets = Ticket.query.filter_by(statut='en_cours').count()
     in_repair_tickets = Ticket.query.filter_by(statut='en_reparation').count()
@@ -58,17 +55,6 @@ def cree_ticket():
             db.session.close()
     return render_template('creat_ticket.html', form=form)
 
-
-# @employee_bp.route('/tickets/<status>')
-# @login_required
-# def view_tickets_by_status(status):
-#     try:
-#         tickets_list = Ticket.query.filter_by(statut=status).all()
-#         return render_template('tickets.html', tickets_list=tickets_list, status=status)
-#     except Exception as e:
-#         flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
-#         current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')  # Corrected logger usage
-#         return render_template('tickets.html', tickets_list=[], status=status)
     
 
 @employee_bp.route('/tickets/<status>')
@@ -189,8 +175,3 @@ def edit_ticket(ticket_id):
     return render_template('edit_ticket.html', form=form, ticket=ticket)
 
 
-@employee_bp.route('/edit/')
-def edit():
-    if current_user.is_authenticated:
-        return 'Welcome back, {}'.format(current_user.username)
-    return 'Hello, Guest!'
