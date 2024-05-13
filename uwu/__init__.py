@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager
-from config import DevelopmentConfig
+from config import DevelopmentConfig 
 from .blueprints.employee.routes import employee_bp
 from .blueprints.admin.routes import admin_bp
 from .blueprints.super_admin.routes import super_admin_bp
