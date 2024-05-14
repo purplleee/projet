@@ -217,4 +217,22 @@ button.dropdown-item:hover {
     color: white;
 }
 
+/* faq list  */
+/* Reduce vertical spacing between rows by adjusting the bottom margin */
+.col-xs-12.col-sm-6.col-md-3.mb-2 {
+    margin-bottom: 5px !important; /* Reduced from 10px */
+}
+
+/* Reduce horizontal spacing between cards */
+.custom-col {
+    padding-right: 2px !important;  /* Reduced from 5px */
+    padding-left: 2px !important;   /* Reduced from 5px */
+    margin: 2px !important;         /* Reduced from 5px */
+}
+
+/* Optionally, adjust card margin for tighter grouping */
+.card {
+    margin: 2px !important;  /* Reduced from 5px */
+}
+
 

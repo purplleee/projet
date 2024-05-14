@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}FAQ Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ faq.objet }}</h2>
+    <p><strong>Category:</strong> {{ faq.category.category_name }}</p>
+    <p><strong>Asked by:</strong> {{ faq.user.username }}</p>  <!-- Adjust based on your user model -->
+    <p><strong>Content:</strong> {{ faq.contenu }}</p>
+    <a href="{{ url_for('admin.list_faqs') }}" class="btn btn-link">Back to FAQs</a>
+</div>
+{% endblock %}

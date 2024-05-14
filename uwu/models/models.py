@@ -162,7 +162,10 @@ class FAQ(db.Model):
     objet = db.Column(db.String(255), nullable=False)
     contenu = db.Column(db.Text, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'))
+    category = db.relationship('Category', backref='faqs', lazy=True)  # This is important
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    user = db.relationship('User', backref='faqs', lazy=True)
+
 
 
 class Panne(db.Model):

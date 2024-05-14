@@ -90,3 +90,13 @@ def create_faq():
 
     return render_template('create_faq.html', form=form)
 
+@admin_bp.route('/faqs')
+def list_faqs():
+    faqs = FAQ.query.all()  # Assuming you're fetching all FAQs
+    return render_template('list_faqs.html', faqs=faqs)
+
+@admin_bp.route('/faq/<int:faq_id>')
+def view_faq(faq_id):
+    faq = FAQ.query.get_or_404(faq_id)  # Fetch the FAQ or return 404 if not found
+    return render_template('view_faq.html', faq=faq)
+

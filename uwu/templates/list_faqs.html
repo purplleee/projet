@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}FAQs{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        {% for faq in faqs %}
+        <div class="col-xs-12 col-sm-6 col-md-3 mb-2 px-1" style="margin-bottom: 5px; padding-right: 2px; padding-left: 2px;">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ faq.objet }}</h5>
+                    <p class="card-text">Category: {{ faq.category.category_name }}</p>
+                    <p class="card-text">By: {{ faq.user.username }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('admin.view_faq', faq_id=faq.faq_id) }}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
