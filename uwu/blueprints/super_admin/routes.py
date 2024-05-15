@@ -29,8 +29,18 @@ def index():
 @super_admin_bp.route('/users/')
 @login_required
 def super_admin_users():
-    users = User.query.all()  # Assuming super_admins can see everyone
-    return render_template('users.html', users=users, role='super_admin')
+    try:
+        # Fetch all structures and create a dictionary mapping IDs to names
+        structures = Structure.query.all()
+        structure_names = {structure.structure_id: structure.structure_name for structure in structures}
+
+        # Fetch all non-super_admin users
+        users = User.query.join(Role).all()
+        return render_template('users.html', users=users, structure_names=structure_names)
+    except Exception as e:
+        current_app.logger.error(f'Failed to fetch user list: {e}')
+        flash(f'Erreur lors de la récupération des utilisateurs: {str(e)}', 'error')
+        return render_template('users.html', users=[], structure_names={})
 
 
 @super_admin_bp.route('/stats/')
