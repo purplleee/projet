@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel 
-from uwu.models.models import  Category,Marque,Modele,Type_m
+from uwu.models.models import  Category,Marque,Modele,Type_m,Role,Structure,Category, FAQ
 from ...forms import TicketForm, MaterielForm
 from uwu.database import db
 from flask_login import login_required , LoginManager
@@ -175,3 +175,12 @@ def edit_ticket(ticket_id):
     return render_template('edit_ticket.html', form=form, ticket=ticket)
 
 
+@employee_bp.route('/faqs')
+def list_faqs():
+    faqs = FAQ.query.all()  # Assuming you're fetching all FAQs
+    return render_template('list_faqs.html', faqs=faqs)
+
+@employee_bp.route('/faq/<int:faq_id>')
+def view_faq(faq_id):
+    faq = FAQ.query.get_or_404(faq_id)  # Fetch the FAQ or return 404 if not found
+    return render_template('view_faq.html', faq=faq)

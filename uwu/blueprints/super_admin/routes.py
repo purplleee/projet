@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app
+from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm
+from ...forms import TicketForm, MaterielForm,FAQForm
 import uuid
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
+from uwu.models.models import Role,Structure,Category, FAQ
+from flask_login import current_user
 
 super_admin_bp = Blueprint('super_admin', __name__)
 
@@ -35,6 +37,18 @@ def super_admin_users():
 @login_required
 def stats():
     return "herrrrrrrrr"
+
+
+@super_admin_bp.route('/faqs')
+def list_faqs():
+    faqs = FAQ.query.all()  # Assuming you're fetching all FAQs
+    return render_template('list_faqs.html', faqs=faqs)
+
+@super_admin_bp.route('/faq/<int:faq_id>')
+def view_faq(faq_id):
+    faq = FAQ.query.get_or_404(faq_id)  # Fetch the FAQ or return 404 if not found
+    return render_template('view_faq.html', faq=faq)
+
 
 
 

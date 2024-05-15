@@ -29,7 +29,7 @@
         <a class="nav-item nav-link" href="{{ url_for('super_admin.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.super_admin_users') }}">Users</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.stats') }}">Statistiques</a>
-        <a class="nav-item nav-link" href="#">FAQ</a>
+        <a class="nav-item nav-link" href="{{ url_for('super_admin.list_faqs') }}">FAQ</a>
       {% elif current_user.role.name == 'admin' %}
         <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('admin.admin_users') }}">Users</a>
@@ -39,7 +39,7 @@
         <a class="nav-item nav-link" href="{{ url_for('employee.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('employee.cree_ticket') }}">Créer un ticket</a>
         <a class="nav-item nav-link" href="{{ url_for('employee.materiel') }}">Matériel</a>
-        <a class="nav-item nav-link" href="#">FAQ</a>
+        <a class="nav-item nav-link" href="{{ url_for('employee.list_faqs') }}">FAQ</a>
       {% endif %}
     </div>
   </div>
