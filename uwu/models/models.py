@@ -101,7 +101,6 @@ class Ticket(db.Model):
     statut = db.Column(db.Enum('nouveau', 'en_cours', 'clos', 'en_reparation', 'suspended', name='ticket_status'), default="nouveau")
     creator_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     assigned_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
-    days_in_repair = db.Column(db.Integer, nullable=True)
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'), nullable=True)
     ticket_creation_date = db.Column(db.DateTime, server_default=func.now())
 
