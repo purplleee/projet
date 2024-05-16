@@ -15,37 +15,46 @@ login_manager = LoginManager(auth_bp)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = User.query.filter_by(username=username).first()
+    try:
+        if request.method == 'POST':
+            username = request.form['username']
+            password = request.form['password']
+            user = User.query.filter_by(username=username).first()
 
-        if user and user.check_password(password):
+            if not user:
+                flash('Username does not exist', 'danger')
+                current_app.logger.info(f"Login attempt for non-existent username: {username}")
+                return render_template('login.html')
+
+            if not user.check_password(password):
+                flash('Incorrect password', 'danger')
+                current_app.logger.info(f"Incorrect password for username: {username}")
+                return render_template('login.html')
+
             login_user(user)
-            # Ensure you reference user.role and not just role
-            if user.role:
-                current_app.logger.debug(f"User {username} logged in with role: {user.role.name}")
-                if user.role.name == 'admin':
-                    current_app.logger.debug("Redirecting to admin.index")
-                    return redirect(url_for('admin.index'))
-                elif user.role.name == 'employee':
-                    current_app.logger.debug("Redirecting to employee.index")
-                    return redirect(url_for('employee.index'))
-                elif user.role.name == 'super_admin':
-                    current_app.logger.debug("Redirecting to super_admin.index")
-                    return redirect(url_for('super_admin.index'))
+            current_app.logger.debug(f"User {username} logged in with role: {user.role.name}")
+            if user.role.name == 'admin':
+                current_app.logger.debug("Redirecting to admin.index")
+                return redirect(url_for('admin.index'))
+            elif user.role.name == 'employee':
+                current_app.logger.debug("Redirecting to employee.index")
+                return redirect(url_for('employee.index'))
+            elif user.role.name == 'super_admin':
+                current_app.logger.debug("Redirecting to super_admin.index")
+                return redirect(url_for('super_admin.index'))
             else:
                 flash('No roles assigned to this user.', 'warning')
                 return redirect(url_for('auth.register'))
 
-        else:
-            flash('Invalid username or password', 'danger')
-            current_app.logger.info(f"Invalid login attempt for username: {username}")
+    except Exception as e:
+        flash('An error occurred during login', 'danger')
+        current_app.logger.error(f"An error occurred during login: {str(e)}")
 
-    return render_template('login.html')
+    finally:
+        if request.method == 'GET':
+            return render_template('login.html')
 
 
 
