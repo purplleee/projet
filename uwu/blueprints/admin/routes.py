@@ -7,6 +7,7 @@ from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
 from uwu.models.models import Role,Structure,Category, FAQ
 from flask_login import current_user
+from sqlalchemy.exc import SQLAlchemyError
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -93,12 +94,47 @@ def create_faq():
 
 
 @admin_bp.route('/faqs')
+@login_required
 def list_faqs():
     faqs = FAQ.query.all()  # Assuming you're fetching all FAQs
     return render_template('list_faqs.html', faqs=faqs)
 
 @admin_bp.route('/faq/<int:faq_id>')
+@login_required
 def view_faq(faq_id):
     faq = FAQ.query.get_or_404(faq_id)  # Fetch the FAQ or return 404 if not found
     return render_template('view_faq.html', faq=faq)
 
+@admin_bp.route('/creat_user', methods=['GET', 'POST'])
+@login_required
+def add_user():
+    if request.method == 'POST':
+        username = request.form['nom'].strip() + "_" + request.form['prenom'].strip()
+        password = request.form['password']
+        role_name = request.form['roles']  # Single role name as string
+        structure_id = int(request.form['structure_id'])
+
+        # Fetch role from the database
+        role = Role.query.filter_by(name=role_name).first()
+        if not role:
+            flash('Specified role is invalid', 'error')
+            return redirect(request.url)
+
+        # Create new user instance with the specified role
+        new_user = User(username=username, password=password, role=role)
+        new_user.structure_id = structure_id
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('User registered successfully.')
+            return redirect(url_for('admin.admin_users'))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
+            current_app.logger.error(f"Error during user registration: {str(e)}")
+        finally:
+            db.session.close()
+
+    structures = Structure.query.all()
+    return render_template('register.html', structures=structures)

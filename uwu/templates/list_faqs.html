@@ -4,9 +4,8 @@
 
 {% block content %}
 <div class="container mt-5">
-    <!-- Conditional rendering of the Add FAQ button -->
     {% if current_user.role.name == 'admin' %}
-    <div class="mb-4">
+    <div class="d-flex justify-content-end mb-4">
         <a href="{{ url_for('admin.create_faq') }}" class="btn btn-success">Add FAQ</a>
     </div>
     {% endif %}
