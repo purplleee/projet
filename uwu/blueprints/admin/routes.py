@@ -70,6 +70,7 @@ def organigramme():
 
 
 @admin_bp.route('/create_faq', methods=['GET', 'POST'])
+@login_required  # Ensure user is logged in
 def create_faq():
     form = FAQForm()
     
@@ -81,7 +82,7 @@ def create_faq():
             objet=form.objet.data,
             contenu=form.contenu.data,
             category_id=form.category_id.data,
-            created_by_user_id=current_user.user_id  # Assuming you have a current_user object
+            created_by_user_id=current_user.user_id  # Securely fetch from logged-in user context
         )
         db.session.add(new_faq)
         db.session.commit()
@@ -89,6 +90,7 @@ def create_faq():
         return redirect(url_for('admin.admin_users'))  # Redirect to a relevant page after creation
 
     return render_template('create_faq.html', form=form)
+
 
 @admin_bp.route('/faqs')
 def list_faqs():

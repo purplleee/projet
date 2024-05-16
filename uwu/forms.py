@@ -32,5 +32,6 @@ class FAQForm(FlaskForm):
     objet = StringField('Subject', validators=[InputRequired(), Length(min=5, max=255)])
     contenu = TextAreaField('Content', validators=[InputRequired(), Length(min=20)])
     category_id = SelectField('Category', validators=[InputRequired()], coerce=int)
-    # created_by_user_id = HiddenField('Created By', validators=[InputRequired()])
+    # Ensure the creator's ID is properly captured but not manipulated by the client
+    created_by_user_id = HiddenField('Created By')
 
