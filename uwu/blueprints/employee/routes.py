@@ -14,10 +14,11 @@ login_manager = LoginManager(employee_bp)
 @employee_bp.route('/')
 @login_required
 def index():
-    new_tickets = Ticket.query.filter_by(statut='nouveau').count()
-    in_progress_tickets = Ticket.query.filter_by(statut='en_cours').count()
-    in_repair_tickets = Ticket.query.filter_by(statut='en_reparation').count()
-    closed_tickets = Ticket.query.filter_by(statut='clos').count()
+    user_id = current_user.user_id  # Assuming 'id' is the attribute for user ID in your User model
+    new_tickets = Ticket.query.filter_by(statut='nouveau', creator_user_id=user_id).count()
+    in_progress_tickets = Ticket.query.filter_by(statut='en_cours', creator_user_id=user_id).count()
+    in_repair_tickets = Ticket.query.filter_by(statut='en_reparation', creator_user_id=user_id).count()
+    closed_tickets = Ticket.query.filter_by(statut='clos', creator_user_id=user_id).count()
     return render_template('index.html',
                            new_tickets=new_tickets,
                            in_progress_tickets=in_progress_tickets,
@@ -61,6 +62,7 @@ def cree_ticket():
 @login_required
 def view_tickets_by_status(status):
     try:
+        user_id = current_user.user_id  
         # Join the Tickets table with Categories and optionally with Materials
         tickets_list = db.session.query(
             Ticket.titre.label('titre'),
@@ -68,12 +70,15 @@ def view_tickets_by_status(status):
             Ticket.urgent.label('urgent'),
             Materiel.code_a_barre.label('material_name'),
             Ticket.statut.label('statut'),
-            Ticket.id_ticket.label('id_ticket')  
+            Ticket.id_ticket.label('id_ticket')
         ).join(
             Category, Category.category_id == Ticket.category_id
         ).outerjoin(
             Materiel, Materiel.material_id == Ticket.material_id
-        ).filter(Ticket.statut == status).all()
+        ).filter(
+            Ticket.statut == status,
+            Ticket.creator_user_id == user_id  # Filter by logged-in user's ID
+        ).all()
         
         return render_template('tickets.html', tickets_list=tickets_list, status=status)
     except Exception as e:
