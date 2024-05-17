@@ -151,7 +151,7 @@ def edit_ticket(ticket_id):
 
     # Populate choices for category and material
     form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
-    form.materiel.choices = [(0, 'None')] + [(m.material_id, m.name) for m in Materiel.query.order_by(Materiel.name)]
+    form.materiel.choices = [(0, 'None')] + [(m.material_id, m.code_a_barre) for m in Materiel.query.order_by(Materiel.code_a_barre)]
 
     if request.method == 'POST':
         try:
