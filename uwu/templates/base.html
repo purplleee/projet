@@ -27,13 +27,13 @@
     <div class="navbar-nav">
       {% if current_user.role.name == 'super_admin' %}
         <a class="nav-item nav-link" href="{{ url_for('super_admin.index') }}">Accueil</a>
-        <a class="nav-item nav-link" href="{{ url_for('super_admin.super_admin_users') }}">Users</a>
+        <a class="nav-item nav-link" href="{{ url_for('super_admin.super_admin_users') }}">Utilisateurs</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.stats') }}">Statistiques</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.list_faqs') }}">FAQ</a>
       {% elif current_user.role.name == 'admin' %}
         <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Accueil</a>
-        <a class="nav-item nav-link" href="{{ url_for('admin.admin_users') }}">Users</a>
-        <a class="nav-item nav-link" href="{{ url_for('admin.organigramme') }}">paramétrage</a>
+        <a class="nav-item nav-link" href="{{ url_for('admin.admin_users') }}">Utilisateurs</a>
+        <a class="nav-item nav-link" href="{{ url_for('admin.organigramme') }}">Paramétrage</a>
         <a class="nav-item nav-link" href="{{ url_for('admin.list_faqs') }}">FAQ</a>
       {% else %}
         <a class="nav-item nav-link" href="{{ url_for('employee.index') }}">Accueil</a>
