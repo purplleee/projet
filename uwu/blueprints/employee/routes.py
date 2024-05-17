@@ -98,10 +98,17 @@ def cree_mat():
     modeles = Modele.query.all()
     
     # Set dropdown choices using the correct attribute name
-    form.type_id.choices = [(t.type_id, t.type_name) for t in types]  # Adjusted to use the correct attribute
+    form.type_id.choices = [(t.type_id, t.type_name) for t in types]
     form.marque_id.choices = [(m.marque_id, m.marque_name) for m in marques]
     form.modele_id.choices = [(mo.modele_id, mo.modele_name) for mo in modeles]
+
     if form.validate_on_submit():
+        # Check if the code_a_barre already exists
+        existing_materiel = Materiel.query.filter_by(code_a_barre=form.code_a_barre.data).first()
+        if existing_materiel:
+            flash('Erreur: Code à barre existe déjà!', 'error')
+            return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
+        
         try:
             new_materiel = Materiel(
                 code_a_barre=form.code_a_barre.data,
@@ -120,14 +127,8 @@ def cree_mat():
             return render_template('creat_materiel.html', form=form)
         finally:
             db.session.close()
-    else:
-        # Load dropdown data
-        marques = Marque.query.all()
-        types = Type_m.query.all()
-        modeles = Modele.query.all()
-        return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
 
-    return render_template('creat_materiel.html', form=form)
+    return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
 
 
 @employee_bp.route('/materiel/')
