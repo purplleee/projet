@@ -65,7 +65,7 @@ def admin_users():
 @admin_bp.route('/organigramme/')
 @login_required
 def organigramme():
-    return "organigramme"
+    return render_template('para.html')
 
 
 
