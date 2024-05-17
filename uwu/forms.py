@@ -36,3 +36,5 @@ class FAQForm(FlaskForm):
     # Ensure the creator's ID is properly captured but not manipulated by the client
     created_by_user_id = HiddenField('Created By')
 
+class DeleteFAQForm(FlaskForm):
+    pass

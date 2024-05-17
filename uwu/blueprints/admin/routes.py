@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm,FAQForm
-import uuid
+from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
@@ -97,13 +96,53 @@ def create_faq():
 @login_required
 def list_faqs():
     faqs = FAQ.query.all()  # Assuming you're fetching all FAQs
-    return render_template('list_faqs.html', faqs=faqs)
+    delete_form = DeleteFAQForm()
+    return render_template('list_faqs.html', faqs=faqs, delete_form=delete_form)
 
 @admin_bp.route('/faq/<int:faq_id>')
 @login_required
 def view_faq(faq_id):
     faq = FAQ.query.get_or_404(faq_id)  # Fetch the FAQ or return 404 if not found
     return render_template('view_faq.html', faq=faq)
+
+@admin_bp.route('/faq/edit/<int:faq_id>', methods=['GET', 'POST'])
+@login_required
+def edit_faq(faq_id):
+    if current_user.role.name != 'admin':
+        flash('Access denied.', 'danger')
+        return redirect(url_for('admin.list_faqs'))
+    
+    faq = FAQ.query.get_or_404(faq_id)
+    form = FAQForm(obj=faq)  # Populate form with FAQ data
+
+    # Populate category choices
+    categories = Category.query.all()
+    form.category_id.choices = [(category.category_id, category.category_name) for category in categories]
+    
+    if form.validate_on_submit():
+        faq.objet = form.objet.data
+        faq.contenu = form.contenu.data
+        faq.category_id = form.category_id.data
+        db.session.commit()
+        flash('FAQ updated successfully.', 'success')
+        return redirect(url_for('admin.list_faqs'))
+    
+    return render_template('edit_faq.html', form=form, faq=faq)
+
+
+@admin_bp.route('/faq/delete/<int:faq_id>', methods=['POST'])
+@login_required
+def delete_faq(faq_id):
+    if current_user.role.name != 'admin':
+        flash('Access denied.', 'danger')
+        return redirect(url_for('admin.list_faqs'))
+    
+    faq = FAQ.query.get_or_404(faq_id)
+    db.session.delete(faq)
+    db.session.commit()
+    flash('FAQ deleted successfully.', 'success')
+    return redirect(url_for('admin.list_faqs'))
+
 
 @admin_bp.route('/creat_user', methods=['GET', 'POST'])
 @login_required

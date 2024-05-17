@@ -14,7 +14,7 @@ login_manager = LoginManager(employee_bp)
 @employee_bp.route('/')
 @login_required
 def index():
-    user_id = current_user.user_id  # Assuming 'id' is the attribute for user ID in your User model
+    user_id = current_user.user_id  
     new_tickets = Ticket.query.filter_by(statut='nouveau', creator_user_id=user_id).count()
     in_progress_tickets = Ticket.query.filter_by(statut='en_cours', creator_user_id=user_id).count()
     in_repair_tickets = Ticket.query.filter_by(statut='en_reparation', creator_user_id=user_id).count()

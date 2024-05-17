@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit FAQ{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit FAQ</h2>
+    <form method="POST" action="{{ url_for('admin.edit_faq', faq_id=faq.faq_id) }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="objet">Subject</label>
+            {{ form.objet(class="form-control", id="objet") }}
+        </div>
+        <div class="form-group">
+            <label for="contenu">Content</label>
+            {{ form.contenu(class="form-control", id="contenu") }}
+        </div>
+        <div class="form-group">
+            <label for="category_id">Category</label>
+            {{ form.category_id(class="form-control", id="category_id") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+{% endblock %}
