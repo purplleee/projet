@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container">
     <h1>Users</h1>
-    {% if current_user.role.name == 'admin' %}
+    {% if current_user.role.name == 'admin' or 'super_admin' %}
     <div class="d-flex justify-content-end mb-4">
         <a href="{{ url_for('admin.add_user') }}" class="btn btn-success">Add user</a>
     </div>
