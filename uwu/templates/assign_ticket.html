@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Assigner un ticket</h2>
+    <h2 class="mb-4">Affecter un ticket</h2>
     <form method="POST" action="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" novalidate>
         {{ form.hidden_tag() }}
         {{ form.csrf_token }}

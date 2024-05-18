@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container">
-    <h2>Register New User</h2>
+    <h2>Créer un compte Administrateur</h2>
     <!-- Display flash messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -21,11 +21,11 @@
             <input type="text" class="form-control" id="prenom" name="prenom" required>
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">Mot de passe</label>
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
         <div class="form-group">
-            <label for="roles">Role</label>
+            <label for="roles">Type</label>
             <select class="form-control" id="roles" name="roles">
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
@@ -42,7 +42,7 @@
         </div>
         <div class="text-right">
             <button type="reset" class="btn btn-secondary">Annuler</button>
-            <button type="submit" class="btn btn-success">Register</button>
+            <button type="submit" class="btn btn-success">Créer</button>
         </div>
     </form>
 </div>

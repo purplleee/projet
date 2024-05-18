@@ -19,7 +19,7 @@ class AssignTicketForm(FlaskForm):
     categorie = SelectField('Categorie', validators=[InputRequired()], coerce=int)
     urgent = RadioField('Urgence', validators=[InputRequired()], choices=[
         ('Faible', 'Faible'), ('Moyen', 'Moyen'), ('Élevé', 'Élevé')])
-    admin_assign = SelectField('Assign to Admin', coerce=int)
+    admin_assign = SelectField('Affecter à l\'Administrateur', coerce=int)
 
 class MaterielForm(FlaskForm):
     # Assuming 'code_a_barre' should be a numeric code, use a validator that checks for numeric range instead of length
