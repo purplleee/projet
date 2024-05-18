@@ -49,7 +49,7 @@
     <!-- Add this part inside the <nav> or appropriate section of your base.html -->
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          nom prénom  <span class="material-symbols-outlined">account_circle</span> 
+          {{ current_user.username }} <span class="material-symbols-outlined">account_circle</span> 
         </a>
         <div class="dropdown-menu dropdown-menu-right">
           <a class="dropdown-item" href="{{ url_for('auth.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
