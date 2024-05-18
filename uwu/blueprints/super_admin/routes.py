@@ -8,6 +8,7 @@ from uwu.models.models import Role,Structure,Category, FAQ
 from flask_login import current_user
 import logging
 from sqlalchemy.orm.exc import DetachedInstanceError
+from sqlalchemy.exc import SQLAlchemyError
 
 super_admin_bp = Blueprint('super_admin', __name__)
 
@@ -134,6 +135,77 @@ def view_faq(faq_id):
     return render_template('view_faq.html', faq=faq)
 
 
+@super_admin_bp.route('/faq/edit/<int:faq_id>', methods=['GET', 'POST'])
+@login_required
+def edit_faq(faq_id):
+    if current_user.role.name != 'admin':
+        flash('Access denied.', 'danger')
+        return redirect(url_for('admin.list_faqs'))
+    
+    faq = FAQ.query.get_or_404(faq_id)
+    form = FAQForm(obj=faq)  # Populate form with FAQ data
 
+    # Populate category choices
+    categories = Category.query.all()
+    form.category_id.choices = [(category.category_id, category.category_name) for category in categories]
+    
+    if form.validate_on_submit():
+        faq.objet = form.objet.data
+        faq.contenu = form.contenu.data
+        faq.category_id = form.category_id.data
+        db.session.commit()
+        flash('FAQ updated successfully.', 'success')
+        return redirect(url_for('admin.list_faqs'))
+    
+    return render_template('edit_faq.html', form=form, faq=faq)
+
+
+@super_admin_bp.route('/faq/delete/<int:faq_id>', methods=['POST'])
+@login_required
+def delete_faq(faq_id):
+    if current_user.role.name != 'admin':
+        flash('Access denied.', 'danger')
+        return redirect(url_for('admin.list_faqs'))
+    
+    faq = FAQ.query.get_or_404(faq_id)
+    db.session.delete(faq)
+    db.session.commit()
+    flash('FAQ deleted successfully.', 'success')
+    return redirect(url_for('admin.list_faqs'))
+
+
+@super_admin_bp.route('/creat_user', methods=['GET', 'POST'])
+@login_required
+def add_user():
+    if request.method == 'POST':
+        username = request.form['nom'].strip() + "_" + request.form['prenom'].strip()
+        password = request.form['password']
+        role_name = request.form['roles']  # Single role name as string
+        structure_id = int(request.form['structure_id'])
+
+        # Fetch role from the database
+        role = Role.query.filter_by(name=role_name).first()
+        if not role:
+            flash('Specified role is invalid', 'error')
+            return redirect(request.url)
+
+        # Create new user instance with the specified role
+        new_user = User(username=username, password=password, role=role)
+        new_user.structure_id = structure_id
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('User registered successfully.')
+            return redirect(url_for('admin.admin_users'))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
+            current_app.logger.error(f"Error during user registration: {str(e)}")
+        finally:
+            db.session.close()
+
+    structures = Structure.query.all()
+    return render_template('register.html', structures=structures)
 
 

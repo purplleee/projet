@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    {% if current_user.role.name == 'admin' %}
+    {% if current_user.role.name == 'admin' or 'super_admin' %}
     <div class="d-flex justify-content-end mb-4">
         <a href="{{ url_for('admin.create_faq') }}" class="btn btn-success">Add FAQ</a>
     </div>
@@ -21,7 +21,7 @@
                 <div class="card-footer">
                     <div class="btn-group d-flex">
                         <a href="{{ url_for('admin.view_faq', faq_id=faq.faq_id) }}" class="btn btn-primary flex-fill">View</a>
-                        {% if current_user.role.name == 'admin' %}
+                        {% if current_user.role.name == 'admin' or 'super_admin' %}
                         <a href="{{ url_for('admin.edit_faq', faq_id=faq.faq_id) }}" class="btn btn-warning flex-fill">Edit</a>
                         <button type="button" class="btn btn-danger flex-fill" data-toggle="modal" data-target="#deleteModal" data-faq-id="{{ faq.faq_id }}">Delete</button>
                         {% endif %}
