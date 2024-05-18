@@ -21,14 +21,19 @@
                 <td>{{ ticket.urgent }}</td>
                 <td>{{ ticket.material_name or 'N/A' }}</td>
                 <td>
-                    {% if ticket.statut == 'nouveau' %}
-                        <!-- Material Icon Button for Edit -->
-                        <a href="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="Edit">
-                            <span class="material-symbols-outlined">edit</span>
-                        </a>
+                    {% if (ticket.statut == 'nouveau' or ticket.statut == 'en_cours') and current_user.role.name == 'super_admin' %}
+                    <!-- Material Icon Button for Edit -->
+                    <a href="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="Edit">
+                        <span class="material-symbols-outlined">edit</span>
+                    </a>
+                    {% elif ticket.statut == 'nouveau' and current_user.role.name == 'employee' %}
+                    <!-- Material Icon Button for Edit -->
+                    <a href="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="Edit">
+                        <span class="material-symbols-outlined">edit</span>
+                    </a>
                     {% else %}
-                        <!-- Optionally, display nothing or some status information -->
-                        No actions available
+                    <!-- Optionally, display nothing or some status information -->
+                    No actions available
                     {% endif %}
                 </td>
             </tr>

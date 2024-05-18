@@ -15,6 +15,12 @@ class TicketForm(FlaskForm):
     creator_user_id = HiddenField('Created By')
 
 
+class AssignTicketForm(FlaskForm):
+    categorie = SelectField('Categorie', validators=[InputRequired()], coerce=int)
+    urgent = RadioField('Urgence', validators=[InputRequired()], choices=[
+        ('Faible', 'Faible'), ('Moyen', 'Moyen'), ('Élevé', 'Élevé')])
+    admin_assign = SelectField('Assign to Admin', coerce=int)
+
 class MaterielForm(FlaskForm):
     # Assuming 'code_a_barre' should be a numeric code, use a validator that checks for numeric range instead of length
     code_a_barre = StringField(

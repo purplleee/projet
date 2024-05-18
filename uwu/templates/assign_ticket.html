@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Assigner un ticket</h2>
+    <form method="POST" action="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" novalidate>
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+
+        <div class="form-group">
+            <label class="form-control-label">Titre</label>
+            <p class="form-control-static">{{ ticket.titre }}</p>
+        </div>
+
+        <div class="form-group">
+            <label class="form-control-label">Description Ticket</label>
+            <p class="form-control-static">{{ ticket.description_ticket }}</p>
+        </div>
+
+        <div class="form-group">
+            <label class="form-control-label">Créateur</label>
+            <p class="form-control-static">{{ ticket.creator.username }}</p>
+        </div>
+
+        <div class="form-group">
+            {{ form.categorie.label(class="form-control-label") }}
+            {% if form.categorie.errors %}
+                {{ form.categorie(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.categorie.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.categorie(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.urgent.label(class="form-control-label") }}
+            <div>
+                {% for subfield in form.urgent %}
+                    <label class="radio-inline">
+                        {{ subfield }} {{ subfield.label }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form.admin_assign.label(class="form-control-label") }}
+            {% if form.admin_assign.errors %}
+                {{ form.admin_assign(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.admin_assign.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.admin_assign(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="text-right">
+            <button type="button" class="btn btn-secondary" onclick="window.history.back();">Annuler</button>
+            <button type="submit" class="btn btn-success">Valider</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

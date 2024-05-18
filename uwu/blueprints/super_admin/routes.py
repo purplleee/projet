@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm,FAQForm
-import uuid
+from ...forms import TicketForm, MaterielForm,FAQForm , AssignTicketForm
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
 from uwu.models.models import Role,Structure,Category, FAQ
 from flask_login import current_user
+import logging
+from sqlalchemy.orm.exc import DetachedInstanceError
 
 super_admin_bp = Blueprint('super_admin', __name__)
 
@@ -42,6 +43,8 @@ def view_tickets_by_status(status):
             Category, Category.category_id == Ticket.category_id
         ).outerjoin(
             Materiel, Materiel.material_id == Ticket.material_id
+        ).filter(
+            Ticket.statut == status
         ).all()
         
         return render_template('tickets.html', tickets_list=tickets_list, status=status)
@@ -51,6 +54,51 @@ def view_tickets_by_status(status):
         return render_template('tickets.html', tickets_list=[], status=status)
 
 
+
+@super_admin_bp.route('/assign_ticket/<int:ticket_id>', methods=['GET', 'POST'])
+@login_required
+def assign_ticket(ticket_id):
+    ticket = Ticket.query.get_or_404(ticket_id)
+    form = AssignTicketForm(obj=ticket)
+
+    # Ensure current_user is attached to the session
+    user = User.query.get(current_user.user_id)
+
+    # Populate choices for category and admin assignment
+    form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
+    form.admin_assign.choices = [(a.user_id, a.username) for a in User.query.join(Role).filter(Role.name == 'admin').order_by(User.username)]
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            try:
+                # Re-fetch ticket to ensure it is attached to the session
+                ticket = Ticket.query.get_or_404(ticket_id)
+
+                # Update ticket properties for super admin
+                ticket.category_id = form.categorie.data
+                ticket.urgent = form.urgent.data
+                ticket.assigned_user_id = form.admin_assign.data
+                ticket.statut = 'en_cours'
+                db.session.commit()
+                flash('Ticket assigned successfully!', 'success')
+                return redirect(url_for('super_admin.index'))
+            except Exception as e:
+                db.session.rollback()
+                logging.error(f'Error assigning the ticket: {str(e)}')
+                flash(f'Error assigning the ticket: {str(e)}', 'error')
+        else:
+            # Log form validation errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    logging.error(f"Error in {field}: {error}")
+                    flash(f"Error in {field}: {error}", 'error')
+            flash('Error assigning the ticket. Please check the form data.', 'error')
+
+    # Set initial form values
+    form.categorie.data = ticket.category_id
+    form.urgent.data = ticket.urgent
+    form.admin_assign.data = ticket.assigned_user_id
+    return render_template('assign_ticket.html', form=form, ticket=ticket, user=user)
 
 @super_admin_bp.route('/users/')
 @login_required
