@@ -7,18 +7,18 @@
     {% if current_user.role.name == 'super_admin' %}
     <div class="row">
         <div class="ticket-status nouveau">
-            <button onclick="window.location.href='{{ url_for('employee.view_tickets_by_status', status='nouveau') }}'">{{ new_tickets }} <br>nouveau</button>
+            <button onclick="window.location.href='{{ url_for('super_admin.view_tickets_by_status', status='nouveau') }}'">{{ new_tickets }} <br>nouveau</button>
         </div>
         <div class="ticket-status en-cours">
-            <button onclick="location.href='{{ url_for('employee.view_tickets_by_status', status='en_cours') }}'">{{ in_progress_tickets }}<br>en cours</button>
+            <button onclick="location.href='{{ url_for('super_admin.view_tickets_by_status', status='en_cours') }}'">{{ in_progress_tickets }}<br>en cours</button>
         </div>
     </div>
     <div class="row">
         <div class="ticket-status en-reparation">
-            <button onclick="location.href='{{ url_for('employee.view_tickets_by_status', status='en_reparation') }}'">{{ in_repair_tickets }}<br>en réparation</button>
+            <button onclick="location.href='{{ url_for('super_admin.view_tickets_by_status', status='en_reparation') }}'">{{ in_repair_tickets }}<br>en réparation</button>
         </div>
         <div class="ticket-status clos">
-            <button onclick="location.href='{{ url_for('employee.view_tickets_by_status', status='clos') }}'">{{ closed_tickets }}<br>clos</button>
+            <button onclick="location.href='{{ url_for('super_admin.view_tickets_by_status', status='clos') }}'">{{ closed_tickets }}<br>clos</button>
         </div>
     </div>
 

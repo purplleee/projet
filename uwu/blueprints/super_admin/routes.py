@@ -26,6 +26,32 @@ def index():
                            in_repair_tickets=in_repair_tickets,
                            closed_tickets=closed_tickets)
 
+
+@super_admin_bp.route('/tickets/<status>')
+@login_required
+def view_tickets_by_status(status):
+    try:
+        tickets_list = db.session.query(
+            Ticket.titre.label('titre'),
+            Category.category_name.label('category_name'),
+            Ticket.urgent.label('urgent'),
+            Materiel.code_a_barre.label('material_name'),
+            Ticket.statut.label('statut'),
+            Ticket.id_ticket.label('id_ticket')
+        ).join(
+            Category, Category.category_id == Ticket.category_id
+        ).outerjoin(
+            Materiel, Materiel.material_id == Ticket.material_id
+        ).all()
+        
+        return render_template('tickets.html', tickets_list=tickets_list, status=status)
+    except Exception as e:
+        flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
+        current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')
+        return render_template('tickets.html', tickets_list=[], status=status)
+
+
+
 @super_admin_bp.route('/users/')
 @login_required
 def super_admin_users():
