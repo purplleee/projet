@@ -23,8 +23,8 @@
                 <td>
                     {% if (ticket.statut == 'nouveau' or ticket.statut == 'en_cours') and current_user.role.name == 'super_admin' %}
                     <!-- Material Icon Button for Edit -->
-                    <a href="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="Edit">
-                        <span class="material-symbols-outlined">edit</span>
+                    <a href="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="affecter">
+                        <span class="material-symbols-outlined">assignment_add</span>
                     </a>
                     {% elif ticket.statut == 'nouveau' and current_user.role.name == 'employee' %}
                     <!-- Material Icon Button for Edit -->
