@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Structures{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Structures</h2>
+    <ul class="list-group">
+        {% for structure in structures %}
+        <li class="list-group-item">{{ structure.structure_name }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

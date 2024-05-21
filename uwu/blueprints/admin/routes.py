@@ -4,7 +4,7 @@ from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
-from uwu.models.models import Role,Structure,Category, FAQ
+from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -258,5 +258,22 @@ def parametrage():
     return render_template('para.html')
 
 
+@admin_bp.route('/structures/')
+@login_required
+def structures():
+    structures = Structure.query.all()
+    return render_template('structures.html', structures=structures)
+
+@admin_bp.route('/marques/')
+@login_required
+def marques():
+    marques = Marque.query.all()
+    return render_template('marques.html', marques=marques)
+
+@admin_bp.route('/types/')
+@login_required
+def types():
+    types = Type_m.query.all()
+    return render_template('types.html', types=types)
 
 

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Types{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Types</h2>
+    <ul class="list-group">
+        {% for type in types %}
+        <li class="list-group-item">{{ type.type_name }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
