@@ -261,3 +261,22 @@ def delete_user(user_id):
         current_app.logger.error(f"Error during user deletion: {str(e)}")
 
     return redirect(url_for('super_admin.super_admin_users'))
+
+
+@super_admin_bp.route('/reset_password/<int:user_id>', methods=['POST'])
+@login_required
+def reset_password(user_id):
+    user = User.query.get_or_404(user_id)
+    new_password = user.username
+    user.set_password(new_password)
+
+    try:
+        db.session.commit()
+        flash('Password reset successfully.', 'success')
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        flash(f'An error occurred while resetting the password. Error: {str(e)}', 'error')
+        current_app.logger.error(f"Error during password reset: {str(e)}")
+
+    return redirect(url_for('super_admin.super_admin_users'))
+
