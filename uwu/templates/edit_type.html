@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Type{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Type</h2>
+    <form method="POST" action="{{ url_for('admin.edit_type', id=type.type_id) }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.type_name.label(class="form-control-label") }}
+            {{ form.type_name(class="form-control") }}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+{% endblock %}

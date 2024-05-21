@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, TextAreaField, IntegerField, BooleanField,RadioField,FieldList, SelectField)
-from wtforms.validators import InputRequired, Length , Regexp
-from wtforms import HiddenField
+from wtforms.validators import InputRequired, Length , Regexp ,DataRequired
+from wtforms import HiddenField, SubmitField
 
 
 
@@ -44,3 +44,17 @@ class FAQForm(FlaskForm):
 
 class DeleteFAQForm(FlaskForm):
     pass
+
+class StructureForm(FlaskForm):
+    structure_name = StringField('Structure Name', validators=[DataRequired()])
+    submit = SubmitField('Add Structure')
+
+class TypeForm(FlaskForm):
+    type_name = StringField('Type Name', validators=[DataRequired()])
+    submit = SubmitField('Add Type')
+
+class MarqueForm(FlaskForm):
+    marque_name = StringField('Marque Name', validators=[DataRequired()])
+    submit = SubmitField('Add Marque')
+
+    

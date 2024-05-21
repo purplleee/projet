@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm
+from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm, MarqueForm
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
@@ -258,22 +258,141 @@ def parametrage():
     return render_template('para.html')
 
 
-@admin_bp.route('/structures/')
+
+@admin_bp.route('/structures/', methods=['GET', 'POST'])
 @login_required
 def structures():
+    form = StructureForm()
+    if form.validate_on_submit():
+        structure = Structure(structure_name=form.structure_name.data)
+        db.session.add(structure)
+        db.session.commit()
+        flash('Structure added successfully!', 'success')
+        return redirect(url_for('admin.structures'))
     structures = Structure.query.all()
-    return render_template('structures.html', structures=structures)
+    return render_template('structures.html', structures=structures, form=form)
 
-@admin_bp.route('/marques/')
+@admin_bp.route('/add_structure/', methods=['POST'])
+@login_required
+def add_structure():
+    form = StructureForm()
+    if form.validate_on_submit():
+        structure = Structure(structure_name=form.structure_name.data)
+        db.session.add(structure)
+        db.session.commit()
+        flash('Structure added successfully!', 'success')
+    return redirect(url_for('admin.structures'))
+
+@admin_bp.route('/edit_structure/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_structure(id):
+    structure = Structure.query.get_or_404(id)
+    form = StructureForm(obj=structure)
+    if form.validate_on_submit():
+        structure.structure_name = form.structure_name.data
+        db.session.commit()
+        flash('Structure updated successfully!', 'success')
+        return redirect(url_for('admin.structures'))
+    return render_template('edit_structure.html', form=form, structure=structure)
+
+@admin_bp.route('/delete_structure/<int:id>', methods=['POST'])
+@login_required
+def delete_structure(id):
+    structure = Structure.query.get_or_404(id)
+    db.session.delete(structure)
+    db.session.commit()
+    flash('Structure deleted successfully!', 'success')
+    return redirect(url_for('admin.structures'))
+
+# Route for Marques
+@admin_bp.route('/marques/', methods=['GET', 'POST'])
 @login_required
 def marques():
+    form = MarqueForm()
+    if form.validate_on_submit():
+        marque = Marque(marque_name=form.marque_name.data)
+        db.session.add(marque)
+        db.session.commit()
+        flash('Marque added successfully!', 'success')
+        return redirect(url_for('admin.marques'))
     marques = Marque.query.all()
-    return render_template('marques.html', marques=marques)
+    return render_template('marques.html', marques=marques, form=form)
 
-@admin_bp.route('/types/')
+@admin_bp.route('/add_marque/', methods=['POST'])
+@login_required
+def add_marque():
+    form = MarqueForm()
+    if form.validate_on_submit():
+        marque = Marque(marque_name=form.marque_name.data)
+        db.session.add(marque)
+        db.session.commit()
+        flash('Marque added successfully!', 'success')
+    return redirect(url_for('admin.marques'))
+
+@admin_bp.route('/edit_marque/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_marque(id):
+    marque = Marque.query.get_or_404(id)
+    form = MarqueForm(obj=marque)
+    if form.validate_on_submit():
+        marque.marque_name = form.marque_name.data
+        db.session.commit()
+        flash('Marque updated successfully!', 'success')
+        return redirect(url_for('admin.marques'))
+    return render_template('edit_marque.html', form=form, marque=marque)
+
+@admin_bp.route('/delete_marque/<int:id>', methods=['POST'])
+@login_required
+def delete_marque(id):
+    marque = Marque.query.get_or_404(id)
+    db.session.delete(marque)
+    db.session.commit()
+    flash('Marque deleted successfully!', 'success')
+    return redirect(url_for('admin.marques'))
+
+# Route for Types
+@admin_bp.route('/types/', methods=['GET', 'POST'])
 @login_required
 def types():
+    form = TypeForm()
+    if form.validate_on_submit():
+        type_m = Type_m(type_name=form.type_name.data)
+        db.session.add(type_m)
+        db.session.commit()
+        flash('Type added successfully!', 'success')
+        return redirect(url_for('admin.types'))
     types = Type_m.query.all()
-    return render_template('types.html', types=types)
+    return render_template('types.html', types=types, form=form)
 
+@admin_bp.route('/add_type/', methods=['POST'])
+@login_required
+def add_type():
+    form = TypeForm()
+    if form.validate_on_submit():
+        type_m = Type_m(type_name=form.type_name.data)
+        db.session.add(type_m)
+        db.session.commit()
+        flash('Type added successfully!', 'success')
+    return redirect(url_for('admin.types'))
+
+@admin_bp.route('/edit_type/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_type(id):
+    type_m = Type_m.query.get_or_404(id)
+    form = TypeForm(obj=type_m)
+    if form.validate_on_submit():
+        type_m.type_name = form.type_name.data
+        db.session.commit()
+        flash('Type updated successfully!', 'success')
+        return redirect(url_for('admin.types'))
+    return render_template('edit_type.html', form=form, type=type_m)
+
+@admin_bp.route('/delete_type/<int:id>', methods=['POST'])
+@login_required
+def delete_type(id):
+    type_m = Type_m.query.get_or_404(id)
+    db.session.delete(type_m)
+    db.session.commit()
+    flash('Type deleted successfully!', 'success')
+    return redirect(url_for('admin.types'))
 
