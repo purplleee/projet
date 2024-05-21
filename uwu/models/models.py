@@ -8,11 +8,12 @@ from sqlalchemy.orm import relationship
 
 
 
-# Define a many-to-many association table for role transitions
+
 role_transitions = Table('role_transitions', db.Model.metadata,
     Column('role_id', Integer, ForeignKey('roles.role_id'), primary_key=True),
     Column('allowed_role_id', Integer, ForeignKey('roles.role_id'), primary_key=True)
 )
+
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -86,10 +87,12 @@ class Structure(db.Model):
     structure_id = db.Column(db.Integer, primary_key=True)
     structure_name = db.Column(db.String(255))
 
+
 class Category(db.Model):
     __tablename__ = 'categories'
     category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(255))
+
 
 class Ticket(db.Model):
     __tablename__ = 'tickets'
@@ -123,6 +126,7 @@ class Fournisseur(db.Model):
     # Define a relationship that links back to the 'Materiel' table
     materials = db.relationship('Materiel', backref='fournisseur', lazy='dynamic')
 
+
 class Materiel(db.Model):
     __tablename__ = 'materials'
     material_id = db.Column(db.Integer, primary_key=True)
@@ -140,18 +144,18 @@ class Materiel(db.Model):
     modele = db.relationship('Modele', backref='materiels')
 
 
-
-
 class Marque(db.Model):
     __tablename__ = 'marques'
     marque_id = db.Column(db.Integer, primary_key=True)
     marque_name = db.Column(db.String(100))
+
 
 class Modele(db.Model):
     __tablename__ = 'modeles'
     modele_id = db.Column(db.Integer, primary_key=True)
     modele_name = db.Column(db.String(100))
     marque_id = db.Column(db.Integer, db.ForeignKey('marques.marque_id'))
+
 
 class Comment(db.Model):
     __tablename__ = 'comments'
@@ -160,6 +164,7 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     comment_text = db.Column(db.Text)
     created_at = db.Column(db.DateTime, server_default=func.now())
+
 
 class FAQ(db.Model):
     __tablename__ = 'faqs'
@@ -172,10 +177,10 @@ class FAQ(db.Model):
     user = db.relationship('User', backref='faqs', lazy=True)
 
 
-
 class Panne(db.Model):
     __tablename__ = 'pannes'
     panne_id = db.Column(db.Integer, primary_key=True)
     date_parti_reparation = db.Column(db.DateTime)
     fournisseur_id = db.Column(db.Integer, db.ForeignKey('fournisseurs.fournisseur_id'))
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'))
+
