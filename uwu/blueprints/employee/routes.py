@@ -10,7 +10,6 @@ employee_bp = Blueprint('employee', __name__)
 login_manager = LoginManager(employee_bp)
 
 
-
 @employee_bp.route('/')
 @login_required
 def index():
@@ -24,6 +23,7 @@ def index():
                            in_progress_tickets=in_progress_tickets,
                            in_repair_tickets=in_repair_tickets,
                            closed_tickets=closed_tickets)
+
 
 @employee_bp.route('/cree_ticket/', methods=('GET', 'POST'))
 @login_required
@@ -57,7 +57,6 @@ def cree_ticket():
     return render_template('creat_ticket.html', form=form)
 
     
-
 @employee_bp.route('/tickets/<status>')
 @login_required
 def view_tickets_by_status(status):
@@ -186,7 +185,9 @@ def list_faqs():
     faqs = FAQ.query.all()  # Assuming you're fetching all FAQs
     return render_template('list_faqs.html', faqs=faqs)
 
+
 @employee_bp.route('/faq/<int:faq_id>')
 def view_faq(faq_id):
     faq = FAQ.query.get_or_404(faq_id)  # Fetch the FAQ or return 404 if not found
     return render_template('view_faq.html', faq=faq)
+

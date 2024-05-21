@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 super_admin_bp = Blueprint('super_admin', __name__)
 
+
 @super_admin_bp.route('/')
 @login_required
 def index():
@@ -53,7 +54,6 @@ def view_tickets_by_status(status):
         flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
         current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')
         return render_template('tickets.html', tickets_list=[], status=status)
-
 
 
 @super_admin_bp.route('/assign_ticket/<int:ticket_id>', methods=['GET', 'POST'])
@@ -101,6 +101,7 @@ def assign_ticket(ticket_id):
     form.admin_assign.data = ticket.assigned_user_id
     return render_template('assign_ticket.html', form=form, ticket=ticket, user=user)
 
+
 @super_admin_bp.route('/users/')
 @login_required
 def super_admin_users():
@@ -128,6 +129,7 @@ def stats():
 def list_faqs():
     faqs = FAQ.query.all()  # Assuming you're fetching all FAQs
     return render_template('list_faqs.html', faqs=faqs)
+
 
 @super_admin_bp.route('/faq/<int:faq_id>')
 def view_faq(faq_id):
@@ -207,5 +209,4 @@ def add_user():
 
     structures = Structure.query.all()
     return render_template('register.html', structures=structures)
-
 

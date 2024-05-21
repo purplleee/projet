@@ -10,6 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 admin_bp = Blueprint('admin', __name__)
 
+
 @admin_bp.route('/')
 @login_required
 def index():
@@ -23,6 +24,7 @@ def index():
                            in_progress_tickets=in_progress_tickets,
                            in_repair_tickets=in_repair_tickets,
                            closed_tickets=closed_tickets)
+
 
 @admin_bp.route('/tickets/<status>')
 @login_required
@@ -59,14 +61,10 @@ def admin_users():
         return render_template('users.html', users=[], structure_names={})
 
 
-
-
 @admin_bp.route('/organigramme/')
 @login_required
 def organigramme():
     return render_template('para.html')
-
-
 
 
 @admin_bp.route('/create_faq', methods=['GET', 'POST'])
@@ -99,11 +97,13 @@ def list_faqs():
     delete_form = DeleteFAQForm()
     return render_template('list_faqs.html', faqs=faqs, delete_form=delete_form)
 
+
 @admin_bp.route('/faq/<int:faq_id>')
 @login_required
 def view_faq(faq_id):
     faq = FAQ.query.get_or_404(faq_id)  # Fetch the FAQ or return 404 if not found
     return render_template('view_faq.html', faq=faq)
+
 
 @admin_bp.route('/faq/edit/<int:faq_id>', methods=['GET', 'POST'])
 @login_required
@@ -177,3 +177,4 @@ def add_user():
 
     structures = Structure.query.all()
     return render_template('register.html', structures=structures)
+
