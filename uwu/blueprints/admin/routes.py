@@ -40,6 +40,17 @@ def view_tickets_by_status(status):
         return render_template('tickets.html', tickets_list=[], status=status)
 
 
+
+
+
+
+
+
+
+
+
+
+
 @admin_bp.route('/users/')
 @login_required
 def admin_users():
@@ -62,7 +73,7 @@ def admin_users():
 
 
 @admin_bp.route('/create_faq', methods=['GET', 'POST'])
-@login_required  # Ensure user is logged in
+@login_required  
 def create_faq():
     form = FAQForm()
     
@@ -258,7 +269,6 @@ def parametrage():
     return render_template('para.html')
 
 
-
 @admin_bp.route('/structures/', methods=['GET', 'POST'])
 @login_required
 def structures():
@@ -272,6 +282,7 @@ def structures():
     structures = Structure.query.all()
     return render_template('structures.html', structures=structures, form=form)
 
+
 @admin_bp.route('/add_structure/', methods=['POST'])
 @login_required
 def add_structure():
@@ -282,6 +293,7 @@ def add_structure():
         db.session.commit()
         flash('Structure added successfully!', 'success')
     return redirect(url_for('admin.structures'))
+
 
 @admin_bp.route('/edit_structure/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -295,6 +307,7 @@ def edit_structure(id):
         return redirect(url_for('admin.structures'))
     return render_template('edit_structure.html', form=form, structure=structure)
 
+
 @admin_bp.route('/delete_structure/<int:id>', methods=['POST'])
 @login_required
 def delete_structure(id):
@@ -304,7 +317,7 @@ def delete_structure(id):
     flash('Structure deleted successfully!', 'success')
     return redirect(url_for('admin.structures'))
 
-# Route for Marques
+
 @admin_bp.route('/marques/', methods=['GET', 'POST'])
 @login_required
 def marques():
@@ -318,6 +331,7 @@ def marques():
     marques = Marque.query.all()
     return render_template('marques.html', marques=marques, form=form)
 
+
 @admin_bp.route('/add_marque/', methods=['POST'])
 @login_required
 def add_marque():
@@ -328,6 +342,7 @@ def add_marque():
         db.session.commit()
         flash('Marque added successfully!', 'success')
     return redirect(url_for('admin.marques'))
+
 
 @admin_bp.route('/edit_marque/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -341,6 +356,7 @@ def edit_marque(id):
         return redirect(url_for('admin.marques'))
     return render_template('edit_marque.html', form=form, marque=marque)
 
+
 @admin_bp.route('/delete_marque/<int:id>', methods=['POST'])
 @login_required
 def delete_marque(id):
@@ -350,7 +366,7 @@ def delete_marque(id):
     flash('Marque deleted successfully!', 'success')
     return redirect(url_for('admin.marques'))
 
-# Route for Types
+
 @admin_bp.route('/types/', methods=['GET', 'POST'])
 @login_required
 def types():
@@ -364,6 +380,7 @@ def types():
     types = Type_m.query.all()
     return render_template('types.html', types=types, form=form)
 
+
 @admin_bp.route('/add_type/', methods=['POST'])
 @login_required
 def add_type():
@@ -374,6 +391,7 @@ def add_type():
         db.session.commit()
         flash('Type added successfully!', 'success')
     return redirect(url_for('admin.types'))
+
 
 @admin_bp.route('/edit_type/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -386,6 +404,7 @@ def edit_type(id):
         flash('Type updated successfully!', 'success')
         return redirect(url_for('admin.types'))
     return render_template('edit_type.html', form=form, type=type_m)
+
 
 @admin_bp.route('/delete_type/<int:id>', methods=['POST'])
 @login_required
