@@ -33,7 +33,7 @@
       {% elif current_user.role.name == 'admin' %}
         <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('admin.admin_users') }}">Utilisateurs</a>
-        <a class="nav-item nav-link" href="{{ url_for('admin.organigramme') }}">Paramétrage</a>
+        <a class="nav-item nav-link" href="{{ url_for('admin.parametrage') }}">Paramétrage</a>
         <a class="nav-item nav-link" href="{{ url_for('admin.list_faqs') }}">FAQ</a>
       {% else %}
         <a class="nav-item nav-link" href="{{ url_for('employee.index') }}">Accueil</a>

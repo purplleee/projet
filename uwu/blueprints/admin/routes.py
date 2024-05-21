@@ -61,12 +61,6 @@ def admin_users():
         return render_template('users.html', users=[], structure_names={})
 
 
-@admin_bp.route('/organigramme/')
-@login_required
-def organigramme():
-    return render_template('para.html')
-
-
 @admin_bp.route('/create_faq', methods=['GET', 'POST'])
 @login_required  # Ensure user is logged in
 def create_faq():
@@ -256,6 +250,13 @@ def reset_password_admin(user_id):
         current_app.logger.error(f"Error during password reset: {str(e)}")
 
     return redirect(url_for('admin.admin_users'))
+
+
+@admin_bp.route('/parametrage/')
+@login_required
+def parametrage():
+    return render_template('para.html')
+
 
 
 
