@@ -122,7 +122,7 @@ def super_admin_users():
 @super_admin_bp.route('/stats/')
 @login_required
 def stats():
-    return "herrrrrrrrr"
+    return render_template("stat.html")
 
 
 @super_admin_bp.route('/faqs')
