@@ -220,7 +220,8 @@ def edit_user(user_id):
             current_app.logger.error(f"Error during user update: {str(e)}")
 
     structures = Structure.query.all()
-    return render_template('register.html', structures=structures, user=user)
+    return render_template('edit_user.html', user=user, structures=structures)
+
 
 @admin_bp.route('/delete_user/<int:user_id>', methods=['POST'])
 @login_required
