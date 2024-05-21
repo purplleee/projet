@@ -71,15 +71,15 @@ class User(db.Model, UserMixin):
 
     @property
     def is_admin(self):
-        return self.current_role == 'admin'
+        return self.role.name == 'admin' if self.role else False
 
     @property
     def is_employee(self):
-        return self.current_role == 'employee'
+        return self.role.name == 'employee' if self.role else False
 
     @property
     def is_super_admin(self):
-        return self.current_role == 'super_admin'
+        return self.role.name == 'super_admin' if self.role else False
 
 
 class Structure(db.Model):

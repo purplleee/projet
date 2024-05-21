@@ -210,3 +210,23 @@ def add_user():
     structures = Structure.query.all()
     return render_template('register.html', structures=structures)
 
+
+@super_admin_bp.route('/users/delete/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    if not current_user.is_super_admin:
+        flash('You do not have permission to perform this action.', 'danger')
+        return redirect(url_for('super_admin.super_admin_users'))
+
+    user = User.query.get_or_404(user_id)
+    
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        flash('User has been deleted successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Failed to delete user: {e}')
+        flash(f'Error deleting user: {e}', 'error')
+
+    return redirect(url_for('super_admin.super_admin_users'))
