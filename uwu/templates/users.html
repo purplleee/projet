@@ -103,7 +103,13 @@
         var button = $(event.relatedTarget);
         var userId = button.data('user-id');
         var form = $('#reset-password-form');
-        var actionUrl = "{{ url_for(current_user.role.name + '.reset_password', user_id=0) }}".replace('0', userId);
+        var actionUrl;
+        if ("{{ current_user.role.name }}" == "super_admin") {
+            actionUrl = "{{ url_for('super_admin.reset_password_super_admin', user_id=0) }}";
+        } else {
+            actionUrl = "{{ url_for('admin.reset_password_admin', user_id=0) }}";
+        }
+        actionUrl = actionUrl.replace('0', userId);
         form.attr('action', actionUrl);
     });
 </script>

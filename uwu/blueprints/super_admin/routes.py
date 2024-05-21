@@ -265,7 +265,7 @@ def delete_user(user_id):
 
 @super_admin_bp.route('/reset_password/<int:user_id>', methods=['POST'])
 @login_required
-def reset_password(user_id):
+def reset_password_super_admin(user_id):
     user = User.query.get_or_404(user_id)
     new_password = user.username
     user.set_password(new_password)
@@ -279,4 +279,9 @@ def reset_password(user_id):
         current_app.logger.error(f"Error during password reset: {str(e)}")
 
     return redirect(url_for('super_admin.super_admin_users'))
+
+
+
+
+
 
