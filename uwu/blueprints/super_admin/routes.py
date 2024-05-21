@@ -176,7 +176,7 @@ def delete_faq(faq_id):
     return redirect(url_for('admin.list_faqs'))
 
 
-@super_admin_bp.route('/creat_user', methods=['GET', 'POST'])
+@super_admin_bp.route('/create_user', methods=['GET', 'POST'])
 @login_required
 def add_user():
     if request.method == 'POST':
@@ -199,7 +199,7 @@ def add_user():
             db.session.add(new_user)
             db.session.commit()
             flash('User registered successfully.')
-            return redirect(url_for('admin.admin_users'))
+            return redirect(url_for('super_admin.super_admin_users'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
@@ -211,22 +211,52 @@ def add_user():
     return render_template('register.html', structures=structures)
 
 
-@super_admin_bp.route('/users/delete/<int:user_id>', methods=['POST'])
+@super_admin_bp.route('/edit_user/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+
+    if request.method == 'POST':
+        user.username = request.form['nom'].strip() + "_" + request.form['prenom'].strip()
+        password = request.form['password']
+        role_name = request.form['roles']
+        structure_id = int(request.form['structure_id'])
+
+        role = Role.query.filter_by(name=role_name).first()
+        if not role:
+            flash('Specified role is invalid', 'error')
+            return redirect(request.url)
+
+        user.role = role
+        user.structure_id = structure_id
+
+        if password:
+            user.set_password(password)
+
+        try:
+            db.session.commit()
+            flash('User updated successfully.')
+            return redirect(url_for('super_admin.super_admin_users'))
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            flash(f'An error occurred while updating the user. Error: {str(e)}', 'error')
+            current_app.logger.error(f"Error during user update: {str(e)}")
+
+    structures = Structure.query.all()
+    return render_template('register.html', structures=structures, user=user)
+
+@super_admin_bp.route('/delete_user/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
-    if not current_user.is_super_admin:
-        flash('You do not have permission to perform this action.', 'danger')
-        return redirect(url_for('super_admin.super_admin_users'))
-
     user = User.query.get_or_404(user_id)
-    
+
     try:
         db.session.delete(user)
         db.session.commit()
-        flash('User has been deleted successfully.', 'success')
-    except Exception as e:
+        flash('User deleted successfully.')
+    except SQLAlchemyError as e:
         db.session.rollback()
-        current_app.logger.error(f'Failed to delete user: {e}')
-        flash(f'Error deleting user: {e}', 'error')
+        flash(f'An error occurred while deleting the user. Error: {str(e)}', 'error')
+        current_app.logger.error(f"Error during user deletion: {str(e)}")
 
     return redirect(url_for('super_admin.super_admin_users'))

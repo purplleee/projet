@@ -71,16 +71,21 @@ def logout():
 @login_required
 def switch_role():
     new_role = request.form.get('role')
-    # Correct the attribute name to 'current_role'
-    current_role_object = Role.query.filter_by(name=current_user.current_role).first()
+    # Correct the attribute name to 'role.name'
+    current_role_name = current_user.role.name
+    current_role_object = Role.query.filter_by(name=current_role_name).first()
 
     if current_role_object and new_role in current_role_object.get_allowed_transitions():
-        current_user.current_role = new_role  # Update the current role in the user model
-        db.session.commit()  # Commit the changes to the database
-        flash('Role switched successfully!', 'success')
-        return redirect(url_for(f"{new_role}.index"))  # Redirect to the index page for the new role
+        new_role_object = Role.query.filter_by(name=new_role).first()
+        if new_role_object:
+            current_user.role = new_role_object  # Update the role in the user model
+            db.session.commit()  # Commit the changes to the database
+            flash('Role switched successfully!', 'success')
+            return redirect(url_for(f"{new_role}.index"))  # Redirect to the index page for the new role
+        else:
+            flash('The selected role does not exist.', 'error')
     else:
-        flash('Transition to selected role is not allowed.', 'error')
+        flash('Transition to the selected role is not allowed.', 'error')
 
     return redirect(url_for('auth.login'))  # Redirect to login page or a more appropriate fallback
 

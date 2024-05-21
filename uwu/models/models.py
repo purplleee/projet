@@ -53,9 +53,10 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def __init__(self, username, password, role=None):
+    def __init__(self, username, password=None, role=None):
         self.username = username
-        self.set_password(password)
+        if password:
+            self.set_password(password)
         self.role = role
 
     def assign_role(self, role_name):

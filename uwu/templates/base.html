@@ -86,6 +86,15 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script>
+  $('#deleteModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget);
+      var userId = button.data('user-id');
+      var form = $('#delete-form');
+      var actionUrl = "{{ url_for(current_user.role.name + '.delete_user', user_id=0) }}".replace('0', userId);
+      form.attr('action', actionUrl);
+  });
+</script>
 
 
 

@@ -1,13 +1,11 @@
-{% extends 'base.html' %}
-
-{% block title %}User List{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class="container">
     <h1>Users</h1>
-    {% if current_user.role.name == 'admin' or 'super_admin' %}
+    {% if current_user.role.name in ['admin', 'super_admin'] %}
     <div class="d-flex justify-content-end mb-4">
-        <a href="{{ url_for('super_admin.add_user') }}" class="btn btn-success">Add user</a>
+        <a href="{{ url_for(current_user.role.name + '.add_user') }}" class="btn btn-success">Add user</a>
     </div>
     {% endif %}
     {% if users %}
@@ -17,7 +15,7 @@
                 <th>Username</th>
                 <th>Role</th>
                 <th>Structure</th>
-                {% if current_user.role.name == 'super_admin' %}
+                {% if current_user.role.name in ['admin', 'super_admin'] %}
                 <th>Actions</th>
                 {% endif %}
             </tr>
@@ -28,10 +26,10 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.role.name }}</td>
                 <td>{{ structure_names[user.structure_id] if user.structure_id in structure_names else 'Unknown Structure' }}</td>
-                {% if current_user.role.name == 'super_admin' %}
+                {% if current_user.role.name in ['admin', 'super_admin'] %}
                 <td>
                     <div class="btn-group">
-                        <a href="{{ url_for('super_admin.delete_user', user_id=user.user_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{{ url_for(current_user.role.name + '.edit_user', user_id=user.user_id) }}" class="btn btn-warning btn-sm">Edit</a>
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal" data-user-id="{{ user.user_id }}">Delete</button>
                     </div>
                 </td>
@@ -73,9 +71,9 @@
         var button = $(event.relatedTarget);
         var userId = button.data('user-id');
         var form = $('#delete-form');
-        var actionUrl = "/super_admin/users/delete/" + userId;
+        var actionUrl = "{{ url_for(current_user.role.name + '.delete_user', user_id=0) }}";
+        actionUrl = actionUrl.replace('/0', '/' + userId);
         form.attr('action', actionUrl);
     });
 </script>
-
 {% endblock %}
