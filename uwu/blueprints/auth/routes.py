@@ -11,9 +11,11 @@ from sqlalchemy.exc import SQLAlchemyError
 auth_bp = Blueprint('auth', __name__, static_folder='static',template_folder='template')
 login_manager = LoginManager(auth_bp)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -57,16 +59,12 @@ def login():
             return render_template('login.html')
 
 
-
-
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     flash('You have been logged out.')
     return redirect(url_for('auth.login'))
-
-
 
 
 @auth_bp.route('/switch_role', methods=['POST'])
@@ -85,41 +83,4 @@ def switch_role():
         flash('Transition to selected role is not allowed.', 'error')
 
     return redirect(url_for('auth.login'))  # Redirect to login page or a more appropriate fallback
-
-
-
-
-
-@auth_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['nom'].strip() + "_" + request.form['prenom'].strip()
-        password = request.form['password']
-        role_name = request.form['roles']  # Single role name as string
-        structure_id = int(request.form['structure_id'])
-
-        # Fetch role from the database
-        role = Role.query.filter_by(name=role_name).first()
-        if not role:
-            flash('Specified role is invalid', 'error')
-            return redirect(request.url)
-
-        # Create new user instance with the specified role
-        new_user = User(username=username, password=password, role=role)
-        new_user.structure_id = structure_id
-
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-            flash('User registered successfully.')
-            return redirect(url_for('auth.login'))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
-            current_app.logger.error(f"Error during user registration: {str(e)}")
-        finally:
-            db.session.close()
-
-    structures = Structure.query.all()
-    return render_template('register.html', structures=structures)
 
