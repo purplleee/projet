@@ -91,7 +91,7 @@
       var button = $(event.relatedTarget);
       var userId = button.data('user-id');
       var form = $('#delete-form');
-      var actionUrl = "{{ url_for(current_user.role.name + '.delete_user', user_id=0) }}".replace('0', userId);
+      var actionUrl = "{{ url_for('admin' + '.delete_user', user_id=0) }}".replace('0', userId);
       form.attr('action', actionUrl);
   });
 </script>
