@@ -9,6 +9,7 @@ from .blueprints.common.errors import register_error_handlers
 from uwu.models import Ticket, Materiel, User
 from .database import db, init_app as init_db
 import logging
+from sqlalchemy.orm import joinedload
 
 def create_app(config_class=DevelopmentConfig):
     app = Flask(__name__)
@@ -34,7 +35,7 @@ def create_app(config_class=DevelopmentConfig):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return User.query.options(joinedload(User.role)).get(user_id)
 
     # Blueprint registrations
     app.register_blueprint(employee_bp)

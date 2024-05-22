@@ -5,13 +5,13 @@ from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
 from uwu.models.models import Role,Structure,Category, FAQ
-from flask_login import current_user
+from flask_login import current_user ,LoginManager
 import logging
 from sqlalchemy.orm.exc import DetachedInstanceError
 from sqlalchemy.exc import SQLAlchemyError
 
 super_admin_bp = Blueprint('super_admin', __name__)
-
+login_manager = LoginManager(super_admin_bp)
 
 @super_admin_bp.route('/')
 @login_required
@@ -182,16 +182,15 @@ def add_user():
     if request.method == 'POST':
         username = request.form['nom'].strip() + "_" + request.form['prenom'].strip()
         password = request.form['password']
-        role_name = request.form['roles']  # Single role name as string
+        role_name = request.form['roles']
         structure_id = int(request.form['structure_id'])
 
-        # Fetch role from the database
+        # Fetch role within the same session context
         role = Role.query.filter_by(name=role_name).first()
         if not role:
             flash('Specified role is invalid', 'error')
             return redirect(request.url)
 
-        # Create new user instance with the specified role
         new_user = User(username=username, password=password, role=role)
         new_user.structure_id = structure_id
 
@@ -204,8 +203,6 @@ def add_user():
             db.session.rollback()
             flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
             current_app.logger.error(f"Error during user registration: {str(e)}")
-        finally:
-            db.session.close()
 
     structures = Structure.query.all()
     return render_template('register.html', structures=structures)
