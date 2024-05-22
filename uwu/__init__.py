@@ -10,19 +10,14 @@ from uwu.models import Ticket, Materiel, User
 from .database import db, init_app as init_db
 import logging
 
-
-
-
 def create_app(config_class=DevelopmentConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # configure session cookies
+    # Configure session cookies
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['SESSION_COOKIE_SECURE'] = True  
     app.config['SESSION_COOKIE_HTTPONLY'] = True  
-
-    
 
     # Initialize database and migrations
     init_db(app)
