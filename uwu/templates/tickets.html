@@ -10,7 +10,9 @@
                 <th>Category</th>
                 <th>Urgency</th>
                 <th>Material</th>
+                {% if current_user.role.name in ['admin', 'super_admin'] %}
                 <th>Creator</th> <!-- Added column for creator's username -->
+                {% endif %}
                 <th>Actions</th> <!-- Column for actions such as edit -->
             </tr>
         </thead>
@@ -21,7 +23,9 @@
                 <td>{{ ticket.category_name }}</td>
                 <td>{{ ticket.urgent }}</td>
                 <td>{{ ticket.material_name or 'N/A' }}</td>
-                <td>{{ ticket.creator.username }}</td> <!-- Display creator's username -->
+                {% if current_user.role.name in ['admin', 'super_admin'] %}
+                <td>{{ ticket.creator_username }}</td> <!-- Display creator's username -->
+                {% endif %}
                 <td>
                     {% if (ticket.statut == 'nouveau' or ticket.statut == 'en_cours') and current_user.role.name == 'super_admin' %}
                     <!-- Material Icon Button for Edit -->

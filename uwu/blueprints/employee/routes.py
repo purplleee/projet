@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel 
-from uwu.models.models import  Category,Marque,Modele,Type_m,Role,Structure,Category, FAQ
+from uwu.models.models import  Category,Marque,Modele,Type_m,Role,Structure,Category, FAQ, User
 from ...forms import TicketForm, MaterielForm
 from uwu.database import db
 from flask_login import login_required , LoginManager
@@ -31,17 +31,17 @@ def cree_ticket():
     form = TicketForm()
     # Correct the attribute references to match your database schema
     form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
-    form.materiel.choices = [(m.material_id, m.code_a_barre) for m in Materiel.query.order_by(Materiel.code_a_barre)]
+    form.materiel.choices = [(0, 'None')] + [(m.material_id, m.code_a_barre) for m in Materiel.query.order_by(Materiel.code_a_barre)]
 
     if form.validate_on_submit():
         # Convert '0' or any non-valid choice to None for database storage
-        material_id = None if form.materiel.data == '0' else form.materiel.data
+        material_id = None if form.materiel.data == 0 else form.materiel.data
         new_ticket = Ticket(
             titre=form.titre.data,
             description_ticket=form.description_ticket.data,
             urgent=form.urgent.data,
             category_id=form.categorie.data,
-            material_id=form.materiel.data if form.materiel.data != 0 else None ,
+            material_id=material_id,  # Use the corrected material_id variable
             creator_user_id=current_user.user_id  # Set the creator user ID
         )
         db.session.add(new_ticket)
@@ -62,18 +62,21 @@ def cree_ticket():
 def view_tickets_by_status(status):
     try:
         user_id = current_user.user_id  
-        # Join the Tickets table with Categories and optionally with Materials
+        # Join the Tickets table with Categories, Materials, and Users
         tickets_list = db.session.query(
             Ticket.titre.label('titre'),
             Category.category_name.label('category_name'),
             Ticket.urgent.label('urgent'),
             Materiel.code_a_barre.label('material_name'),
             Ticket.statut.label('statut'),
-            Ticket.id_ticket.label('id_ticket')
+            Ticket.id_ticket.label('id_ticket'),
+            User.username.label('creator_username')  # Include creator's username
         ).join(
             Category, Category.category_id == Ticket.category_id
         ).outerjoin(
             Materiel, Materiel.material_id == Ticket.material_id
+        ).join(
+            User, User.user_id == Ticket.creator_user_id
         ).filter(
             Ticket.statut == status,
             Ticket.creator_user_id == user_id  # Filter by logged-in user's ID
