@@ -11,7 +11,7 @@ class TicketForm(FlaskForm):
     categorie = SelectField('Categorie', validators=[InputRequired()], coerce=int)
     urgent = RadioField('Urgence', validators=[InputRequired()], choices=[
         ('Faible', 'Faible'), ('Moyen', 'Moyen'), ('Élevé', 'Élevé')])
-    materiel = SelectField('Materiel', validators=[InputRequired()], coerce=int)
+    materiel = SelectField('Materiel', coerce=int)
     creator_user_id = HiddenField('Created By')
 
 
