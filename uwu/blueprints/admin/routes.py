@@ -32,12 +32,16 @@ def view_tickets_by_status(status):
     try:
         if status == 'nouveau':
             return redirect(url_for('admin.index'))  # Redirect if trying to access 'nouveau'
-        tickets_list = Ticket.query.filter_by(statut=status).all()
+        
+        # Fetch tickets assigned to the logged-in admin
+        tickets_list = Ticket.query.filter_by(statut=status, assigned_user_id=current_user.user_id).all()
+        
         return render_template('tickets.html', tickets_list=tickets_list, status=status)
     except Exception as e:
         flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
         current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')
         return render_template('tickets.html', tickets_list=[], status=status)
+
 
 
 
