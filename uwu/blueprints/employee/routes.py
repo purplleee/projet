@@ -116,7 +116,8 @@ def cree_mat():
                 code_a_barre=form.code_a_barre.data,
                 type_id=form.type_id.data,
                 marque_id=form.marque_id.data,
-                modele_id=form.modele_id.data
+                modele_id=form.modele_id.data,
+                structure_id=current_user.structure_id  # Assign the user's structure_id
             )
             db.session.add(new_materiel)
             db.session.commit()

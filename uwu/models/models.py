@@ -132,17 +132,17 @@ class Materiel(db.Model):
     __tablename__ = 'materials'
     material_id = db.Column(db.Integer, primary_key=True)
     code_a_barre = db.Column(db.Integer, nullable=False)
-    # Ensure this foreign key points back to the 'fournisseurs' table
     fournisseur_id = db.Column(db.Integer, db.ForeignKey('fournisseurs.fournisseur_id'))
 
-    # Other fields remain unchanged
     type_id = db.Column(db.Integer, db.ForeignKey('type_m.type_id'))
     type = db.relationship('Type_m', backref='materiels')
     marque_id = db.Column(db.Integer, db.ForeignKey('marques.marque_id'))
     marque = db.relationship('Marque', backref='materiels')
     modele_id = db.Column(db.Integer, db.ForeignKey('modeles.modele_id'))
-    structure_id = Column(Integer, ForeignKey('structures.structure_id'))
     modele = db.relationship('Modele', backref='materiels')
+
+    structure_id = db.Column(db.Integer, db.ForeignKey('structures.structure_id'))  # Ensure this column is defined
+    structure = db.relationship('Structure', backref='materiels')  # Add relationship if necessary
 
 
 class Marque(db.Model):
