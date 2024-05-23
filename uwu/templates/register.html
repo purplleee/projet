@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container">
-    <h2>Créer un compte Administrateur</h2>
+    <h2>Créer un compte</h2>
     <!-- Display flash messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -11,7 +11,7 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-    <form method="post" action="{{ url_for('admin.add_user') }}">
+    <form method="post" action="{{ url_for(current_user.role.name + '.add_user') }}">
         <div class="form-group">
             <label for="nom">Nom</label>
             <input type="text" class="form-control" id="nom" name="nom" required>
