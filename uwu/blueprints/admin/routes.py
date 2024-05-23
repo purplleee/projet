@@ -4,7 +4,7 @@ from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureFor
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
-from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m
+from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m, Modele
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -328,6 +328,41 @@ def structure_materiel(structure_id):
     structure = Structure.query.get_or_404(structure_id)
     materiel_list = Materiel.query.filter_by(structure_id=structure_id).all()
     return render_template('materiel.html', structure=structure, materiel_list=materiel_list)
+
+
+@admin_bp.route('/edit_mat/<int:materiel_id>', methods=['GET', 'POST'])
+@login_required
+def edit_mat(materiel_id):
+    if not current_user.is_admin:
+        abort(403)  # Forbidden
+    materiel = Materiel.query.get_or_404(materiel_id)
+    form = MaterielForm(obj=materiel)
+
+    if form.validate_on_submit():
+        materiel.code_a_barre = form.code_a_barre.data
+        materiel.type_id = form.type_id.data
+        materiel.marque_id = form.marque_id.data
+        materiel.modele_id = form.modele_id.data
+        db.session.commit()
+        flash('Materiel updated successfully!', 'success')
+        return redirect(url_for('admin.structure_materiel', structure_id=materiel.structure_id))
+
+    marques = Marque.query.all()
+    types = Type_m.query.all()
+    modeles = Modele.query.all()
+    return render_template('edit_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
+
+
+@admin_bp.route('/delete_mat/<int:materiel_id>', methods=['POST'])
+@login_required
+def delete_mat(materiel_id):
+    if not current_user.is_admin:
+        abort(403)  # Forbidden
+    materiel = Materiel.query.get_or_404(materiel_id)
+    db.session.delete(materiel)
+    db.session.commit()
+    flash('Materiel deleted successfully!', 'success')
+    return redirect(url_for('admin.structure_materiel', structure_id=materiel.structure_id))
 
 
 @admin_bp.route('/marques/', methods=['GET', 'POST'])

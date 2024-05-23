@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Materiel - {{ structure.structure_name }}{% endblock %}
+{% block title %}Materiel{% if structure %} - {{ structure.structure_name }}{% endif %}{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Materiel for {{ structure.structure_name }}</h2>
-    {% if current_user.role.name == 'employee' %}
+    <h2>Materiel{% if structure %} for {{ structure.structure_name }}{% endif %}</h2>
     <div class="d-flex justify-content-end mb-4">
-        <a href="{{ url_for('employee.cree_mat') }}" class="btn btn-success">Add materiel</a>
+        {% if current_user.is_employee %}
+        <a href="{{ url_for('employee.cree_mat') }}" class="btn btn-success">Add Materiel</a>
+        {% endif %}
     </div>
-    {% endif %}
     <table class="table">
         <thead>
             <tr>
@@ -17,6 +17,9 @@
                 <th>Type</th>
                 <th>Marque</th>
                 <th>Modèle</th>
+                {% if current_user.is_admin %}
+                <th>Actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -26,6 +29,14 @@
                 <td>{{ materiel.type.type_name if materiel.type else 'N/A' }}</td>
                 <td>{{ materiel.marque.marque_name if materiel.marque else 'N/A' }}</td>
                 <td>{{ materiel.modele.modele_name if materiel.modele else 'N/A' }}</td>
+                {% if current_user.is_admin %}
+                <td>
+                    <a href="{{ url_for('admin.edit_mat', materiel_id=materiel.material_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ url_for('admin.delete_mat', materiel_id=materiel.material_id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

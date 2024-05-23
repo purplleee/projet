@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Edit Materiel</h2>
+    <form method="POST" action="{{ url_for('admin.edit_mat', materiel_id=materiel.material_id) }}" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.code_a_barre.label(class="form-control-label") }}
+            {% if form.code_a_barre.errors %}
+                {{ form.code_a_barre(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.code_a_barre.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.code_a_barre(class="form-control") }}
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.type_id.label(class="form-control-label") }}
+            <select name="type_id" id="type_id" class="form-control">
+                {% for type in types %}
+                <option value="{{ type.type_id }}" {% if type.type_id == materiel.type_id %}selected{% endif %}>{{ type.type_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            {{ form.marque_id.label(class="form-control-label") }}
+            <select name="marque_id" id="marque_id" class="form-control">
+                {% for marque in marques %}
+                <option value="{{ marque.marque_id }}" {% if marque.marque_id == materiel.marque_id %}selected{% endif %}>{{ marque.marque_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            {{ form.modele_id.label(class="form-control-label") }}
+            <select name="modele_id" id="modele_id" class="form-control">
+                {% for modele in modeles %}
+                <option value="{{ modele.modele_id }}" {% if modele.modele_id == materiel.modele_id %}selected{% endif %}>{{ modele.modele_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="text-right">
+            <button type="reset" class="btn btn-secondary">Annuler</button>
+            <button type="submit" class="btn btn-success">Valider</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -89,11 +89,14 @@ def view_tickets_by_status(status):
         return render_template('tickets.html', tickets_list=[], status=status)
 
 
-@employee_bp.route('/cree_mat/', methods=('GET', 'POST'))
+@employee_bp.route('/cree_mat/', methods=['GET', 'POST'])
 @login_required
 def cree_mat():
+    if not current_user.is_employee:
+        abort(403)  # Forbidden
+
     form = MaterielForm()
-    
+
     # Load dropdown data
     marques = Marque.query.all()
     types = Type_m.query.all()
