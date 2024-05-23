@@ -57,4 +57,7 @@ class MarqueForm(FlaskForm):
     marque_name = StringField('Marque Name', validators=[DataRequired()])
     submit = SubmitField('Add Marque')
 
-    
+class ModeleForm(FlaskForm):
+    modele_name = StringField('Model Name', validators=[DataRequired()])
+    submit = SubmitField('Add Model')
+

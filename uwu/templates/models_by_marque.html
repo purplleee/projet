@@ -5,12 +5,69 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Models for {{ marque.marque_name }}</h2>
+    <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addModelModal">Add Model</button>
     <ul class="list-group">
         {% for model in models %}
-        <li class="list-group-item">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ marque.marque_name }}_{{ model.modele_name }}
+            <div>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModelModal{{ model.modele_id }}">Edit</button>
+                <form action="{{ url_for('admin.delete_model', model_id=model.modele_id) }}" method="POST" style="display:inline;">
+                    {{ edit_forms[model.modele_id].hidden_tag() }}
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </div>
         </li>
+
+        <!-- Edit Model Modal -->
+        <div class="modal fade" id="editModelModal{{ model.modele_id }}" tabindex="-1" role="dialog" aria-labelledby="editModelModalLabel{{ model.modele_id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModelModalLabel{{ model.modele_id }}">Edit Model</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{{ url_for('admin.edit_model', model_id=model.modele_id) }}">
+                            {{ edit_forms[model.modele_id].hidden_tag() }}
+                            <div class="form-group">
+                                {{ edit_forms[model.modele_id].modele_name.label(class="form-control-label") }}
+                                {{ edit_forms[model.modele_id].modele_name(class="form-control") }}
+                            </div>
+                            {{ edit_forms[model.modele_id].submit(class="btn btn-primary") }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
     </ul>
 </div>
+
+<!-- Add Model Modal -->
+<div class="modal fade" id="addModelModal" tabindex="-1" role="dialog" aria-labelledby="addModelModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModelModalLabel">Add Model</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('admin.add_model', marque_id=marque.marque_id) }}">
+                    {{ add_form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ add_form.modele_name.label(class="form-control-label") }}
+                        {{ add_form.modele_name(class="form-control") }}
+                    </div>
+                    {{ add_form.submit(class="btn btn-primary") }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

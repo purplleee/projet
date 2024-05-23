@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm, MarqueForm
+from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm, MarqueForm,ModeleForm
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
@@ -421,12 +421,55 @@ def delete_marque(id):
     return redirect(url_for('admin.marques'))
 
 
-@admin_bp.route('/marque/<int:marque_id>/models', methods=['GET'])
+@admin_bp.route('/marque/<int:marque_id>/models', methods=['GET', 'POST'])
 @login_required
 def models_by_marque(marque_id):
     marque = Marque.query.get_or_404(marque_id)
     models = Modele.query.filter_by(marque_id=marque_id).all()
-    return render_template('models_by_marque.html', marque=marque, models=models)
+    add_form = ModeleForm()
+    
+    # Generate a dictionary of forms for each model for editing
+    edit_forms = {model.modele_id: ModeleForm(obj=model) for model in models}
+    
+    return render_template('models_by_marque.html', marque=marque, models=models, add_form=add_form, edit_forms=edit_forms)
+
+
+
+@admin_bp.route('/marque/<int:marque_id>/add_model', methods=['GET', 'POST'])
+@login_required
+def add_model(marque_id):
+    form = ModeleForm()
+    if form.validate_on_submit():
+        model = Modele(modele_name=form.modele_name.data, marque_id=marque_id)
+        db.session.add(model)
+        db.session.commit()
+        flash('Model added successfully!', 'success')
+        return redirect(url_for('admin.models_by_marque', marque_id=marque_id))
+    return render_template('add_model.html', form=form, marque_id=marque_id)
+
+
+@admin_bp.route('/edit_model/<int:model_id>', methods=['GET', 'POST'])
+@login_required
+def edit_model(model_id):
+    model = Modele.query.get_or_404(model_id)
+    form = ModeleForm(obj=model)
+    if form.validate_on_submit():
+        model.modele_name = form.modele_name.data
+        db.session.commit()
+        flash('Model updated successfully!', 'success')
+        return redirect(url_for('admin.models_by_marque', marque_id=model.marque_id))
+    return render_template('edit_model.html', form=form, model=model)
+
+
+@admin_bp.route('/delete_model/<int:model_id>', methods=['POST'])
+@login_required
+def delete_model(model_id):
+    model = Modele.query.get_or_404(model_id)
+    marque_id = model.marque_id
+    db.session.delete(model)
+    db.session.commit()
+    flash('Model deleted successfully!', 'success')
+    return redirect(url_for('admin.models_by_marque', marque_id=marque_id))
 
 
 @admin_bp.route('/types/', methods=['GET', 'POST'])
