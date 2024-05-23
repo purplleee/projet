@@ -89,3 +89,29 @@ def switch_role():
 
     return redirect(url_for('auth.login'))  # Redirect to login page or a more appropriate fallback
 
+
+@auth_bp.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    role = current_user.role.name
+    if request.method == 'POST':
+        current_password = request.form['current_password']
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+
+        if not current_user.check_password(current_password):
+            flash('Current password is incorrect', 'danger')
+            return redirect(url_for('auth.change_password'))
+
+        if new_password != confirm_password:
+            flash('New passwords do not match', 'danger')
+            return redirect(url_for('auth.change_password'))
+
+        current_user.set_password(new_password)
+        db.session.commit()
+        flash('Password has been updated', 'success')
+        return redirect(url_for(current_user.role.name + '.index'))
+
+    return render_template('change_password.html')
+
+

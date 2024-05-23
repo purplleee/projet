@@ -46,7 +46,6 @@
 
   <div class="nav-item dropdown form-inline my-2 my-lg-0">
 
-    <!-- Add this part inside the <nav> or appropriate section of your base.html -->
       <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ current_user.username }} <span class="material-symbols-outlined">account_circle</span> 
@@ -63,9 +62,9 @@
               </button>
           </form>
           {% endfor %}
-           
-          
-        </div>
+      
+          <a class="dropdown-item" href="{{ url_for('auth.change_password') }}">Change Password</a>
+        </div>  
       </div>
     
   </div>
