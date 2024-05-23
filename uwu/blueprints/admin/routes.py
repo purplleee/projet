@@ -277,6 +277,7 @@ def parametrage():
 @login_required
 def structures():
     form = StructureForm()
+    delete_form = DeleteFAQForm()
     if form.validate_on_submit():
         structure = Structure(structure_name=form.structure_name.data)
         db.session.add(structure)
@@ -284,7 +285,7 @@ def structures():
         flash('Structure added successfully!', 'success')
         return redirect(url_for('admin.structures'))
     structures = Structure.query.all()
-    return render_template('structures.html', structures=structures, form=form)
+    return render_template('structures.html', structures=structures, form=form, delete_form=delete_form)
 
 
 @admin_bp.route('/add_structure/', methods=['POST'])
@@ -327,7 +328,8 @@ def delete_structure(id):
 def structure_materiel(structure_id):
     structure = Structure.query.get_or_404(structure_id)
     materiel_list = Materiel.query.filter_by(structure_id=structure_id).all()
-    return render_template('materiel.html', structure=structure, materiel_list=materiel_list)
+    delete_form = DeleteFAQForm()
+    return render_template('materiel.html', structure=structure, materiel_list=materiel_list, delete_form=delete_form)
 
 
 @admin_bp.route('/edit_mat/<int:materiel_id>', methods=['GET', 'POST'])
