@@ -108,7 +108,7 @@ class Ticket(db.Model):
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'), nullable=True)
     ticket_creation_date = db.Column(db.DateTime, server_default=func.now())
 
-    creator = db.relationship('User', foreign_keys=[creator_user_id], backref='created_tickets')
+    creator_user = db.relationship('User', foreign_keys=[creator_user_id], backref='created_tickets')
     assigned_user = db.relationship('User', foreign_keys=[assigned_user_id], backref='assigned_tickets')
     category = db.relationship('Category', backref='tickets')
     material = db.relationship('Materiel', backref='tickets')

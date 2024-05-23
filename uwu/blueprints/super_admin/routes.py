@@ -9,6 +9,7 @@ from flask_login import current_user ,LoginManager
 import logging
 from sqlalchemy.orm.exc import DetachedInstanceError
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import aliased
 
 super_admin_bp = Blueprint('super_admin', __name__)
 login_manager = LoginManager(super_admin_bp)
@@ -16,13 +17,11 @@ login_manager = LoginManager(super_admin_bp)
 @super_admin_bp.route('/')
 @login_required
 def index():
-    # Fetch tickets in different statuses
     new_tickets = Ticket.query.filter_by(statut='nouveau').count()
     in_progress_tickets = Ticket.query.filter_by(statut='en_cours').count()
     in_repair_tickets = Ticket.query.filter_by(statut='en_reparation').count()
-    closed_tickets = Ticket.query.filter_by(statut='ferme').count()
+    closed_tickets = Ticket.query.filter_by(statut='clos').count()  # Corrected to 'clos' instead of 'ferme'
 
-    # Render the super admin dashboard template with the ticket counts
     return render_template('index.html',
                            new_tickets=new_tickets,
                            in_progress_tickets=in_progress_tickets,
@@ -34,17 +33,27 @@ def index():
 @login_required
 def view_tickets_by_status(status):
     try:
+        # Aliases for User table to distinguish creator and assigned users
+        creator_alias = aliased(User)
+        assigned_alias = aliased(User)
+
         tickets_list = db.session.query(
             Ticket.titre.label('titre'),
             Category.category_name.label('category_name'),
             Ticket.urgent.label('urgent'),
             Materiel.code_a_barre.label('material_name'),
             Ticket.statut.label('statut'),
-            Ticket.id_ticket.label('id_ticket')
+            Ticket.id_ticket.label('id_ticket'),
+            creator_alias.username.label('creator_username'),  # Include creator's username
+            assigned_alias.username.label('assigned_admin_username')  # Include assigned admin's username
         ).join(
             Category, Category.category_id == Ticket.category_id
         ).outerjoin(
             Materiel, Materiel.material_id == Ticket.material_id
+        ).join(
+            creator_alias, creator_alias.user_id == Ticket.creator_user_id
+        ).outerjoin(
+            assigned_alias, assigned_alias.user_id == Ticket.assigned_user_id
         ).filter(
             Ticket.statut == status
         ).all()

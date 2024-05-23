@@ -7,6 +7,7 @@ from uwu.models import Ticket, Materiel, User
 from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m, Modele
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import aliased
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -33,15 +34,38 @@ def view_tickets_by_status(status):
         if status == 'nouveau':
             return redirect(url_for('admin.index'))  # Redirect if trying to access 'nouveau'
         
+        # Aliases for User table to distinguish creator and assigned users
+        creator_alias = aliased(User)
+        assigned_alias = aliased(User)
+
         # Fetch tickets assigned to the logged-in admin
-        tickets_list = Ticket.query.filter_by(statut=status, assigned_user_id=current_user.user_id).all()
+        tickets_list = db.session.query(
+            Ticket.titre.label('titre'),
+            Category.category_name.label('category_name'),
+            Ticket.urgent.label('urgent'),
+            Materiel.code_a_barre.label('material_name'),
+            Ticket.statut.label('statut'),
+            Ticket.id_ticket.label('id_ticket'),
+            creator_alias.username.label('creator_username'),  # Include creator's username
+            assigned_alias.username.label('assigned_admin_username')  # Include assigned admin's username
+        ).join(
+            Category, Category.category_id == Ticket.category_id
+        ).outerjoin(
+            Materiel, Materiel.material_id == Ticket.material_id
+        ).join(
+            creator_alias, creator_alias.user_id == Ticket.creator_user_id
+        ).outerjoin(
+            assigned_alias, assigned_alias.user_id == Ticket.assigned_user_id
+        ).filter(
+            Ticket.statut == status,
+            Ticket.assigned_user_id == current_user.user_id  # Filter by logged-in admin's ID
+        ).all()
         
         return render_template('tickets.html', tickets_list=tickets_list, status=status)
     except Exception as e:
         flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
         current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')
         return render_template('tickets.html', tickets_list=[], status=status)
-
 
 
 

@@ -12,6 +12,7 @@
                 <th>Material</th>
                 {% if current_user.role.name in ['admin', 'super_admin'] %}
                 <th>Creator</th> <!-- Added column for creator's username -->
+                <th>Assigned Admin</th> <!-- Added column for assigned admin's username -->
                 {% endif %}
                 <th>Actions</th> <!-- Column for actions such as edit -->
             </tr>
@@ -25,6 +26,7 @@
                 <td>{{ ticket.material_name or 'N/A' }}</td>
                 {% if current_user.role.name in ['admin', 'super_admin'] %}
                 <td>{{ ticket.creator_username }}</td> <!-- Display creator's username -->
+                <td>{{ ticket.assigned_admin_username or 'N/A' }}</td> <!-- Display assigned admin's username -->
                 {% endif %}
                 <td>
                     {% if (ticket.statut == 'nouveau' or ticket.statut == 'en_cours') and current_user.role.name == 'super_admin' %}
