@@ -375,15 +375,18 @@ def delete_mat(materiel_id):
 @admin_bp.route('/marques/', methods=['GET', 'POST'])
 @login_required
 def marques():
-    form = MarqueForm()
-    if form.validate_on_submit():
-        marque = Marque(marque_name=form.marque_name.data)
+    add_form = MarqueForm()
+    if add_form.validate_on_submit():
+        marque = Marque(marque_name=add_form.marque_name.data)
         db.session.add(marque)
         db.session.commit()
         flash('Marque added successfully!', 'success')
         return redirect(url_for('admin.marques'))
+    
     marques = Marque.query.all()
-    return render_template('marques.html', marques=marques, form=form)
+    edit_forms = {marque.marque_id: MarqueForm(obj=marque) for marque in marques}
+    
+    return render_template('marques.html', marques=marques, add_form=add_form, edit_forms=edit_forms)
 
 
 @admin_bp.route('/add_marque/', methods=['POST'])

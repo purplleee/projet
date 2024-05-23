@@ -11,13 +11,37 @@
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <a href="{{ url_for('admin.models_by_marque', marque_id=marque.marque_id) }}">{{ marque.marque_name }}</a>
             <div>
-                <a href="{{ url_for('admin.edit_marque', id=marque.marque_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editMarqueModal{{ marque.marque_id }}">Edit</button>
                 <form action="{{ url_for('admin.delete_marque', id=marque.marque_id) }}" method="POST" style="display:inline;">
-                    {{ form.hidden_tag() }}
+                    {{ edit_forms[marque.marque_id].hidden_tag() }}
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
             </div>
         </li>
+
+        <!-- Edit Marque Modal -->
+        <div class="modal fade" id="editMarqueModal{{ marque.marque_id }}" tabindex="-1" role="dialog" aria-labelledby="editMarqueModalLabel{{ marque.marque_id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editMarqueModalLabel{{ marque.marque_id }}">Edit Marque</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{{ url_for('admin.edit_marque', id=marque.marque_id) }}">
+                            {{ edit_forms[marque.marque_id].hidden_tag() }}
+                            <div class="form-group">
+                                {{ edit_forms[marque.marque_id].marque_name.label(class="form-control-label") }}
+                                {{ edit_forms[marque.marque_id].marque_name(class="form-control") }}
+                            </div>
+                            {{ edit_forms[marque.marque_id].submit(class="btn btn-primary") }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
     </ul>
 </div>
@@ -34,12 +58,12 @@
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ url_for('admin.add_marque') }}">
-                    {{ form.hidden_tag() }}
+                    {{ add_form.hidden_tag() }}
                     <div class="form-group">
-                        {{ form.marque_name.label(class="form-control-label") }}
-                        {{ form.marque_name(class="form-control") }}
+                        {{ add_form.marque_name.label(class="form-control-label") }}
+                        {{ add_form.marque_name(class="form-control") }}
                     </div>
-                    {{ form.submit(class="btn btn-primary") }}
+                    {{ add_form.submit(class="btn btn-primary") }}
                 </form>
             </div>
         </div>
