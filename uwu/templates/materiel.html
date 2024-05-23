@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Materiel{% if structure %} - {{ structure.structure_name }}{% endif %}{% endblock %}
+{% block title %}Materiel{% if current_user.is_admin %} - {{ structure.structure_name }}{% endif %}{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Materiel{% if structure %} for {{ structure.structure_name }}{% endif %}</h2>
+    <h2>Materiel{% if current_user.is_admin %} for {{ structure.structure_name }}{% endif %}</h2>
     <div class="d-flex justify-content-end mb-4">
-        {% if current_user.is_employee  %}
+        {% if current_user.is_employee %}
         <a href="{{ url_for('employee.cree_mat') }}" class="btn btn-success">Add Materiel</a>
         {% elif current_user.is_admin %}
         <a href="{{ url_for('admin.cree_mat_admin', structure_id=structure.structure_id) }}" class="btn btn-success">Add Materiel</a>
@@ -35,7 +35,7 @@
                 <td>
                     <a href="{{ url_for('admin.edit_mat', materiel_id=materiel.material_id) }}" class="btn btn-warning btn-sm">Edit</a>
                     {% if current_user.is_admin %}
-                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteMaterielModal{{ materiel.material_id}}">Delete</button>
+                    <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteMaterielModal{{ materiel.material_id }}">Delete</button>
                     {% endif %}
                 </td>
                 {% endif %}

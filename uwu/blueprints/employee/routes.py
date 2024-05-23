@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel 
 from uwu.models.models import  Category,Marque,Modele,Type_m,Role,Structure,Category, FAQ, User
-from ...forms import TicketForm, MaterielForm
+from ...forms import TicketForm, MaterielForm ,DeleteFAQForm
 from uwu.database import db
 from flask_login import login_required , LoginManager
 from flask_login import current_user
@@ -92,7 +92,7 @@ def view_tickets_by_status(status):
 @employee_bp.route('/cree_mat/', methods=['GET', 'POST'])
 @login_required
 def cree_mat():
-    if not (current_user.is_employee or current_user.is_admin):
+    if not (current_user.is_employee ):
         abort(403)  # Forbidden
 
     form = MaterielForm()
@@ -120,7 +120,7 @@ def cree_mat():
                 type_id=form.type_id.data,
                 marque_id=form.marque_id.data,
                 modele_id=form.modele_id.data,
-                structure_id=current_user.structure_id  # Assign the user's structure_id
+                structure_id=current_user.structure_id  # Ensure the user's structure_id is assigned
             )
             db.session.add(new_materiel)
             db.session.commit()
@@ -141,17 +141,17 @@ def cree_mat():
 @login_required
 def materiel():
     try:
-        # Assuming current_user has a structure_id attribute
         structure_id = current_user.structure_id
         structure = Structure.query.get_or_404(structure_id)
         materiel_list = Materiel.query.filter_by(structure_id=structure_id).all()
+        delete_form = DeleteFAQForm()  # Add this line
 
-        return render_template('materiel.html', structure=structure, materiel_list=materiel_list)
+        return render_template('materiel.html', structure=structure, materiel_list=materiel_list, delete_form=delete_form)
     except Exception as e:
         flash(f'Erreur lors de la récupération du matériel: {str(e)}', 'error')
         current_app.logger.error(f'Failed to fetch material: {e}')
-        return render_template('materiel.html', structure=None, materiel_list=[])
-
+        return render_template('materiel.html', structure=None, materiel_list=[], delete_form=None)  # Pass delete_form=None
+    
 
 @employee_bp.route('/edit_ticket/<int:ticket_id>', methods=['GET', 'POST'])
 @login_required
