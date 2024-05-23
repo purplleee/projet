@@ -322,6 +322,14 @@ def delete_structure(id):
     return redirect(url_for('admin.structures'))
 
 
+@admin_bp.route('/structure/<int:structure_id>', methods=['GET'])
+@login_required
+def structure_materiel(structure_id):
+    structure = Structure.query.get_or_404(structure_id)
+    materiel_list = Materiel.query.filter_by(structure_id=structure_id).all()
+    return render_template('materiel.html', structure=structure, materiel_list=materiel_list)
+
+
 @admin_bp.route('/marques/', methods=['GET', 'POST'])
 @login_required
 def marques():

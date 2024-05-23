@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
+{% block title %}Materiel - {{ structure.structure_name }}{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
-    <h2>Materiel</h2>
+    <h2>Materiel for {{ structure.structure_name }}</h2>
     {% if current_user.role.name == 'employee' %}
     <div class="d-flex justify-content-end mb-4">
         <a href="{{ url_for('employee.cree_mat') }}" class="btn btn-success">Add materiel</a>

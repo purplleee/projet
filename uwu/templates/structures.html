@@ -9,7 +9,7 @@
     <ul class="list-group">
         {% for structure in structures %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ structure.structure_name }}
+            <a href="{{ url_for('admin.structure_materiel', structure_id=structure.structure_id) }}">{{ structure.structure_name }}</a>
             <div>
                 <a href="{{ url_for('admin.edit_structure', id=structure.structure_id) }}" class="btn btn-warning btn-sm">Edit</a>
                 <form action="{{ url_for('admin.delete_structure', id=structure.structure_id) }}" method="POST" style="display:inline;">

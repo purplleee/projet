@@ -138,12 +138,18 @@ def cree_mat():
 @login_required
 def materiel():
     try:
-        materiel_list = Materiel.query.all()
-        return render_template('materiel.html', materiel_list=materiel_list)
+        # Assuming current_user has a structure_id attribute
+        structure_id = current_user.structure_id
+        structure = Structure.query.get_or_404(structure_id)
+        materiel_list = Materiel.query.filter_by(structure_id=structure_id).all()
+
+        return render_template('materiel.html', structure=structure, materiel_list=materiel_list)
     except Exception as e:
         flash(f'Erreur lors de la récupération du matériel: {str(e)}', 'error')
-        current_app.logger.error(f'Failed to fetch material: {e}')  # Corrected logger usage
-        return render_template('materiel.html', materiel_list=[])
+        current_app.logger.error(f'Failed to fetch material: {e}')
+        return render_template('materiel.html', structure=None, materiel_list=[])
+
+
 
 
 @employee_bp.route('/edit_ticket/<int:ticket_id>', methods=['GET', 'POST'])
