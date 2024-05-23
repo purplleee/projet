@@ -92,7 +92,7 @@ def view_tickets_by_status(status):
 @employee_bp.route('/cree_mat/', methods=['GET', 'POST'])
 @login_required
 def cree_mat():
-    if not current_user.is_employee:
+    if not (current_user.is_employee or current_user.is_admin):
         abort(403)  # Forbidden
 
     form = MaterielForm()

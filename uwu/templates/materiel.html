@@ -6,7 +6,7 @@
 <div class="container mt-5">
     <h2>Materiel{% if structure %} for {{ structure.structure_name }}{% endif %}</h2>
     <div class="d-flex justify-content-end mb-4">
-        {% if current_user.is_employee %}
+        {% if current_user.is_employee or current_user.is_admin %}
         <a href="{{ url_for('employee.cree_mat') }}" class="btn btn-success">Add Materiel</a>
         {% endif %}
     </div>
@@ -29,12 +29,14 @@
                 <td>{{ materiel.type.type_name if materiel.type else 'N/A' }}</td>
                 <td>{{ materiel.marque.marque_name if materiel.marque else 'N/A' }}</td>
                 <td>{{ materiel.modele.modele_name if materiel.modele else 'N/A' }}</td>
-                {% if current_user.is_admin %}
+                {% if current_user.is_admin or current_user.is_employee %}
                 <td>
                     <a href="{{ url_for('admin.edit_mat', materiel_id=materiel.material_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    {% if current_user.is_admin %}
                     <form action="{{ url_for('admin.delete_mat', materiel_id=materiel.material_id) }}" method="POST" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
+                    {% endif %}
                 </td>
                 {% endif %}
             </tr>

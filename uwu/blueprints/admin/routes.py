@@ -333,10 +333,20 @@ def structure_materiel(structure_id):
 @admin_bp.route('/edit_mat/<int:materiel_id>', methods=['GET', 'POST'])
 @login_required
 def edit_mat(materiel_id):
-    if not current_user.is_admin:
+    if not (current_user.is_admin or current_user.is_employee):
         abort(403)  # Forbidden
     materiel = Materiel.query.get_or_404(materiel_id)
     form = MaterielForm(obj=materiel)
+    
+    # Load dropdown data
+    marques = Marque.query.all()
+    types = Type_m.query.all()
+    modeles = Modele.query.all()
+    
+    # Set dropdown choices
+    form.type_id.choices = [(t.type_id, t.type_name) for t in types]
+    form.marque_id.choices = [(m.marque_id, m.marque_name) for m in marques]
+    form.modele_id.choices = [(mo.modele_id, mo.modele_name) for mo in modeles]
 
     if form.validate_on_submit():
         materiel.code_a_barre = form.code_a_barre.data
@@ -347,10 +357,7 @@ def edit_mat(materiel_id):
         flash('Materiel updated successfully!', 'success')
         return redirect(url_for('admin.structure_materiel', structure_id=materiel.structure_id))
 
-    marques = Marque.query.all()
-    types = Type_m.query.all()
-    modeles = Modele.query.all()
-    return render_template('edit_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
+    return render_template('edit_materiel.html', form=form, marques=marques, types=types, modeles=modeles, materiel=materiel)
 
 
 @admin_bp.route('/delete_mat/<int:materiel_id>', methods=['POST'])
