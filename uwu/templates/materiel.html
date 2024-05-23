@@ -6,8 +6,10 @@
 <div class="container mt-5">
     <h2>Materiel{% if structure %} for {{ structure.structure_name }}{% endif %}</h2>
     <div class="d-flex justify-content-end mb-4">
-        {% if current_user.is_employee or current_user.is_admin %}
+        {% if current_user.is_employee  %}
         <a href="{{ url_for('employee.cree_mat') }}" class="btn btn-success">Add Materiel</a>
+        {% elif current_user.is_admin %}
+        <a href="{{ url_for('admin.cree_mat_admin', structure_id=structure.structure_id) }}" class="btn btn-success">Add Materiel</a>
         {% endif %}
     </div>
     <table class="table">

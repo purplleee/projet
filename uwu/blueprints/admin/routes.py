@@ -332,6 +332,54 @@ def structure_materiel(structure_id):
     return render_template('materiel.html', structure=structure, materiel_list=materiel_list, delete_form=delete_form)
 
 
+@admin_bp.route('/cree_mat_admin/<int:structure_id>', methods=['GET', 'POST'])
+@login_required
+def cree_mat_admin(structure_id):
+    if not current_user.is_admin:
+        abort(403)  # Forbidden
+
+    form = MaterielForm()
+
+    # Load dropdown data
+    marques = Marque.query.all()
+    types = Type_m.query.all()
+    modeles = Modele.query.all()
+    
+    # Set dropdown choices using the correct attribute name
+    form.type_id.choices = [(t.type_id, t.type_name) for t in types]
+    form.marque_id.choices = [(m.marque_id, m.marque_name) for m in marques]
+    form.modele_id.choices = [(mo.modele_id, mo.modele_name) for mo in modeles]
+
+    if form.validate_on_submit():
+        # Check if the code_a_barre already exists
+        existing_materiel = Materiel.query.filter_by(code_a_barre=form.code_a_barre.data).first()
+        if existing_materiel:
+            flash('Erreur: Code à barre existe déjà!', 'error')
+            return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
+        
+        try:
+            new_materiel = Materiel(
+                code_a_barre=form.code_a_barre.data,
+                type_id=form.type_id.data,
+                marque_id=form.marque_id.data,
+                modele_id=form.modele_id.data,
+                structure_id=structure_id  # Use provided structure_id
+            )
+            db.session.add(new_materiel)
+            db.session.commit()
+            flash('Matériel créé avec succès!', 'success')
+            return redirect(url_for('admin.structure_materiel', structure_id=structure_id))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erreur lors de la création du matériel: {str(e)}', 'error')
+            current_app.logger.error(f'Error creating material: {e}')
+            return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
+        finally:
+            db.session.close()
+
+    return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles, structure_id=structure_id)
+
+
 @admin_bp.route('/edit_mat/<int:materiel_id>', methods=['GET', 'POST'])
 @login_required
 def edit_mat(materiel_id):
