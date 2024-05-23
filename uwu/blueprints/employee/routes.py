@@ -153,8 +153,6 @@ def materiel():
         return render_template('materiel.html', structure=None, materiel_list=[])
 
 
-
-
 @employee_bp.route('/edit_ticket/<int:ticket_id>', methods=['GET', 'POST'])
 @login_required
 def edit_ticket(ticket_id):
