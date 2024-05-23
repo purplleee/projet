@@ -17,16 +17,19 @@ login_manager = LoginManager(super_admin_bp)
 @super_admin_bp.route('/')
 @login_required
 def index():
+    # Fetch tickets in different statuses across the entire system
     new_tickets = Ticket.query.filter_by(statut='nouveau').count()
     in_progress_tickets = Ticket.query.filter_by(statut='en_cours').count()
     in_repair_tickets = Ticket.query.filter_by(statut='en_reparation').count()
-    closed_tickets = Ticket.query.filter_by(statut='clos').count()  # Corrected to 'clos' instead of 'ferme'
+    closed_tickets = Ticket.query.filter_by(statut='clos').count()  # Corrected to 'clos'
 
+    # Render the super admin dashboard template with the ticket counts
     return render_template('index.html',
                            new_tickets=new_tickets,
                            in_progress_tickets=in_progress_tickets,
                            in_repair_tickets=in_repair_tickets,
                            closed_tickets=closed_tickets)
+
 
 
 @super_admin_bp.route('/tickets/<status>')
