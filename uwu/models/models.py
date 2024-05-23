@@ -149,6 +149,7 @@ class Marque(db.Model):
     __tablename__ = 'marques'
     marque_id = db.Column(db.Integer, primary_key=True)
     marque_name = db.Column(db.String(100))
+    modeles = db.relationship('Modele', backref='marque', lazy=True)
 
 
 class Modele(db.Model):

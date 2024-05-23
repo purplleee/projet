@@ -421,6 +421,14 @@ def delete_marque(id):
     return redirect(url_for('admin.marques'))
 
 
+@admin_bp.route('/marque/<int:marque_id>/models', methods=['GET'])
+@login_required
+def models_by_marque(marque_id):
+    marque = Marque.query.get_or_404(marque_id)
+    models = Modele.query.filter_by(marque_id=marque_id).all()
+    return render_template('models_by_marque.html', marque=marque, models=models)
+
+
 @admin_bp.route('/types/', methods=['GET', 'POST'])
 @login_required
 def types():

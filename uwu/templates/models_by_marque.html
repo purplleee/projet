@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Models for {{ marque.marque_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Models for {{ marque.marque_name }}</h2>
+    <ul class="list-group">
+        {% for model in models %}
+        <li class="list-group-item">
+            {{ marque.marque_name }}_{{ model.modele_name }}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
