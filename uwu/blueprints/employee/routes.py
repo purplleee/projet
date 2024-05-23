@@ -130,7 +130,7 @@ def cree_mat():
             db.session.rollback()
             flash(f'Erreur lors de la création du matériel: {str(e)}', 'error')
             current_app.logger.error(f'Error creating material: {e}')
-            return render_template('creat_materiel.html', form=form)
+            return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
         finally:
             db.session.close()
 

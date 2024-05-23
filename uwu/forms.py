@@ -22,7 +22,6 @@ class AssignTicketForm(FlaskForm):
     admin_assign = SelectField('Affecter à l\'Administrateur', coerce=int)
 
 class MaterielForm(FlaskForm):
-    # Assuming 'code_a_barre' should be a numeric code, use a validator that checks for numeric range instead of length
     code_a_barre = StringField(
         'Code à Barre', 
         validators=[

@@ -131,7 +131,7 @@ class Fournisseur(db.Model):
 class Materiel(db.Model):
     __tablename__ = 'materials'
     material_id = db.Column(db.Integer, primary_key=True)
-    code_a_barre = db.Column(db.Integer, nullable=False)
+    code_a_barre = db.Column(db.BigInteger, nullable=False)  
     fournisseur_id = db.Column(db.Integer, db.ForeignKey('fournisseurs.fournisseur_id'))
 
     type_id = db.Column(db.Integer, db.ForeignKey('type_m.type_id'))
