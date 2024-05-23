@@ -478,15 +478,18 @@ def delete_model(model_id):
 @admin_bp.route('/types/', methods=['GET', 'POST'])
 @login_required
 def types():
-    form = TypeForm()
-    if form.validate_on_submit():
-        type_m = Type_m(type_name=form.type_name.data)
+    add_form = TypeForm()
+    if add_form.validate_on_submit():
+        type_m = Type_m(type_name=add_form.type_name.data)
         db.session.add(type_m)
         db.session.commit()
         flash('Type added successfully!', 'success')
         return redirect(url_for('admin.types'))
+    
     types = Type_m.query.all()
-    return render_template('types.html', types=types, form=form)
+    edit_forms = {type_m.type_id: TypeForm(obj=type_m) for type_m in types}
+    
+    return render_template('types.html', types=types, add_form=add_form, edit_forms=edit_forms)
 
 
 @admin_bp.route('/add_type/', methods=['POST'])
@@ -501,7 +504,7 @@ def add_type():
     return redirect(url_for('admin.types'))
 
 
-@admin_bp.route('/edit_type/<int:id>', methods=['GET', 'POST'])
+@admin_bp.route('/edit_type/<int:id>', methods=['POST'])
 @login_required
 def edit_type(id):
     type_m = Type_m.query.get_or_404(id)
@@ -510,8 +513,7 @@ def edit_type(id):
         type_m.type_name = form.type_name.data
         db.session.commit()
         flash('Type updated successfully!', 'success')
-        return redirect(url_for('admin.types'))
-    return render_template('edit_type.html', form=form, type=type_m)
+    return redirect(url_for('admin.types'))
 
 
 @admin_bp.route('/delete_type/<int:id>', methods=['POST'])

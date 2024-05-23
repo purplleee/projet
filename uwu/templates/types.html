@@ -11,13 +11,37 @@
         <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ type.type_name }}
             <div>
-                <a href="{{ url_for('admin.edit_type', id=type.type_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editTypeModal{{ type.type_id }}">Edit</button>
                 <form action="{{ url_for('admin.delete_type', id=type.type_id) }}" method="POST" style="display:inline;">
-                    {{ form.hidden_tag() }}
+                    {{ edit_forms[type.type_id].hidden_tag() }}
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
             </div>
         </li>
+
+        <!-- Edit Type Modal -->
+        <div class="modal fade" id="editTypeModal{{ type.type_id }}" tabindex="-1" role="dialog" aria-labelledby="editTypeModalLabel{{ type.type_id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editTypeModalLabel{{ type.type_id }}">Edit Type</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{{ url_for('admin.edit_type', id=type.type_id) }}">
+                            {{ edit_forms[type.type_id].hidden_tag() }}
+                            <div class="form-group">
+                                {{ edit_forms[type.type_id].type_name.label(class="form-control-label") }}
+                                {{ edit_forms[type.type_id].type_name(class="form-control") }}
+                            </div>
+                            {{ edit_forms[type.type_id].submit(class="btn btn-primary") }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
     </ul>
 </div>
@@ -34,15 +58,16 @@
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ url_for('admin.add_type') }}">
-                    {{ form.hidden_tag() }}
+                    {{ add_form.hidden_tag() }}
                     <div class="form-group">
-                        {{ form.type_name.label(class="form-control-label") }}
-                        {{ form.type_name(class="form-control") }}
+                        {{ add_form.type_name.label(class="form-control-label") }}
+                        {{ add_form.type_name(class="form-control") }}
                     </div>
-                    {{ form.submit(class="btn btn-primary") }}
+                    {{ add_form.submit(class="btn btn-primary") }}
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}
