@@ -60,3 +60,7 @@ class ModeleForm(FlaskForm):
     modele_name = StringField('Model Name', validators=[DataRequired()])
     submit = SubmitField('Add Model')
 
+
+class CommentForm(FlaskForm):
+    comment_text = TextAreaField('Comment', validators=[DataRequired()])
+    submit = SubmitField('Add Comment')

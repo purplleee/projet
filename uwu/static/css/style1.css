@@ -236,3 +236,32 @@ button.dropdown-item:hover {
 }
 
 
+/* comments style */
+.comments {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto;
+    padding-right: 10px; /* Adjust for scrollbar space */
+}
+
+.comment {
+    background-color: #f8f9fa; /* Light gray background */
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.comment .avatar {
+    flex-shrink: 0;
+}
+
+.comment img {
+    border-radius: 50%;
+}
+
+.comment-body {
+    flex-grow: 1;
+}
+
+.comment p {
+    margin: 0;
+}

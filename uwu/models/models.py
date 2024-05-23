@@ -2,7 +2,7 @@ from uwu.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy.sql import func
-from sqlalchemy import Table, Integer, ForeignKey, Column, String
+from sqlalchemy import Table, Integer, ForeignKey, Column, String, Enum
 from sqlalchemy.orm import relationship
 
 
@@ -20,7 +20,6 @@ class Role(db.Model):
     role_id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True)
 
-    # Relationships for allowed transitions
     allowed_transitions = relationship(
         'Role', 
         secondary=role_transitions,
@@ -43,9 +42,9 @@ class User(db.Model, UserMixin):
     password_hash = Column(String(255))
     structure_id = Column(Integer, ForeignKey('structures.structure_id'))
 
-    # New direct relationship with Role
     role_id = Column(Integer, ForeignKey('roles.role_id'))
     role = relationship('Role', backref='users')
+    comments = relationship('Comment', backref='comment_user', lazy='dynamic')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -108,11 +107,11 @@ class Ticket(db.Model):
     material_id = db.Column(db.Integer, db.ForeignKey('materials.material_id'), nullable=True)
     ticket_creation_date = db.Column(db.DateTime, server_default=func.now())
 
-    creator_user = db.relationship('User', foreign_keys=[creator_user_id], backref='created_tickets')
-    assigned_user = db.relationship('User', foreign_keys=[assigned_user_id], backref='assigned_tickets')
-    category = db.relationship('Category', backref='tickets')
-    material = db.relationship('Materiel', backref='tickets')
-
+    creator_user = relationship('User', foreign_keys=[creator_user_id], backref='created_tickets')
+    assigned_user = relationship('User', foreign_keys=[assigned_user_id], backref='assigned_tickets')
+    category = relationship('Category', backref='tickets')
+    material = relationship('Materiel', backref='tickets')
+    comments = relationship('Comment', backref='ticket', lazy='dynamic')
 
 class Type_m(db.Model):
     __tablename__ = 'type_m'
@@ -124,8 +123,7 @@ class Fournisseur(db.Model):
     __tablename__ = 'fournisseurs'
     fournisseur_id = db.Column(db.Integer, primary_key=True)
     fournisseur_name = db.Column(db.String(100))
-    # Define a relationship that links back to the 'Materiel' table
-    materials = db.relationship('Materiel', backref='fournisseur', lazy='dynamic')
+    materials = relationship('Materiel', backref='fournisseur', lazy='dynamic')
 
 
 class Materiel(db.Model):
@@ -133,23 +131,21 @@ class Materiel(db.Model):
     material_id = db.Column(db.Integer, primary_key=True)
     code_a_barre = db.Column(db.BigInteger, nullable=False)  
     fournisseur_id = db.Column(db.Integer, db.ForeignKey('fournisseurs.fournisseur_id'))
-
     type_id = db.Column(db.Integer, db.ForeignKey('type_m.type_id'))
-    type = db.relationship('Type_m', backref='materiels')
+    type = relationship('Type_m', backref='materiels')
     marque_id = db.Column(db.Integer, db.ForeignKey('marques.marque_id'))
-    marque = db.relationship('Marque', backref='materiels')
+    marque = relationship('Marque', backref='materiels')
     modele_id = db.Column(db.Integer, db.ForeignKey('modeles.modele_id'))
-    modele = db.relationship('Modele', backref='materiels')
-
-    structure_id = db.Column(db.Integer, db.ForeignKey('structures.structure_id'))  # Ensure this column is defined
-    structure = db.relationship('Structure', backref='materiels')  # Add relationship if necessary
+    modele = relationship('Modele', backref='materiels')
+    structure_id = db.Column(db.Integer, db.ForeignKey('structures.structure_id'))  
+    structure = relationship('Structure', backref='materiels')
 
 
 class Marque(db.Model):
     __tablename__ = 'marques'
     marque_id = db.Column(db.Integer, primary_key=True)
     marque_name = db.Column(db.String(100))
-    modeles = db.relationship('Modele', backref='marque', lazy=True)
+    modeles = relationship('Modele', backref='marque', lazy=True)
 
 
 class Modele(db.Model):
@@ -167,6 +163,7 @@ class Comment(db.Model):
     comment_text = db.Column(db.Text)
     created_at = db.Column(db.DateTime, server_default=func.now())
 
+    user = relationship('User', backref='user_comments')
 
 class FAQ(db.Model):
     __tablename__ = 'faqs'
@@ -174,10 +171,9 @@ class FAQ(db.Model):
     objet = db.Column(db.String(255), nullable=False)
     contenu = db.Column(db.Text, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'))
-    category = db.relationship('Category', backref='faqs', lazy=True)  # This is important
+    category = relationship('Category', backref='faqs', lazy=True)
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    user = db.relationship('User', backref='faqs', lazy=True)
-
+    user = relationship('User', backref='faqs', lazy=True)
 
 class Panne(db.Model):
     __tablename__ = 'pannes'

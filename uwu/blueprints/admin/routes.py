@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm, MarqueForm,ModeleForm
+from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm, MarqueForm,ModeleForm, CommentForm
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
-from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m, Modele
+from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m, Modele, Comment
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import aliased
@@ -68,7 +68,25 @@ def view_tickets_by_status(status):
         return render_template('tickets.html', tickets_list=[], status=status)
 
 
+@admin_bp.route('/ticket/<int:ticket_id>', methods=['GET', 'POST'])
+@login_required
+def view_ticket(ticket_id):
+    ticket = Ticket.query.get_or_404(ticket_id)
+    form = CommentForm()
 
+    if form.validate_on_submit() and current_user.role.name != 'super_admin':
+        comment = Comment(
+            ticket_id=ticket_id,
+            user_id=current_user.user_id,
+            comment_text=form.comment_text.data
+        )
+        db.session.add(comment)
+        db.session.commit()
+        flash('Comment added successfully.', 'success')
+        return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
+
+    comments = Comment.query.filter_by(ticket_id=ticket_id).order_by(Comment.created_at.desc()).all()
+    return render_template('ticket_detail.html', ticket=ticket, comments=comments, form=form)
 
 
 

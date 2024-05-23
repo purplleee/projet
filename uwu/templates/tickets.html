@@ -11,36 +11,33 @@
                 <th>Urgency</th>
                 <th>Material</th>
                 {% if current_user.role.name in ['admin', 'super_admin'] %}
-                <th>Creator</th> <!-- Added column for creator's username -->
-                <th>Assigned Admin</th> <!-- Added column for assigned admin's username -->
+                <th>Creator</th>
+                <th>Assigned Admin</th>
                 {% endif %}
-                <th>Actions</th> <!-- Column for actions such as edit -->
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for ticket in tickets_list %}
             <tr>
-                <td>{{ ticket.titre }}</td>
+                <td><a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}">{{ ticket.titre }}</a></td>
                 <td>{{ ticket.category_name }}</td>
                 <td>{{ ticket.urgent }}</td>
                 <td>{{ ticket.material_name or 'N/A' }}</td>
                 {% if current_user.role.name in ['admin', 'super_admin'] %}
-                <td>{{ ticket.creator_username }}</td> <!-- Display creator's username -->
-                <td>{{ ticket.assigned_admin_username or 'N/A' }}</td> <!-- Display assigned admin's username -->
+                <td>{{ ticket.creator_username }}</td>
+                <td>{{ ticket.assigned_admin_username or 'N/A' }}</td>
                 {% endif %}
                 <td>
                     {% if (ticket.statut == 'nouveau' or ticket.statut == 'en_cours') and current_user.role.name == 'super_admin' %}
-                    <!-- Material Icon Button for Edit -->
                     <a href="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="affecter">
                         <span class="material-symbols-outlined">assignment_add</span>
                     </a>
                     {% elif ticket.statut == 'nouveau' and current_user.role.name == 'employee' %}
-                    <!-- Material Icon Button for Edit -->
                     <a href="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="Edit">
                         <span class="material-symbols-outlined">edit</span>
                     </a>
                     {% else %}
-                    <!-- Optionally, display nothing or some status information -->
                     No actions available
                     {% endif %}
                 </td>

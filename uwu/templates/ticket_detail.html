@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Ticket Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Comments</h3>
+            <div class="comments">
+                {% for comment in comments %}
+                <div class="comment d-flex align-items-start mb-3">
+                    <div class="avatar me-3">
+                        <img src="{{ url_for('static', filename='img/avatar.png') }}" alt="Avatar" class="rounded-circle" width="50">
+                    </div>
+                    <div class="comment-body">
+                        <p>{{ comment.comment_text }}</p>
+                        <p class="small text-muted">By: {{ comment.user.username }} on {{ comment.created_at }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if current_user.role.name != 'super_admin' %}
+            <h3>Add a Comment</h3>
+            <form method="post">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.comment_text.label(class="form-label") }}
+                    {{ form.comment_text(class="form-control") }}
+                </div>
+                <div class="form-group mt-3">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <h3>{{ ticket.titre }}</h3>
+            <p>{{ ticket.description_ticket }}</p>
+            <p>Status: {{ ticket.statut }}</p>
+            <p>Category: {{ ticket.category.category_name }}</p>
+            <p>Urgency: {{ ticket.urgent }}</p>
+            <p>Creator: {{ ticket.creator_user.username }}</p>
+            <p>Assigned Admin: {{ ticket.assigned_user.username if ticket.assigned_user else 'N/A' }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
