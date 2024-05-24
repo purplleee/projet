@@ -4,12 +4,13 @@ from ...forms import TicketForm, MaterielForm,FAQForm , AssignTicketForm,EditTic
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
-from uwu.models.models import Role,Structure,Category, FAQ
+from uwu.models.models import Role,Structure,Category, FAQ,Fournisseur
 from flask_login import current_user ,LoginManager
 import logging
 from sqlalchemy.orm.exc import DetachedInstanceError
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import aliased
+from sqlalchemy import func
 
 super_admin_bp = Blueprint('super_admin', __name__)
 login_manager = LoginManager(super_admin_bp)
@@ -160,7 +161,51 @@ def super_admin_users():
 @super_admin_bp.route('/stats/')
 @login_required
 def stats():
-    return render_template("stat.html")
+    # Fetch reparation statistics
+    reparation_per_month = db.session.query(
+        func.DATE_FORMAT(Ticket.ticket_creation_date, '%Y-%m').label('month'),
+        func.count(Ticket.id_ticket).label('count')
+    ).group_by('month').all()
+
+    reparation_per_year = db.session.query(
+        func.DATE_FORMAT(Ticket.ticket_creation_date, '%Y').label('year'),
+        func.count(Ticket.id_ticket).label('count')
+    ).group_by('year').all()
+
+    # Fetch material data for each fournisseur
+    fournisseurs = db.session.query(Fournisseur).all()
+    fournisseur_materials = {
+        fournisseur.fournisseur_id: db.session.query(Materiel).filter_by(fournisseur_id=fournisseur.fournisseur_id).all()
+        for fournisseur in fournisseurs
+    }
+
+    return render_template("stat.html",
+                           reparation_per_month=reparation_per_month,
+                           reparation_per_year=reparation_per_year,
+                           fournisseurs=fournisseurs,
+                           fournisseur_materials=fournisseur_materials)
+
+
+@super_admin_bp.route('/fournisseur/<int:fournisseur_id>')
+@login_required
+def fournisseur_detail(fournisseur_id):
+    fournisseur = Fournisseur.query.get_or_404(fournisseur_id)
+    materials = Materiel.query.filter_by(fournisseur_id=fournisseur_id).all()
+    return render_template('fournisseur_detail.html', fournisseur=fournisseur, materials=materials)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @super_admin_bp.route('/faqs')

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Fournisseur Detail{% endblock %}
+
+{% block content %}
+<h1>{{ fournisseur.fournisseur_name }}</h1>
+<ul>
+    {% for material in materials %}
+    <li>{{ material.code_a_barre }} - {{ material.type.type_name }} - {{ material.marque.marque_name }} {{ material.modele.modele_name }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
