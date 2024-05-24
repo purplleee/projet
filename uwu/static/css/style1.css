@@ -29,17 +29,7 @@ body{
     top: 50%;
     transform: translateY(-50%);
 }
-.material-symbols-outlined {
-    font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-    color: white !important;
-    vertical-align: middle;
-    margin-right: 8px;
-    margin-left: 20px;
-}
+
 .dropdown-menu {
     background-color: #ffffff !important;
     color: white !important;
@@ -172,7 +162,6 @@ body{
     width: 40px;               /* Square dimensions */
     height: 40px;              /* Square dimensions */
     color: white;              /* Icon color */
-    background-color: #007bff; /* Background color, change as needed */
     border: none;
     border-radius: 4px;        /* Optional: rounds the corners */
     cursor: pointer;
@@ -278,3 +267,36 @@ button.dropdown-item:hover {
     margin: 0;
 }
 
+
+/* buttons style */
+.material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+.ac_si{
+    color: white !important;
+    vertical-align: middle;
+    margin-right: 8px;
+    margin-left: 20px;
+}
+.bt {
+    color: rgb(0, 0, 0) !important;
+}
+.btn-action {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+}
+.btn-action .material-symbols-outlined {
+    font-size: 20px;
+    color: #333;
+}

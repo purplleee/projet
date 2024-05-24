@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Tickets - {{ status }}</h2>
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>Title</th>
@@ -20,7 +20,7 @@
         <tbody>
             {% for ticket in tickets_list %}
             <tr>
-                <td><a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}">{{ ticket.titre }}</a></td>
+                <td>{{ ticket.titre }}</td>
                 <td>{{ ticket.category_name }}</td>
                 <td>{{ ticket.urgent }}</td>
                 <td>{{ ticket.material_name or 'N/A' }}</td>
@@ -29,16 +29,19 @@
                 <td>{{ ticket.assigned_admin_username or 'N/A' }}</td>
                 {% endif %}
                 <td>
+                    <a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="View Ticket">
+                        <span class="material-symbols-outlined bt">visibility</span>
+                    </a>
                     {% if (ticket.statut == 'nouveau' or ticket.statut == 'en_cours') and current_user.role.name == 'super_admin' %}
-                    <a href="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="affecter">
-                        <span class="material-symbols-outlined">assignment_add</span>
+                    <a href="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Affecter">
+                        <span class="material-symbols-outlined bt">assignment_add</span>
                     </a>
                     {% elif ticket.statut == 'nouveau' and current_user.role.name == 'employee' %}
-                    <a href="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn edit-btn" title="Edit">
-                        <span class="material-symbols-outlined">edit</span>
+                    <a href="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Edit">
+                        <span class="material-symbols-outlined bt">edit</span>
                     </a>
                     {% else %}
-                    No actions available
+                    <span class="text-muted">No actions available</span>
                     {% endif %}
                 </td>
             </tr>
