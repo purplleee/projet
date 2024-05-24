@@ -29,9 +29,15 @@
                 <td>{{ ticket.assigned_admin_username or 'N/A' }}</td>
                 {% endif %}
                 <td>
+                    {% if current_user.role.name == 'super_admin'  %}
                     <a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="View Ticket">
                         <span class="material-symbols-outlined bt">visibility</span>
                     </a>
+                    {% elif ticket.statut != 'nouveau' and (current_user.role.name == 'admin' or  current_user.role.name == 'employee' )%}
+                    <a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="View Ticket">
+                        <span class="material-symbols-outlined bt">visibility</span>
+                    </a>
+                    {% endif %}
                     {% if (ticket.statut == 'nouveau' or ticket.statut == 'en_cours') and current_user.role.name == 'super_admin' %}
                     <a href="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Affecter">
                         <span class="material-symbols-outlined bt">assignment_add</span>
