@@ -9,7 +9,7 @@
     <ul class="list-group">
         {% for model in models %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ marque.marque_name }}_{{ model.modele_name }}
+            {{ model.modele_name }}
             <div>
                 <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModelModal{{ model.modele_id }}">Edit</button>
                 <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModelModal{{ model.modele_id }}">Delete</button>

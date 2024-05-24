@@ -556,14 +556,15 @@ def models_by_marque(marque_id):
 @admin_bp.route('/marque/<int:marque_id>/add_model', methods=['GET', 'POST'])
 @login_required
 def add_model(marque_id):
+    marque = Marque.query.get_or_404(marque_id)  # Fetch the marque using marque_id
     form = ModeleForm()
     if form.validate_on_submit():
-        model = Modele(modele_name=form.modele_name.data, marque_id=marque_id)
+        model = Modele(modele_name=marque.marque_name +"_"+ form.modele_name.data, marque_id=marque_id)
         db.session.add(model)
         db.session.commit()
         flash('Model added successfully!', 'success')
         return redirect(url_for('admin.models_by_marque', marque_id=marque_id))
-    return render_template('add_model.html', form=form, marque_id=marque_id)
+    return render_template('add_model.html', form=form, marque_id=marque_id, marque_name=marque.marque_name)
 
 
 @admin_bp.route('/edit_model/<int:model_id>', methods=['GET', 'POST'])
