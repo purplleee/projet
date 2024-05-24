@@ -248,6 +248,16 @@ button.dropdown-item:hover {
     border-radius: 10px;
     padding: 10px;
     margin-bottom: 10px;
+    display: flex;
+}
+
+.comment.current-user {
+    justify-content: flex-start;
+}
+
+.comment.other-user {
+    justify-content: flex-end;
+    flex-direction: row-reverse;
 }
 
 .comment .avatar {
@@ -259,9 +269,10 @@ button.dropdown-item:hover {
 }
 
 .comment-body {
-    flex-grow: 1;
+    max-width: 75%;
 }
 
-.comment p {
+.comment-body p {
     margin: 0;
 }
+
