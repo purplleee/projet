@@ -93,6 +93,8 @@ def switch_role():
 @auth_bp.route('/change_password', methods=['GET', 'POST'])
 @login_required
 def change_password():
+    structure_id = current_user.structure_id
+    structure = Structure.query.get_or_404(structure_id)
     role = current_user.role.name
     if request.method == 'POST':
         current_password = request.form['current_password']
@@ -112,6 +114,6 @@ def change_password():
         flash('Password has been updated', 'success')
         return redirect(url_for(current_user.role.name + '.index'))
 
-    return render_template('change_password.html')
+    return render_template('change_password.html', structure=structure)
 
 
