@@ -41,7 +41,7 @@
                         <span class="material-symbols-outlined bt">edit</span>
                     </a>
                     {% endif %}
-                    {% if current_user.role.name == 'admin' or current_user.role.name =='super_admin' %}
+                    {% if current_user.role.name == 'admin' %}
                     <a href="{{ url_for(current_user.role.name +'.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Edit">
                         <span class="material-symbols-outlined bt">edit</span>
                     </a>
