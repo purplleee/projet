@@ -136,7 +136,7 @@ def create_faq():
         db.session.add(new_faq)
         db.session.commit()
         flash('FAQ created successfully!', 'success')
-        return redirect(url_for('admin.admin_users'))  # Redirect to a relevant page after creation
+        return redirect(url_for('admin.list_faqs')) 
 
     return render_template('create_faq.html', form=form)
 
