@@ -119,11 +119,13 @@ def admin_users():
 
 
 @admin_bp.route('/create_faq', methods=['GET', 'POST'])
-@login_required  
+@login_required
 def create_faq():
-    form = FAQForm()
+    if current_user.role.name != 'admin':
+        flash('Access denied. Only admins can create FAQs.', 'danger')
+        return redirect(url_for('admin.list_faqs'))
     
-    # Set choices for category_id using the correct attribute name
+    form = FAQForm()
     form.category_id.choices = [(c.category_id, c.category_name) for c in Category.query.all()]
     
     if form.validate_on_submit():
@@ -131,12 +133,12 @@ def create_faq():
             objet=form.objet.data,
             contenu=form.contenu.data,
             category_id=form.category_id.data,
-            created_by_user_id=current_user.user_id  # Securely fetch from logged-in user context
+            created_by_user_id=current_user.user_id
         )
         db.session.add(new_faq)
         db.session.commit()
         flash('FAQ created successfully!', 'success')
-        return redirect(url_for('admin.list_faqs')) 
+        return redirect(url_for('admin.list_faqs'))
 
     return render_template('create_faq.html', form=form)
 
@@ -144,7 +146,7 @@ def create_faq():
 @admin_bp.route('/faqs')
 @login_required
 def list_faqs():
-    faqs = FAQ.query.all()  # Assuming you're fetching all FAQs
+    faqs = FAQ.query.all()
     delete_form = DeleteFAQForm()
     return render_template('list_faqs.html', faqs=faqs, delete_form=delete_form)
 
@@ -152,23 +154,20 @@ def list_faqs():
 @admin_bp.route('/faq/<int:faq_id>')
 @login_required
 def view_faq(faq_id):
-    faq = FAQ.query.get_or_404(faq_id)  # Fetch the FAQ or return 404 if not found
+    faq = FAQ.query.get_or_404(faq_id)
     return render_template('view_faq.html', faq=faq)
 
 
 @admin_bp.route('/faq/edit/<int:faq_id>', methods=['GET', 'POST'])
 @login_required
 def edit_faq(faq_id):
-    if current_user.role.name != 'admin':
-        flash('Access denied.', 'danger')
+    faq = FAQ.query.get_or_404(faq_id)
+    if current_user.role.name == 'admin' and faq.created_by_user_id != current_user.user_id:
+        flash('Access denied. You can only edit your own FAQs.', 'danger')
         return redirect(url_for('admin.list_faqs'))
     
-    faq = FAQ.query.get_or_404(faq_id)
-    form = FAQForm(obj=faq)  # Populate form with FAQ data
-
-    # Populate category choices
-    categories = Category.query.all()
-    form.category_id.choices = [(category.category_id, category.category_name) for category in categories]
+    form = FAQForm(obj=faq)
+    form.category_id.choices = [(c.category_id, c.category_name) for c in Category.query.all()]
     
     if form.validate_on_submit():
         faq.objet = form.objet.data
@@ -184,11 +183,11 @@ def edit_faq(faq_id):
 @admin_bp.route('/faq/delete/<int:faq_id>', methods=['POST'])
 @login_required
 def delete_faq(faq_id):
-    if current_user.role.name != 'admin':
-        flash('Access denied.', 'danger')
+    faq = FAQ.query.get_or_404(faq_id)
+    if current_user.role.name == 'admin' and faq.created_by_user_id != current_user.user_id:
+        flash('Access denied. You can only delete your own FAQs.', 'danger')
         return redirect(url_for('admin.list_faqs'))
     
-    faq = FAQ.query.get_or_404(faq_id)
     db.session.delete(faq)
     db.session.commit()
     flash('FAQ deleted successfully.', 'success')
