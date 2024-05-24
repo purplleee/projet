@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm, MarqueForm,ModeleForm, CommentForm
+from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm, MarqueForm,ModeleForm, CommentForm,EditTicketForm
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
@@ -89,6 +89,30 @@ def view_ticket(ticket_id):
     return render_template('ticket_detail.html', ticket=ticket, comments=comments, form=form)
 
 
+@admin_bp.route('/edit_ticket/<int:ticket_id>', methods=['GET', 'POST'])
+@login_required
+def edit_ticket(ticket_id):
+    ticket = Ticket.query.get_or_404(ticket_id)
+
+    if current_user.role.name not in ['admin', 'super_admin']:
+        flash('Access denied.', 'error')
+        return redirect(url_for('admin.index'))
+
+    form = EditTicketForm(obj=ticket)
+    form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
+    
+    if form.validate_on_submit():
+        try:
+            ticket.category_id = form.categorie.data
+            ticket.urgent = form.urgent.data
+            db.session.commit()
+            flash('Ticket updated successfully!', 'success')
+            return redirect(url_for('admin.view_tickets_by_status', status=ticket.statut))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating the ticket: {str(e)}', 'error')
+
+    return render_template('edit_ticket_c.html', form=form, ticket=ticket)
 
 
 
