@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm, MarqueForm,ModeleForm, CommentForm,EditTicketForm
+from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm,MarqueForm,ModeleForm, CommentForm,EditTicketForm,CloseTicketForm,AddRepairDetailsForm
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
-from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m, Modele, Comment
+from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m, Modele, Comment, Fournisseur, Panne
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import aliased
@@ -72,13 +72,32 @@ def view_tickets_by_status(status):
 @login_required
 def view_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
-    form = CommentForm()
+    comment_form = CommentForm()
+    close_form = CloseTicketForm()
+    add_repair_details_form = AddRepairDetailsForm()
+    add_repair_details_form.fournisseur.choices = [(f.fournisseur_id, f.fournisseur_name) for f in Fournisseur.query.order_by(Fournisseur.fournisseur_name)]
 
-    if form.validate_on_submit() and current_user.role.name != 'super_admin':
+    if close_form.close.data and close_form.validate_on_submit():
+        if current_user.role.name == 'admin':
+            ticket.close_ticket()
+            flash('Ticket closed successfully.', 'success')
+            return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
+
+    if add_repair_details_form.add_repair_details.data and add_repair_details_form.validate_on_submit():
+        if current_user.role.name == 'admin':
+            ticket.send_to_repair(add_repair_details_form.fournisseur.data, ticket.material_id)
+            # Manually update the repair details
+            panne = Panne.query.filter_by(material_id=ticket.material_id).first()
+            panne.date_parti_reparation = add_repair_details_form.date_parti_reparation.data
+            db.session.commit()
+            flash('Repair details added successfully.', 'success')
+            return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
+
+    if comment_form.validate_on_submit() and current_user.role.name != 'super_admin' and ticket.statut != 'clos':
         comment = Comment(
             ticket_id=ticket_id,
             user_id=current_user.user_id,
-            comment_text=form.comment_text.data
+            comment_text=comment_form.comment_text.data
         )
         db.session.add(comment)
         db.session.commit()
@@ -86,7 +105,7 @@ def view_ticket(ticket_id):
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
     comments = Comment.query.filter_by(ticket_id=ticket_id).order_by(Comment.created_at.desc()).all()
-    return render_template('ticket_detail.html', ticket=ticket, comments=comments, form=form)
+    return render_template('ticket_detail.html', ticket=ticket, comments=comments, comment_form=comment_form, close_form=close_form, add_repair_details_form=add_repair_details_form)
 
 
 @admin_bp.route('/edit_ticket/<int:ticket_id>', methods=['GET', 'POST'])
@@ -114,6 +133,29 @@ def edit_ticket(ticket_id):
 
     return render_template('edit_ticket_c.html', form=form, ticket=ticket)
 
+
+@admin_bp.route('/ticket/<int:ticket_id>/repair', methods=['GET', 'POST'])
+@login_required
+def repair_ticket(ticket_id):
+    ticket = Ticket.query.get_or_404(ticket_id)
+    if ticket.category.category_name != 'Panne Hard' and not ticket.material_id:
+        flash('This ticket cannot be sent for repair.', 'error')
+        return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
+    
+    form = AddRepairDetailsForm()
+    form.fournisseur.choices = [(f.fournisseur_id, f.fournisseur_name) for f in Fournisseur.query.order_by(Fournisseur.fournisseur_name)]
+
+    if form.validate_on_submit():
+        if current_user.role.name == 'admin':
+            ticket.send_to_repair(form.fournisseur.data, ticket.material_id)
+            # Manually update the repair details
+            panne = Panne.query.filter_by(material_id=ticket.material_id).first()
+            panne.date_parti_reparation = form.date_parti_reparation.data
+            db.session.commit()
+            flash('Repair details added successfully.', 'success')
+            return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
+
+    return render_template('repair_ticket.html', ticket=ticket, form=form)
 
 
 

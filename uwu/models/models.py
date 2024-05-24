@@ -109,6 +109,21 @@ class Ticket(db.Model):
     category = relationship('Category', backref='tickets')
     material = relationship('Materiel', backref='tickets')
     comments = relationship('Comment', backref='ticket', lazy='dynamic')
+    
+    def close_ticket(self):
+        self.statut = 'clos'
+        db.session.commit()
+
+    def send_to_repair(self, fournisseur_id, material_id):
+        self.statut = 'en_reparation'
+        panne = Panne(
+            date_parti_reparation=func.now(),
+            fournisseur_id=fournisseur_id,
+            material_id=material_id
+        )
+        db.session.add(panne)
+        db.session.commit()
+
 
 class Type_m(db.Model):
     __tablename__ = 'type_m'

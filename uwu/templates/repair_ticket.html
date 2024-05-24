@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Repair Ticket{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Repair Ticket - {{ ticket.titre }}</h3>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.fournisseur.label(class="form-label") }}
+            {{ form.fournisseur(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.date_parti_reparation.label(class="form-label") }}
+            {{ form.date_parti_reparation(class="form-control") }}
+        </div>
+        <div class="form-group mt-3">
+            {{ form.add_repair_details(class="btn btn-warning") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

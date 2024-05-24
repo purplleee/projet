@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import (StringField, TextAreaField, IntegerField, BooleanField,RadioField,FieldList, SelectField)
+from wtforms import (StringField, TextAreaField, IntegerField, BooleanField,RadioField,FieldList, SelectField,DateField)
 from wtforms.validators import InputRequired, Length , Regexp ,DataRequired
 from wtforms import HiddenField, SubmitField
 
@@ -13,6 +13,16 @@ class TicketForm(FlaskForm):
         ('Faible', 'Faible'), ('Moyen', 'Moyen'), ('Élevé', 'Élevé')])
     materiel = SelectField('Materiel', coerce=int)
     creator_user_id = HiddenField('Created By')
+
+class CloseTicketForm(FlaskForm):
+    close = SubmitField('Close Ticket')
+
+
+class AddRepairDetailsForm(FlaskForm):
+    fournisseur = SelectField('Fournisseur', coerce=int, validators=[InputRequired()])
+    date_parti_reparation = DateField('Date de départ en réparation', format='%Y-%m-%d', validators=[InputRequired()])
+    add_repair_details = SubmitField('Add Repair Details')
+
 
 class EditTicketForm(FlaskForm):
     categorie = SelectField('Categorie', validators=[InputRequired()], coerce=int)

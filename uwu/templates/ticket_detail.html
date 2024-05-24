@@ -11,7 +11,24 @@
             <p>Urgency: {{ ticket.urgent }}</p>
         </div>
     </div>
-    {% if current_user.role.name != 'super_admin' %}
+    {% if current_user.role.name == 'admin' and ticket.statut != 'clos' %}
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <form method="post">
+                {{ close_form.hidden_tag() }}
+                {{ close_form.close(class="btn btn-danger") }}
+            </form>
+        </div>
+    </div>
+    {% if ticket.category.category_name == 'Panne Hard' or ticket.material_id %}
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <a href="{{ url_for('admin.repair_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-warning">Send to Repair</a>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% if current_user.role.name != 'super_admin' and ticket.statut != 'clos' %}
     <div class="row mt-3">
         <div class="col-md-12">
             <div class="comments">
@@ -48,13 +65,13 @@
         <div class="col-md-12">
             <h3>Add a Comment</h3>
             <form method="post">
-                {{ form.hidden_tag() }}
+                {{ comment_form.hidden_tag() }}
                 <div class="form-group">
-                    {{ form.comment_text.label(class="form-label") }}
-                    {{ form.comment_text(class="form-control") }}
+                    {{ comment_form.comment_text.label(class="form-label") }}
+                    {{ comment_form.comment_text(class="form-control") }}
                 </div>
                 <div class="form-group mt-3">
-                    {{ form.submit(class="btn btn-primary") }}
+                    {{ comment_form.submit(class="btn btn-primary") }}
                 </div>
             </form>
         </div>
