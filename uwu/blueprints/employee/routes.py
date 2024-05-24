@@ -193,7 +193,7 @@ def edit_ticket(ticket_id):
 
 @employee_bp.route('/faqs')
 def list_faqs():
-    faqs = FAQ.query.all()  # Assuming you're fetching all FAQs
+    faqs = FAQ.query.all()  
     return render_template('list_faqs.html', faqs=faqs)
 
 
