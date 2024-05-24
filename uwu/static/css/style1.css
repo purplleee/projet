@@ -300,3 +300,38 @@ button.dropdown-item:hover {
     font-size: 20px;
     color: #333;
 }
+
+/* stats css */
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card .card-header {
+    font-weight: bold;
+}
+
+.card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card canvas {
+    max-width: 100%;
+}
+.card .card-header a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.card .card-header a:hover {
+    text-decoration: underline;
+}
+

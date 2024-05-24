@@ -3,10 +3,34 @@
 {% block title %}Fournisseur Detail{% endblock %}
 
 {% block content %}
-<h1>{{ fournisseur.fournisseur_name }}</h1>
-<ul>
-    {% for material in materials %}
-    <li>{{ material.code_a_barre }} - {{ material.type.type_name }} - {{ material.marque.marque_name }} {{ material.modele.modele_name }}</li>
-    {% endfor %}
-</ul>
+<div class="container mt-5">
+    <h1 class="mb-4">{{ fournisseur.fournisseur_name }}</h1>
+    <div class="card">
+        <div class="card-header">
+            <h2>Materials List</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Code à Barre</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Marque</th>
+                        <th scope="col">Modèle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for material in materials %}
+                    <tr>
+                        <td>{{ material.code_a_barre }}</td>
+                        <td>{{ material.type.type_name }}</td>
+                        <td>{{ material.marque.marque_name }}</td>
+                        <td>{{ material.modele.modele_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}
