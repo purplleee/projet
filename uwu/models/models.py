@@ -6,9 +6,6 @@ from sqlalchemy import Table, Integer, ForeignKey, Column, String, Enum
 from sqlalchemy.orm import relationship
 
 
-
-
-
 role_transitions = Table('role_transitions', db.Model.metadata,
     Column('role_id', Integer, ForeignKey('roles.role_id'), primary_key=True),
     Column('allowed_role_id', Integer, ForeignKey('roles.role_id'), primary_key=True)
