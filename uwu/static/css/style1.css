@@ -240,6 +240,8 @@ button.dropdown-item:hover {
 .comments {
     max-height: 400px; /* Adjust height as needed */
     overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse; /* Display comments in reverse order */
     padding-right: 10px; /* Adjust for scrollbar space */
 }
 

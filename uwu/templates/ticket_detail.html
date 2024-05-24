@@ -7,17 +7,13 @@
         <div class="col-md-8">
             <h3>{{ ticket.titre }}</h3>
             <p>{{ ticket.description_ticket }}</p>
-            <p>Status: {{ ticket.statut }}</p>
             <p>Category: {{ ticket.category.category_name }}</p>
             <p>Urgency: {{ ticket.urgent }}</p>
-            <p>Creator: {{ ticket.creator_user.username }}</p>
-            <p>Assigned Admin: {{ ticket.assigned_user.username if ticket.assigned_user else 'N/A' }}</p>
         </div>
     </div>
     {% if current_user.role.name != 'super_admin' %}
     <div class="row mt-3">
         <div class="col-md-12">
-            <h3>Comments</h3>
             <div class="comments">
                 {% for comment in comments %}
                 <div class="comment d-flex align-items-start mb-3 {{ 'current-user' if comment.user_id == current_user.user_id else 'other-user' }}">
