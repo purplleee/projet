@@ -6,20 +6,20 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Urgency</th>
-                <th>Material</th>
+                <th>Titre</th>
+                <th>Catégorie</th>
+                <th>Urgence</th>
+                <th>Matériel</th>
                 {% if current_user.role.name in ['admin', 'super_admin'] %}
-                <th>Creator</th>
+                <th>Créateur</th>
                 {% if status != 'nouveau' %}
-                <th>Assigned Admin</th>
+                <th>Admin Assigné</th>
                 {% endif %}
                 {% if status == 'en_reparation' %}
                 <th>Fournisseur</th>
-                <th>Days in Repair</th>
+                <th>Jours en Réparation</th>
                 {% elif status == 'clos' %}
-                <th>Was in Repair</th>
+                <th>Était en Réparation</th>
                 {% endif %}
                 {% endif %}
                 <th>Actions</th>
@@ -41,16 +41,16 @@
                 <td>{{ ticket.fournisseur_name or 'N/A' }}</td>
                 <td>{{ (current_date - ticket.date_parti_reparation).days if ticket.date_parti_reparation else 'N/A' }}</td>
                 {% elif status == 'clos' %}
-                <td>{{ 'Yes' if ticket.was_in_repair else 'No' }}</td>
+                <td>{{ 'Oui' if ticket.was_in_repair else 'Non' }}</td>
                 {% endif %}
                 {% endif %}
                 <td>
                     {% if current_user.role.name == 'super_admin' %}
-                    <a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="View Ticket">
+                    <a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Voir le Ticket">
                         <span class="material-symbols-outlined bt">visibility</span>
                     </a>
                     {% elif ticket.statut != 'nouveau' and (current_user.role.name == 'admin' or current_user.role.name == 'employee') %}
-                    <a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="View Ticket">
+                    <a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Voir le Ticket">
                         <span class="material-symbols-outlined bt">visibility</span>
                     </a>
                     {% endif %}
@@ -59,12 +59,12 @@
                         <span class="material-symbols-outlined bt">assignment_add</span>
                     </a>
                     {% elif ticket.statut == 'nouveau' and current_user.role.name == 'employee' %}
-                    <a href="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Edit">
+                    <a href="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Éditer">
                         <span class="material-symbols-outlined bt">edit</span>
                     </a>
                     {% endif %}
                     {% if current_user.role.name == 'admin' %}
-                    <a href="{{ url_for(current_user.role.name +'.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Edit">
+                    <a href="{{ url_for(current_user.role.name +'.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Éditer">
                         <span class="material-symbols-outlined bt">edit</span>
                     </a>
                     {% endif %}

@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Help Desk Login</title>
+    <title>Connexion - Sonelgaz</title>
     <link rel="icon" href="{{ url_for('static', filename='img/sol_fav.png') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
         <div class="left-section">
-            <img src="{{ url_for('static', filename='img/help_logo.png') }}" alt="Help Desk Logo" class="logo">
+            <img src="{{ url_for('static', filename='img/help_logo.png') }}" alt="Logo Help Desk" class="logo">
             <form action="{{ url_for('auth.login') }}" method="POST">
                 <div class="input-group">
-                    <input type="text" name="username" placeholder="Identifiant" required>
+                    <input type="text" name="username" placeholder="Username" required>
                 </div>
                 <div class="input-group">
                     <input type="password" name="password" placeholder="Mot de Passe" required>

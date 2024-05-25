@@ -1,33 +1,33 @@
 {% extends 'base.html' %}
 
-{% block title %}Statistics{% endblock %}
+{% block title %}Statistiques{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4">Statistics</h1>
+    <h1 class="mb-4">Statistiques</h1>
 
     <div class="row">
         <div class="col-md-6">
             <div class="card text-white bg-primary mb-4">
-                <div class="card-header">Reparations Per Month</div>
+                <div class="card-header">Réparations par Mois</div>
                 <div class="card-body">
                     <h5 class="card-title">{{ reparation_per_month|length }}</h5>
-                    <p class="card-text">Number of reparations this month.</p>
+                    <p class="card-text">Nombre de réparations ce mois-ci.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card text-white bg-success mb-4">
-                <div class="card-header">Reparations Per Year</div>
+                <div class="card-header">Réparations par An</div>
                 <div class="card-body">
                     <h5 class="card-title">{{ reparation_per_year|length }}</h5>
-                    <p class="card-text">Number of reparations this year.</p>
+                    <p class="card-text">Nombre de réparations cette année.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <h2 class="my-4">Materials by Fournisseur</h2>
+    <h2 class="my-4">Matériaux par Fournisseur</h2>
     <div class="row">
         {% for fournisseur in fournisseurs %}
         <div class="col-md-6 mb-4">
@@ -59,7 +59,7 @@
                 {% endfor %}
             ],
             datasets: [{
-                label: 'Materials',
+                label: 'Matériaux',
                 data: [
                     {% for material in fournisseur_materials[fournisseur.fournisseur_id] %}
                         {{ material.material_id }},

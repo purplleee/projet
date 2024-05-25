@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="centerise">
-    <!-- Show all statuses for super admin -->
+    <!-- Afficher tous les statuts pour le super admin -->
     {% if current_user.role.name == 'super_admin' %}
     <div class="row">
         <div class="ticket-status nouveau">
@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <!-- Show all statuses except 'nouveau' for admin -->
+    <!-- Afficher tous les statuts sauf 'nouveau' pour l'admin -->
     {% elif current_user.role.name == 'admin' %}
     <div class="row">
         <div class="ticket-status en-cours">
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <!-- Show all statuses for employees -->
+    <!-- Afficher tous les statuts pour les employés -->
     {% else %}
     <div class="row">
         <div class="ticket-status nouveau">

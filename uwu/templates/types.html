@@ -5,14 +5,16 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Types</h2>
-    <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addTypeModal">Add Type</button>
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addTypeModal">Ajouter un Type</button>
+    </div>
     <ul class="list-group">
         {% for type in types %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ type.type_name }}
             <div>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editTypeModal{{ type.type_id }}">Edit</button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteTypeModal{{ type.type_id }}">Delete</button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editTypeModal{{ type.type_id }}">Modifier</button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteTypeModal{{ type.type_id }}">Supprimer</button>
             </div>
         </li>
 
@@ -21,7 +23,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editTypeModalLabel{{ type.type_id }}">Edit Type</h5>
+                        <h5 class="modal-title" id="editTypeModalLabel{{ type.type_id }}">Modifier le Type</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -45,19 +47,19 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="deleteTypeModalLabel{{ type.type_id }}">Confirm Deletion</h5>
+                        <h5 class="modal-title" id="deleteTypeModalLabel{{ type.type_id }}">Confirmer la Suppression</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete the type "{{ type.type_name }}"?
+                        Êtes-vous sûr de vouloir supprimer le type "{{ type.type_name }}" ?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
                         <form action="{{ url_for('admin.delete_type', id=type.type_id) }}" method="POST" style="display:inline;">
                             {{ edit_forms[type.type_id].hidden_tag() }}
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
                         </form>
                     </div>
                 </div>
@@ -72,7 +74,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addTypeModalLabel">Add Type</h5>
+                <h5 class="modal-title" id="addTypeModalLabel">Ajouter un Type</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

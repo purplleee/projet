@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
-{% block title %}Repair Ticket{% endblock %}
+{% block title %}Ticket de Réparation{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h3>Repair Ticket - {{ ticket.titre }}</h3>
+    <h3>Ticket de Réparation - {{ ticket.titre }}</h3>
     <form method="post">
         {{ form.hidden_tag() }}
         <div class="form-group">

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-
+{% block title %}Modifier un compte {% endblock %}
 {% block content %}
 <div class="container">
-    <h2>Modifier un compte Administrateur</h2>
-    <!-- Display flash messages -->
+    <h2>Modifier un compte</h2>
+    <!-- Afficher les messages flash -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -17,7 +17,7 @@
             <input type="text" class="form-control" id="nom" name="nom" required value="{{ user.username.split('_')[0] }}">
         </div>
         <div class="form-group">
-            <label for="prenom">Prenom</label>
+            <label for="prenom">Prénom</label>
             <input type="text" class="form-control" id="prenom" name="prenom" required value="{{ user.username.split('_')[1] }}">
         </div>
         <div class="form-group">
@@ -28,11 +28,11 @@
             <label for="roles">Type</label>
             <select class="form-control" id="roles" name="roles">
                 {% if current_user.is_super_admin %}
-                    <option value="employee" {% if user.role.name == 'employee' %}selected{% endif %}>Employee</option>
+                    <option value="employee" {% if user.role.name == 'employee' %}selected{% endif %}>Employé</option>
                     <option value="admin" {% if user.role.name == 'admin' %}selected{% endif %}>Admin</option>
                     <option value="super_admin" {% if user.role.name == 'super_admin' %}selected{% endif %}>Super Admin</option>
                 {% elif current_user.is_admin %}
-                    <option value="employee" {% if user.role.name == 'employee' %}selected{% endif %}>Employee</option>
+                    <option value="employee" {% if user.role.name == 'employee' %}selected{% endif %}>Employé</option>
                     <option value="admin" {% if user.role.name == 'admin' %}selected{% endif %}>Admin</option>
                 {% endif %}
             </select>

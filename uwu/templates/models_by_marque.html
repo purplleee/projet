@@ -1,28 +1,30 @@
 {% extends 'base.html' %}
 
-{% block title %}Models for {{ marque.marque_name }}{% endblock %}
+{% block title %}Modèles pour {{ marque.marque_name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Models for {{ marque.marque_name }}</h2>
-    <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addModelModal">Add Model</button>
+    <h2>Modèles pour {{ marque.marque_name }}</h2>
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addModelModal">Ajouter un Modèle</button>
+    </div>
     <ul class="list-group">
         {% for model in models %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
             {{ model.modele_name }}
             <div>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModelModal{{ model.modele_id }}">Edit</button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModelModal{{ model.modele_id }}">Delete</button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModelModal{{ model.modele_id }}">Modifier</button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModelModal{{ model.modele_id }}">Supprimer</button>
             </div>
         </li>
 
-        <!-- Edit Model Modal -->
+        <!-- Modifier Modal -->
         <div class="modal fade" id="editModelModal{{ model.modele_id }}" tabindex="-1" role="dialog" aria-labelledby="editModelModalLabel{{ model.modele_id }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editModelModalLabel{{ model.modele_id }}">Edit Model</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title" id="editModelModalLabel{{ model.modele_id }}">Modifier le Modèle</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -40,24 +42,24 @@
             </div>
         </div>
 
-        <!-- Delete Model Modal -->
+        <!-- Supprimer Modal -->
         <div class="modal fade" id="deleteModelModal{{ model.modele_id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModelModalLabel{{ model.modele_id }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModelModalLabel{{ model.modele_id }}">Confirm Deletion</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title" id="deleteModelModalLabel{{ model.modele_id }}">Confirmer la Suppression</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete the model "{{ model.modele_name }}"?
+                        Êtes-vous sûr de vouloir supprimer le modèle "{{ model.modele_name }}"?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
                         <form action="{{ url_for('admin.delete_model', model_id=model.modele_id) }}" method="POST" style="display:inline;">
                             {{ edit_forms[model.modele_id].hidden_tag() }}
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
                         </form>
                     </div>
                 </div>
@@ -67,13 +69,13 @@
     </ul>
 </div>
 
-<!-- Add Model Modal -->
+<!-- Ajouter Modal -->
 <div class="modal fade" id="addModelModal" tabindex="-1" role="dialog" aria-labelledby="addModelModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModelModalLabel">Add Model</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="addModelModalLabel">Ajouter un Modèle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>

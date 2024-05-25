@@ -5,14 +5,16 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Structures</h2>
-    <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addStructureModal">Add Structure</button>
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addStructureModal">Ajouter une Structure</button>
+    </div>
     <ul class="list-group">
         {% for structure in structures %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <a href="{{ url_for('admin.structure_materiel', structure_id=structure.structure_id) }}">{{ structure.structure_name }}</a>
             <div>
-                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editStructureModal{{ structure.structure_id }}">Edit</button>
-                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteStructureModal{{ structure.structure_id }}">Delete</button>
+                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editStructureModal{{ structure.structure_id }}">Modifier</button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteStructureModal{{ structure.structure_id }}">Supprimer</button>
             </div>
         </li>
 
@@ -21,7 +23,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editStructureModalLabel{{ structure.structure_id }}">Edit Structure</h5>
+                        <h5 class="modal-title" id="editStructureModalLabel{{ structure.structure_id }}">Modifier la Structure</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -45,19 +47,19 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="deleteStructureModalLabel{{ structure.structure_id }}">Confirm Deletion</h5>
+                        <h5 class="modal-title" id="deleteStructureModalLabel{{ structure.structure_id }}">Confirmer la Suppression</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete the structure "{{ structure.structure_name }}"?
+                        Êtes-vous sûr de vouloir supprimer la structure "{{ structure.structure_name }}" ?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
                         <form action="{{ url_for('admin.delete_structure', id=structure.structure_id) }}" method="POST" style="display:inline;">
                             {{ delete_form.hidden_tag() }}
-                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
                         </form>
                     </div>
                 </div>
@@ -72,7 +74,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addStructureModalLabel">Add Structure</h5>
+                <h5 class="modal-title" id="addStructureModalLabel">Ajouter une Structure</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
