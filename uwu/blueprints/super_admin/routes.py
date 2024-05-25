@@ -179,18 +179,18 @@ def stats():
         func.count(Ticket.id_ticket).label('count')
     ).group_by('year').all()
 
-    # Fetch material data for each fournisseur
-    fournisseurs = db.session.query(Fournisseur).all()
-    fournisseur_materials = {
-        fournisseur.fournisseur_id: db.session.query(Materiel).filter_by(fournisseur_id=fournisseur.fournisseur_id).all()
-        for fournisseur in fournisseurs
-    }
+    # Fetch material counts for each fournisseur
+    fournisseur_material_counts = db.session.query(
+        Fournisseur.fournisseur_id,
+        Fournisseur.fournisseur_name,
+        func.count(Materiel.material_id).label('material_count')
+    ).join(Materiel, Fournisseur.fournisseur_id == Materiel.fournisseur_id)\
+    .group_by(Fournisseur.fournisseur_id, Fournisseur.fournisseur_name).all()
 
     return render_template("stat.html",
                            reparation_per_month=reparation_per_month,
                            reparation_per_year=reparation_per_year,
-                           fournisseurs=fournisseurs,
-                           fournisseur_materials=fournisseur_materials)
+                           fournisseur_material_counts=fournisseur_material_counts)
 
 
 @super_admin_bp.route('/fournisseur/<int:fournisseur_id>')
