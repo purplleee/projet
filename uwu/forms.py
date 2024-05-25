@@ -1,37 +1,32 @@
 from flask_wtf import FlaskForm
-from wtforms import (StringField, TextAreaField, IntegerField, BooleanField,RadioField,FieldList, SelectField,DateField)
-from wtforms.validators import InputRequired, Length , Regexp ,DataRequired
+from wtforms import (StringField, TextAreaField, IntegerField, BooleanField, RadioField, FieldList, SelectField, DateField)
+from wtforms.validators import InputRequired, Length, Regexp, DataRequired
 from wtforms import HiddenField, SubmitField
-
-
 
 class TicketForm(FlaskForm):
     titre = StringField('Titre', validators=[InputRequired(), Length(min=5, max=100)])
-    description_ticket = TextAreaField('Description Ticket', validators=[Length(max=400)])
-    categorie = SelectField('Categorie', validators=[InputRequired()], coerce=int)
+    description_ticket = TextAreaField('Description du Ticket', validators=[Length(max=400)])
+    categorie = SelectField('Catégorie', validators=[InputRequired()], coerce=int)
     urgent = RadioField('Urgence', validators=[InputRequired()], choices=[
         ('Faible', 'Faible'), ('Moyen', 'Moyen'), ('Élevé', 'Élevé')])
-    materiel = SelectField('Materiel', coerce=int)
-    creator_user_id = HiddenField('Created By')
+    materiel = SelectField('Matériel', coerce=int)
+    creator_user_id = HiddenField('Créé par')
 
 class CloseTicketForm(FlaskForm):
-    close = SubmitField('Close Ticket')
-
+    close = SubmitField('Clôturer le Ticket')
 
 class AddRepairDetailsForm(FlaskForm):
     fournisseur = SelectField('Fournisseur', coerce=int, validators=[InputRequired()])
     date_parti_reparation = DateField('Date de départ en réparation', format='%Y-%m-%d', validators=[InputRequired()])
-    add_repair_details = SubmitField('Add Repair Details')
-
+    add_repair_details = SubmitField('Ajouter les Détails de Réparation')
 
 class EditTicketForm(FlaskForm):
-    categorie = SelectField('Categorie', validators=[InputRequired()], coerce=int)
+    categorie = SelectField('Catégorie', validators=[InputRequired()], coerce=int)
     urgent = RadioField('Urgence', validators=[InputRequired()], choices=[
         ('Faible', 'Faible'), ('Moyen', 'Moyen'), ('Élevé', 'Élevé')])
 
-
 class AssignTicketForm(FlaskForm):
-    categorie = SelectField('Categorie', validators=[InputRequired()], coerce=int)
+    categorie = SelectField('Catégorie', validators=[InputRequired()], coerce=int)
     urgent = RadioField('Urgence', validators=[InputRequired()], choices=[
         ('Faible', 'Faible'), ('Moyen', 'Moyen'), ('Élevé', 'Élevé')])
     admin_assign = SelectField('Affecter à l\'Administrateur', coerce=int)
@@ -41,8 +36,8 @@ class MaterielForm(FlaskForm):
         'Code à Barre', 
         validators=[
             InputRequired(), 
-            Length(min=10, max=10, message="The code must be exactly 10 digits long."),
-            Regexp('^\d{10}$', message="The code must consist only of digits.")
+            Length(min=10, max=10, message="Le code doit contenir exactement 10 chiffres."),
+            Regexp('^\d{10}$', message="Le code doit être composé uniquement de chiffres.")
         ]
     )
     type_id = SelectField('Type', validators=[InputRequired()], coerce=int)
@@ -50,32 +45,31 @@ class MaterielForm(FlaskForm):
     modele_id = SelectField('Modèle', validators=[InputRequired()], coerce=int)
 
 class FAQForm(FlaskForm):
-    objet = StringField('Subject', validators=[InputRequired(), Length(min=5, max=255)])
-    contenu = TextAreaField('Content', validators=[InputRequired(), Length(min=20)])
-    category_id = SelectField('Category', validators=[InputRequired()], coerce=int)
+    objet = StringField('Objet', validators=[InputRequired(), Length(min=5, max=255)])
+    contenu = TextAreaField('Contenu', validators=[InputRequired(), Length(min=20)])
+    category_id = SelectField('Catégorie', validators=[InputRequired()], coerce=int)
     # Ensure the creator's ID is properly captured but not manipulated by the client
-    created_by_user_id = HiddenField('Created By')
+    created_by_user_id = HiddenField('Créé par')
 
 class DeleteFAQForm(FlaskForm):
     pass
 
 class StructureForm(FlaskForm):
-    structure_name = StringField('Structure Name', validators=[DataRequired()])
-    submit = SubmitField('Add Structure')
+    structure_name = StringField('Nom de la Structure', validators=[DataRequired()])
+    submit = SubmitField('Ajouter la Structure')
 
 class TypeForm(FlaskForm):
-    type_name = StringField('Type Name', validators=[DataRequired()])
-    submit = SubmitField('Add Type')
+    type_name = StringField('Nom du Type', validators=[DataRequired()])
+    submit = SubmitField('Ajouter le Type')
 
 class MarqueForm(FlaskForm):
-    marque_name = StringField('Marque Name', validators=[DataRequired()])
-    submit = SubmitField('Add Marque')
+    marque_name = StringField('Nom de la Marque', validators=[DataRequired()])
+    submit = SubmitField('Ajouter la Marque')
 
 class ModeleForm(FlaskForm):
-    modele_name = StringField('Model Name', validators=[DataRequired()])
-    submit = SubmitField('Add Model')
-
+    modele_name = StringField('Nom du Modèle', validators=[DataRequired()])
+    submit = SubmitField('Ajouter le Modèle')
 
 class CommentForm(FlaskForm):
-    comment_text = TextAreaField('Comment', validators=[DataRequired()])
-    submit = SubmitField('Add Comment')
+    comment_text = TextAreaField('Commentaire', validators=[DataRequired()])
+    submit = SubmitField('Ajouter le Commentaire')

@@ -13,7 +13,7 @@
         </div>
 
         <div class="form-group">
-            <label class="form-control-label">Description Ticket</label>
+            <label class="form-control-label">Description du Ticket</label>
             <p class="form-control-static">{{ ticket.description_ticket }}</p>
         </div>
 
@@ -40,9 +40,10 @@
             {{ form.urgent.label(class="form-control-label") }}
             <div>
                 {% for subfield in form.urgent %}
-                    <label class="radio-inline">
-                        {{ subfield }} {{ subfield.label }}
-                    </label>
+                    <div class="form-check form-check-inline">
+                        {{ subfield(class="form-check-input") }}
+                        <label class="form-check-label">{{ subfield.label }}</label>
+                    </div>
                 {% endfor %}
             </div>
         </div>

@@ -20,7 +20,7 @@
     <img class="logo" src="{{ url_for('static', filename='img/sonelgaz.png') }}" alt="sonelgaz_logo">
   </a>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Basculer la navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -45,31 +45,27 @@
   </div>
 
   <div class="nav-item dropdown form-inline my-2 my-lg-0">
+    <div class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{ current_user.username }} <span class="material-symbols-outlined ac_si">account_circle</span> 
+      </a>
+      <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{{ url_for('auth.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Déconnexion</a>
+        <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;"></form>
 
-      <div class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ current_user.username }} <span class="material-symbols-outlined ac_si">account_circle</span> 
-        </a>
-        <div class="dropdown-menu dropdown-menu-right">
-          <a class="dropdown-item" href="{{ url_for('auth.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-          <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;"></form>
+        {% for role in current_user.roles %}
+        <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
+          <input type="hidden" name="role" value="{{ role.name }}">
+          <button class="dropdown-item" type="submit" {% if current_user.current_role == role.name %}disabled{% endif %}>
+            Passer à {{ role.name | capitalize }}
+          </button>
+        </form>
+        {% endfor %}
 
-          {% for role in current_user.roles %}
-          <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
-              <input type="hidden" name="role" value="{{ role.name }}">
-              <button class="dropdown-item" type="submit" {% if current_user.current_role == role.name %}disabled{% endif %}>
-                  Switch to {{ role.name | capitalize }}
-              </button>
-          </form>
-          {% endfor %}
-      
-          <a class="dropdown-item" href="{{ url_for('auth.change_password') }}">Change Password</a>
-        </div>  
-      </div>
-    
+        <a class="dropdown-item" href="{{ url_for('auth.change_password') }}">Changer le mot de passe</a>
+      </div>  
+    </div>
   </div>
-
-
 </nav>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -94,8 +90,6 @@
       form.attr('action', actionUrl);
   });
 </script>
-
-
 
 {% block content %} {% endblock %}
 
