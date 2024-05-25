@@ -8,6 +8,7 @@ from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m, Mode
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import aliased
+from datetime import datetime
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -47,7 +48,10 @@ def view_tickets_by_status(status):
             Ticket.statut.label('statut'),
             Ticket.id_ticket.label('id_ticket'),
             creator_alias.username.label('creator_username'),  # Include creator's username
-            assigned_alias.username.label('assigned_admin_username')  # Include assigned admin's username
+            assigned_alias.username.label('assigned_admin_username'),  # Include assigned admin's username
+            Panne.fournisseur_id.label('fournisseur_name'),
+            Panne.date_parti_reparation.label('date_parti_reparation'),
+            (Ticket.statut == 'en_reparation').label('was_in_repair')  # Add this for the clos status check
         ).join(
             Category, Category.category_id == Ticket.category_id
         ).outerjoin(
@@ -56,12 +60,16 @@ def view_tickets_by_status(status):
             creator_alias, creator_alias.user_id == Ticket.creator_user_id
         ).outerjoin(
             assigned_alias, assigned_alias.user_id == Ticket.assigned_user_id
+        ).outerjoin(
+            Panne, Panne.material_id == Ticket.material_id  # Ensure this join is correct for your schema
         ).filter(
             Ticket.statut == status,
-            Ticket.assigned_user_id == current_user.user_id  # Filter by logged-in admin's ID
+            Ticket.assigned_user_id == current_user.user_id if current_user.role.name != 'super_admin' else True  # Filter by logged-in admin's ID unless super_admin
         ).all()
         
-        return render_template('tickets.html', tickets_list=tickets_list, status=status)
+        current_date = datetime.utcnow()  # Get the current date
+        
+        return render_template('tickets.html', tickets_list=tickets_list, status=status, current_date=current_date)
     except Exception as e:
         flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
         current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')
