@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-
+{% block title %}Créer un Matériel{% endblock %}
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Créer un Materiel</h2>
+    <h2 class="mb-4">Créer un Matériel</h2>
     <form method="POST" action="{% if current_user.is_admin %}{{ url_for('admin.cree_mat_admin', structure_id=structure_id) }}{% else %}{{ url_for('employee.cree_mat') }}{% endif %}" novalidate>
         {{ form.hidden_tag() }}
 

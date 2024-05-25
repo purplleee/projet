@@ -16,10 +16,12 @@
             {{ form.contenu(class="form-control", id="contenu") }}
         </div>
         <div class="form-group">
-            <label for="category_id">Categorie</label>
+            <label for="category_id">Catégorie</label>
             {{ form.category_id(class="form-control", id="category_id") }}
         </div>
-        <button type="submit" class="btn btn-primary">Modifier</button>
+        <div class="text-right">
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        </div>
     </form>
 </div>
 {% endblock %}
