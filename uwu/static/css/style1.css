@@ -58,36 +58,33 @@ body{
     color: #184e77 !important;
 }
 .logo {
-    height: 60px; /* Adjust this value as needed */
-    width: auto; /* Keeps the aspect ratio of the image */
-   /* background-color: #f3941c;*/
-    padding: none; /* Ensures padding does not affect size */
-    margin: none; /* Ensures margin does not affect size */
-    vertical-align: middle; /* Centers the logo vertically if the navbar's height is greater */
+    height: 60px; 
+    width: auto;
+    padding: none; 
+    margin: none; 
+    vertical-align: middle; 
 }
 .centerise {
     display: flex;
     justify-content: center;
-    align-items: center; /* This will vertically center the items in the container */
-    flex-direction: column; /* Stack flex items vertically */
-    height: 90vh; /* Make the container full height */
-    gap: 50px; /* This adds space between the rows */
+    align-items: center; 
+    flex-direction: column;
+    height: 90vh; 
+    gap: 50px; 
     margin-right: 150px;
 }
-
+/* index  */
 .ticket-status {
-    width: 250px; /* Set a fixed width */
+    width: 250px; 
     border-radius: 10px;
     margin: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    /* Removed the flex and max-width properties */
 }
 
 .row {
     display: flex;
     justify-content: center;
-    gap: 150px; /* This adds space between the boxes in a row */
-    /* This will make sure that there are always two boxes per row */
+    gap: 150px; 
 }
 
 .ticket-status button {
@@ -96,7 +93,7 @@ body{
     border-radius: 10px;
     color: white;
     padding: 20px;
-    padding-left: 30px; /* Adjust this value as needed for padding on the left */
+    padding-left: 30px; 
     text-align: left;
     font-size:xx-large;
     cursor: pointer;
@@ -156,86 +153,81 @@ body{
 
 /*tickets.html css*/
 .edit-btn {
-    display: inline-flex;      /* Use flexbox for easy centering */
-    align-items: center;       /* Center the content vertically */
-    justify-content: center;   /* Center the content horizontally */
-    width: 40px;               /* Square dimensions */
-    height: 40px;              /* Square dimensions */
-    color: white;              /* Icon color */
+    display: inline-flex;      
+    align-items: center;       
+    justify-content: center;  
+    width: 40px;             
+    height: 40px;          
+    color: white;           
     border: none;
-    border-radius: 4px;        /* Optional: rounds the corners */
+    border-radius: 4px;        
     cursor: pointer;
-    text-decoration: none;     /* Remove underline from the link */
+    text-decoration: none;     
 }
 
 .material-symbols-outlined {
-    font-size: 20px;           /* Icon size */
-    color: inherit;            /* Ensures the icon uses the button's text color */
+    font-size: 20px;        
+    color: inherit;            
 }
 
 /* switching roles */
-/* Dropdown item styling to ensure visibility and interactivity */
 .dropdown-item {
     display: block;
     width: 100%;
-     /* Text color for visibility */
-    background-color: transparent; /* Clear background */
+    background-color: transparent;
 }
 
 .dropdown-item:hover, .dropdown-item:focus {
-    background-color: #0056b3; /* Darker blue on hover/focus for better UI */
+    background-color: #0056b3; 
     color: #ffffff;
 }
 
-/* Specific styles for form within dropdowns */
 form.dropdown-item {
-    padding: 0; /* Remove padding inside the form to align with other dropdown items */
-    margin: 0; /* Remove margins to prevent any layout shift */
+    padding: 0; 
+    margin: 0; 
 }
 
 button.dropdown-item {
-    border: none; /* Remove border to make it seamless within the dropdown */
-    text-align: left; /* Align text to match other dropdown links */
-    padding: 0.5rem 1.5rem; /* Adequate padding for touch targets and aesthetics */
-    width: 100%; /* Full width to align with dropdown boundary */
-    background: transparent; /* Clear background */
+    border: none; 
+    text-align: left; 
+    padding: 0.5rem 1.5rem; 
+    width: 100%; 
+    background: transparent; 
 }
 
 button.dropdown-item:hover {
-    background-color: #0056b3; /* Consistent with hover effect of links */
+    background-color: #0056b3; 
     color: white;
 }
 
 /* faq list  */
-/* Reduce vertical spacing between rows by adjusting the bottom margin */
 .col-xs-12.col-sm-6.col-md-3.mb-2 {
-    margin-bottom: 5px !important; /* Reduced from 10px */
+    margin-bottom: 5px !important; 
 }
 
-/* Reduce horizontal spacing between cards */
+
 .custom-col {
-    padding-right: 2px !important;  /* Reduced from 5px */
-    padding-left: 2px !important;   /* Reduced from 5px */
-    margin: 2px !important;         /* Reduced from 5px */
+    padding-right: 2px !important;  
+    padding-left: 2px !important;   
+    margin: 2px !important;         
 }
 
-/* Optionally, adjust card margin for tighter grouping */
 .card {
-    margin: 2px !important;  /* Reduced from 5px */
+    margin: 2px !important;  
 }
 
 
 /* comments style */
 .comments {
-    max-height: 400px; /* Adjust height as needed */
+    max-height: 400px; 
     overflow-y: auto;
     display: flex;
-    flex-direction: column-reverse; /* Display comments in reverse order */
-    padding-right: 10px; /* Adjust for scrollbar space */
+    flex-direction: column-reverse; 
+    padding-right: 10px; 
 }
 
 .comment {
-    background-color: #f8f9fa; /* Light gray background */
+    background-color: #f8f9fa; 
     border-radius: 10px;
     padding: 10px;
     margin-bottom: 10px;
@@ -268,7 +260,7 @@ button.dropdown-item:hover {
 }
 
 
-/* buttons style */
+/* icons style */
 .material-symbols-outlined {
     font-variation-settings:
     'FILL' 0,
