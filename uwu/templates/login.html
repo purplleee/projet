@@ -24,6 +24,25 @@
         <div class="right-section">
             <h1>Help Desk.</h1>
         </div>
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert-{{ category }} mt-4">
+            {{ message }}
+        </div>
+        {% endfor %}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.add('show');
+                }, 100);
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                }, 5000);
+            });
+        });
+    </script>
 </body>
 </html>

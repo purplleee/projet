@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
@@ -89,4 +89,28 @@ h1 {
     font-size: 3em;
     font-weight: bold;
     margin: 0;
+}
+
+
+.alert {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    padding: 15px;
+    margin: 0;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+    transform: translateX(100%);
+}
+.alert-success { background-color: #4caf50; }
+.alert-danger { background-color: #f44336; }
+.alert-info { background-color: #2196f3; }
+.alert-warning { background-color: #ff9800; }
+.alert.show {
+    opacity: 1;
+    transform: translateX(0);
 }
