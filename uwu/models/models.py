@@ -2,7 +2,7 @@ from uwu.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy.sql import func
-from sqlalchemy import Table, Integer, ForeignKey, Column, String, Enum
+from sqlalchemy import Table, Integer, ForeignKey, Column, String, Enum, DateTime,LargeBinary
 from sqlalchemy.orm import relationship
 
 
@@ -123,6 +123,16 @@ class Ticket(db.Model):
         )
         db.session.add(panne)
         db.session.commit()
+
+
+class Photo(db.Model):
+    __tablename__ = 'photos'
+    photo_id = Column(Integer, primary_key=True)
+    comment_id = Column(Integer, ForeignKey('comments.comment_id'), nullable=True)
+    image_data = Column(LargeBinary, nullable=False)
+    uploaded_at = Column(DateTime, server_default=func.now())
+
+    comment = relationship('Comment', backref='photos')
 
 
 class Type_m(db.Model):

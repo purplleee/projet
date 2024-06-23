@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import (StringField, TextAreaField, IntegerField, BooleanField, RadioField, FieldList, SelectField, DateField)
+from wtforms import (StringField, TextAreaField, IntegerField, BooleanField, RadioField, FieldList, SelectField, DateField, FileField)
 from wtforms.validators import InputRequired, Length, Regexp, DataRequired
 from wtforms import HiddenField, SubmitField
 
@@ -72,4 +72,6 @@ class ModeleForm(FlaskForm):
 
 class CommentForm(FlaskForm):
     comment_text = TextAreaField('Commentaire', validators=[DataRequired()])
+    photo = FileField('ajouter une pièce jointe')
     submit = SubmitField('Ajouter le Commentaire')
+

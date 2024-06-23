@@ -117,14 +117,10 @@
             {% if current_user.role.name == 'admin' and ticket.statut != 'clos' %}
                 <form method="post">
                     {{ close_form.hidden_tag() }}
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        <span class="material-symbols-outlined">close</span> Fermer le Ticket
-                    </button>
+                    <button type="submit" class="btn btn-danger btn-sm">Close Ticket</button>
                 </form>
                 {% if ticket.category.category_name == 'Panne Hard' or ticket.material_id %}
-                <a href="{{ url_for('admin.repair_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-warning btn-sm">
-                    <span class="material-symbols-outlined">build</span> Envoyer en Réparation
-                </a>
+                <a href="{{ url_for('admin.repair_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-warning btn-sm">Send to Repair</a>
                 {% endif %}
             {% endif %}
         </div>
@@ -135,16 +131,22 @@
             <div class="comment {{ 'current-user' if comment.user_id == current_user.user_id else 'other-user' }}">
                 <div class="comment-body">
                     <p>{{ comment.comment_text }}</p>
-                    <p class="small text-muted">Par : {{ comment.user.username }} le {{ comment.created_at }}</p>
+                    <p class="small text-muted">By: {{ comment.user.username }} on {{ comment.created_at }}</p>
+                    {% for photo in comment.photos %}
+                    <div class="comment-photo">
+                        <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" style="max-width: 100%;">
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
             {% endfor %}
         </div>
         {% if not current_user.is_super_admin and ticket.statut != 'clos' %}
-        <form method="post" class="mt-3">
+        <form method="post" class="mt-3" enctype="multipart/form-data">
             {{ comment_form.hidden_tag() }}
             <div class="form-group">
-                {{ comment_form.comment_text(class="form-control", placeholder="Tapez votre commentaire...") }}
+                {{ comment_form.comment_text(class="form-control", placeholder="Type your comment...") }}
+                {{ comment_form.photo(class="form-control") }}
                 <button type="submit" class="btn-icon">
                     <span class="material-symbols-outlined">send</span>
                 </button>

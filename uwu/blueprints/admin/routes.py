@@ -4,11 +4,14 @@ from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureFor
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
-from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m, Modele, Comment, Fournisseur, Panne
+from uwu.models.models import Role,Structure,Category, FAQ, Marque ,Type_m, Modele, Comment, Fournisseur, Panne, Photo
 from flask_login import current_user
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import aliased
 from datetime import datetime
+import os
+from werkzeug.utils import secure_filename
+from flask import current_app
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -94,7 +97,6 @@ def view_ticket(ticket_id):
     if add_repair_details_form.add_repair_details.data and add_repair_details_form.validate_on_submit():
         if current_user.role.name == 'admin':
             ticket.send_to_repair(add_repair_details_form.fournisseur.data, ticket.material_id)
-            # Manually update the repair details
             panne = Panne.query.filter_by(material_id=ticket.material_id).first()
             panne.date_parti_reparation = add_repair_details_form.date_parti_reparation.data
             db.session.commit()
@@ -109,7 +111,14 @@ def view_ticket(ticket_id):
         )
         db.session.add(comment)
         db.session.commit()
-        flash('Comment added successfully.', 'success')
+
+        if comment_form.photo.data:
+            photo_data = comment_form.photo.data.read()
+            photo = Photo(comment_id=comment.comment_id, image_data=photo_data)
+            db.session.add(photo)
+            db.session.commit()
+
+        flash('Comment and photo added successfully.', 'success')
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
     comments = Comment.query.filter_by(ticket_id=ticket_id).order_by(Comment.created_at.desc()).all()

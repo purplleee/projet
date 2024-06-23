@@ -1,3 +1,4 @@
+import base64
 from flask import Flask
 from flask_login import LoginManager
 from config import DevelopmentConfig 
@@ -45,5 +46,14 @@ def create_app(config_class=DevelopmentConfig):
 
     # Error handlers
     register_error_handlers(app)
+
+    # Custom Jinja2 filter for base64 encoding
+    @app.template_filter('b64encode')
+    def b64encode_filter(data):
+        """Base64 encode filter."""
+        return base64.b64encode(data).decode('utf-8')
+
+    # Register the filter with your Flask application
+    app.jinja_env.filters['b64encode'] = b64encode_filter
 
     return app
