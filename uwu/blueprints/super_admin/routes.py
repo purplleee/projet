@@ -203,18 +203,6 @@ def fournisseur_detail(fournisseur_id):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 @super_admin_bp.route('/faqs')
 @login_required
 def list_faqs():
