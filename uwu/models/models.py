@@ -177,6 +177,7 @@ class Comment(db.Model):
 
     user = relationship('User', backref='user_comments')
 
+
 class FAQ(db.Model):
     __tablename__ = 'faqs'
     faq_id = db.Column(db.Integer, primary_key=True)
@@ -186,6 +187,7 @@ class FAQ(db.Model):
     category = relationship('Category', backref='faqs', lazy=True)
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     user = relationship('User', backref='faqs', lazy=True)
+
 
 class Panne(db.Model):
     __tablename__ = 'pannes'
