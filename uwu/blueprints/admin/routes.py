@@ -165,6 +165,7 @@ def repair_ticket(ticket_id):
     if form.validate_on_submit():
         if current_user.role.name == 'admin':
             ticket.send_to_repair(form.fournisseur.data, ticket.material_id)
+            ticket.statut = 'en_reparation'  # Ensure the status is updated
             # Manually update the repair details
             panne = Panne.query.filter_by(material_id=ticket.material_id).first()
             panne.date_parti_reparation = form.date_parti_reparation.data
