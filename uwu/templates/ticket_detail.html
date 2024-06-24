@@ -26,7 +26,7 @@
         font-size: 1rem;
         color: #495057;
     }
-    .commentt {
+    .comments-section {
         background-color: #f8f9fa;
         border-radius: 5px;
         padding: 1rem;
@@ -36,20 +36,23 @@
         display: flex;
         margin-bottom: 0.5rem;
     }
-    .comment .avatar {
-        flex: 0 0 50px;
-        margin-right: 1rem;
-    }
     .comment .comment-body {
         flex: 1;
         background-color: #e0f7fa;
         border-radius: 10px;
         padding: 1rem;
+        max-width: 60%;
         position: relative;
+        word-break: break-all !important; 
+        overflow-wrap: break-word !important; 
     }
-    .comment.current-user .comment-body {
-        background-color: #80deea;
-        color: white;
+    .comment-body {
+        background-color: #b8f0f8;
+        color: rgb(3, 3, 3);
+    }
+    .comment.other-user .comment-body {
+        background-color: #f1f1f1;
+        color: black;
     }
     .form-group {
         display: flex;
@@ -94,14 +97,14 @@
         height: auto;
         cursor: pointer;
         display: block;
-        border-radius: 0; /* Remove circular shape */
-        max-width: 100%; /* Ensure the image does not overflow its container */
+        border-radius: 0;
+        max-width: 100%;
     }
     .modal-body img {
         width: auto;
         height: auto;
-        max-width: 100%; /* Ensure the image fits within the modal */
-        border-radius: 0; /* Remove circular shape */
+        max-width: 100%;
+        border-radius: 0;
     }
     .custom-file-input {
         display: none;
@@ -133,37 +136,41 @@
         <p><strong>Catégorie :</strong> {{ ticket.category.category_name }}</p>
         <p><strong>Urgence :</strong> {{ ticket.urgent }}</p>
     </div>
-    <div class="commentt">
+    <div class="comments-section">
         {% for comment in comments %}
-        <div class="comment {{ 'current-user' if comment.user_id == current_user.user_id else 'other-user' }}">
-            <div class="comment-body">
-                <p>{{ comment.comment_text }}</p>
-                {% for photo in comment.photos %}
-                <div class="comment-photo">
-                    <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" data-toggle="modal" data-target="#photoModal-{{ photo.photo_id }}">
-                </div>
+        <div class="row">
+            <div class="col-12 d-flex {% if comment.user_id == current_user.user_id %}justify-content-start{% else %}justify-content-end{% endif %}">
+                <div class="comment-body {% if comment.user_id == current_user.user_id %}current-user{% else %}other-user{% endif %}">
+                <div class="comment-body">
+                    <p>{{ comment.comment_text }}</p>
+                    {% for photo in comment.photos %}
+                    <div class="comment-photo">
+                        <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" data-toggle="modal" data-target="#photoModal-{{ photo.photo_id }}">
+                    </div>
 
-                <!-- Modal for displaying the image -->
-                <div class="modal fade" id="photoModal-{{ photo.photo_id }}" tabindex="-1" role="dialog" aria-labelledby="photoModalLabel-{{ photo.photo_id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="photoModalLabel-{{ photo.photo_id }}">Photo</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" class="img-fluid">
-                            </div>
-                            <div class="modal-footer">
-                                <a href="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" download="comment_photo.jpg" class="btn btn-primary">Download</a>
+                    <!-- Modal for displaying the image -->
+                    <div class="modal fade" id="photoModal-{{ photo.photo_id }}" tabindex="-1" role="dialog" aria-labelledby="photoModalLabel-{{ photo.photo_id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="photoModalLabel-{{ photo.photo_id }}">Photo</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" class="img-fluid">
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" download="comment_photo.jpg" class="btn btn-primary">Download</a>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
+                    <p class="small text-muted">By: {{ comment.user.username }} on {{ comment.created_at }}</p>
                 </div>
-                {% endfor %}
-                <p class="small text-muted">By: {{ comment.user.username }} on {{ comment.created_at }}</p>
+                </div>
             </div>
         </div>
         {% endfor %}
