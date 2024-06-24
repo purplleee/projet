@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, TextAreaField, IntegerField, BooleanField, RadioField, FieldList, SelectField, DateField, FileField)
-from wtforms.validators import InputRequired, Length, Regexp, DataRequired
+from wtforms.validators import InputRequired, Length, Regexp, DataRequired, ValidationError
 from wtforms import HiddenField, SubmitField
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 class TicketForm(FlaskForm):
     titre = StringField('Titre', validators=[InputRequired(), Length(min=5, max=100)])
@@ -70,8 +71,17 @@ class ModeleForm(FlaskForm):
     modele_name = StringField('Nom du Modèle', validators=[DataRequired()])
     submit = SubmitField('Ajouter le Modèle')
 
+
+def file_size_limit(max_size_in_mb):
+    max_bytes = max_size_in_mb * 1024 * 1024
+    def _file_size_limit(form, field):
+        if len(field.data.read()) > max_bytes:
+            raise ValidationError(f'File size must be less than {max_size_in_mb}MB')
+        field.data.seek(0)  # Reset file pointer after read
+    return _file_size_limit
+
 class CommentForm(FlaskForm):
     comment_text = TextAreaField('Commentaire', validators=[DataRequired()])
-    photo = FileField('ajouter une pièce jointe')
+    photo = FileField('ajouter une pièce jointe', validators=[FileAllowed(['jpg', 'jpeg', 'png']), file_size_limit(5)])
     submit = SubmitField('Ajouter le Commentaire')
 

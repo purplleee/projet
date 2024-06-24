@@ -129,7 +129,7 @@ class Photo(db.Model):
     __tablename__ = 'photos'
     photo_id = Column(Integer, primary_key=True)
     comment_id = Column(Integer, ForeignKey('comments.comment_id'), nullable=True)
-    image_data = Column(LargeBinary, nullable=False)
+    image_data = Column(LargeBinary, nullable=False)  # Ensure no length is set here for LargeBinary
     uploaded_at = Column(DateTime, server_default=func.now())
 
     comment = relationship('Comment', backref='photos')
