@@ -309,6 +309,9 @@ button.dropdown-item:hover {
     transform: translateX(0);
 }
 
+/* comments */
+
+
 .comment-photo img {
     width: auto;
     height: auto;
