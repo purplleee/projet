@@ -24,14 +24,14 @@
         <div class="form-group">
             {{ form.categorie.label(class="form-control-label") }}
             {% if form.categorie.errors %}
-                {{ form.categorie(class="form-control is-invalid") }}
+                {{ form.categorie(class="form-control is-invalid", id="category-select") }}
                 <div class="invalid-feedback">
                     {% for error in form.categorie.errors %}
                         {{ error }}
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.categorie(class="form-control") }}
+                {{ form.categorie(class="form-control", id="category-select") }}
             {% endif %}
         </div>
         
@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="materiel-field" style="display: none;">
             {{ form.materiel.label(class="form-control-label") }}
             {% if form.materiel.errors %}
                 {{ form.materiel(class="form-control is-invalid") }}
@@ -80,4 +80,24 @@
         </div>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const categorySelect = document.getElementById('category-select');
+        const materielField = document.getElementById('materiel-field');
+
+        categorySelect.addEventListener('change', function () {
+            const selectedCategory = categorySelect.options[categorySelect.selectedIndex].text;
+
+            if (selectedCategory === 'Panne Hard' || selectedCategory === 'General') {
+                materielField.style.display = 'block';
+            } else {
+                materielField.style.display = 'none';
+            }
+        });
+
+        // Trigger change event to set initial state
+        categorySelect.dispatchEvent(new Event('change'));
+    });
+</script>
 {% endblock %}
