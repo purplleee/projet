@@ -121,7 +121,7 @@ def view_ticket(ticket_id):
         flash('Comment and photo added successfully.', 'success')
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
-    comments = Comment.query.filter_by(ticket_id=ticket_id).order_by(Comment.created_at.desc()).all()
+    comments = Comment.query.filter_by(ticket_id=ticket_id).order_by(Comment.created_at.asc()).all()
     return render_template('ticket_detail.html', ticket=ticket, comments=comments, comment_form=comment_form, close_form=close_form, add_repair_details_form=add_repair_details_form)
 
 

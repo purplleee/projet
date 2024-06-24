@@ -26,7 +26,7 @@
         font-size: 1rem;
         color: #495057;
     }
-    .comments {
+    .commentt {
         background-color: #f8f9fa;
         border-radius: 5px;
         padding: 1rem;
@@ -133,7 +133,7 @@
         <p><strong>Catégorie :</strong> {{ ticket.category.category_name }}</p>
         <p><strong>Urgence :</strong> {{ ticket.urgent }}</p>
     </div>
-    <div class="comments mt-3">
+    <div class="commentt">
         {% for comment in comments %}
         <div class="comment {{ 'current-user' if comment.user_id == current_user.user_id else 'other-user' }}">
             <div class="comment-body">
