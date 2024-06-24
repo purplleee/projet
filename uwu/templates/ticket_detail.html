@@ -116,7 +116,6 @@
         margin-bottom: 0.5rem;
         display: none;
         position: relative;
-        display: flex;
         align-items: center;
     }
     .attachment-preview img {
@@ -201,7 +200,7 @@
     {% if not current_user.is_super_admin and ticket.statut != 'clos' %}
     <form method="post" class="mt-3" enctype="multipart/form-data">
         {{ comment_form.hidden_tag() }}
-        <div class="attachment-preview" id="attachment-preview">
+        <div class="attachment-preview" id="attachment-preview" style="display: none;">
             <button type="button" class="remove-attachment" id="remove-attachment">&times;</button>
             <img id="attachment-preview-img" src="#" alt="Attachment Preview">
         </div> <!-- Placeholder for attachment preview -->
