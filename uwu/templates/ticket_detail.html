@@ -107,19 +107,23 @@
         align-items: center;
         cursor: pointer;
     }
+    .button-container form,
+    .button-container a {
+        margin-right: 0.5rem;
+    }
 </style>
 
 <div class="container">
     <div class="ticket-header">
-        <h3>Détails du Ticket</h3>
-        <div class="button-container">
+        <h1>Détails du Ticket</h1>
+        <div class="button-container d-flex">
             {% if current_user.role.name == 'admin' and ticket.statut != 'clos' %}
                 <form method="post">
                     {{ close_form.hidden_tag() }}
-                    <button type="submit" class="btn btn-danger btn-sm" id="btn">Close Ticket</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Close Ticket</button>
                 </form>
                 {% if ticket.category.category_name == 'Panne Hard' or ticket.material_id %}
-                <a href="{{ url_for('admin.repair_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-warning btn-sm" id="btn">Send to Repair</a>
+                <a href="{{ url_for('admin.repair_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-warning btn-sm">Send to Repair</a>
                 {% endif %}
             {% endif %}
         </div>
