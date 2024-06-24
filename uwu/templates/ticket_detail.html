@@ -6,11 +6,15 @@
     .container-custom {
         padding: 2rem;
         margin: 0 auto;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .ticket-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 1.5rem;
     }
     .ticket-info {
         margin-bottom: 1rem;
@@ -34,25 +38,20 @@
     }
     .comment {
         display: flex;
-        margin-bottom: 0.5rem;
-    }
-    .comment .comment-body {
-        flex: 1;
-        background-color: #e0f7fa;
-        border-radius: 10px;
-        padding: 1rem;
-        max-width: 60%;
-        position: relative;
-        word-break: break-all !important; 
-        overflow-wrap: break-word !important; 
+        margin-bottom: 15px; /* Space between comments */
     }
     .comment-body {
-        background-color: #b8f0f8;
-        color: rgb(3, 3, 3);
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        padding: 1rem;
+        max-width: 60%;
+        word-break: break-word;
     }
-    .comment.other-user .comment-body {
-        background-color: #f1f1f1;
-        color: black;
+    .current-user {
+        background-color: #cce5ff; /* Light blue for current user */
+    }
+    .other-user {
+        background-color: #e2e3e5; /* Light gray for other users */
     }
     .form-group {
         display: flex;
@@ -115,7 +114,7 @@
     }
 </style>
 
-<div class="container">
+<div class="container container-custom">
     <div class="ticket-header">
         <h1>Détails du Ticket</h1>
         <div class="button-container d-flex">
@@ -141,7 +140,6 @@
         <div class="row">
             <div class="col-12 d-flex {% if comment.user_id == current_user.user_id %}justify-content-start{% else %}justify-content-end{% endif %}">
                 <div class="comment-body {% if comment.user_id == current_user.user_id %}current-user{% else %}other-user{% endif %}">
-                <div class="comment-body">
                     <p>{{ comment.comment_text }}</p>
                     {% for photo in comment.photos %}
                     <div class="comment-photo">
@@ -169,7 +167,6 @@
                     </div>
                     {% endfor %}
                     <p class="small text-muted">By: {{ comment.user.username }} on {{ comment.created_at }}</p>
-                </div>
                 </div>
             </div>
         </div>
