@@ -79,11 +79,15 @@
         border-radius: 4px;
         cursor: pointer;
     }
-    .btn-send {
-        color: rgb(0, 0, 0);
-    }
-    .btn span {
-        margin-right: 0.3rem;
+    .btn-attach, .btn-send {
+        width: 50px;
+        height: 50px;
+        color: #000000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0.5rem !important;
+        margin-right: 0px !important;
     }
     .comment-photo img {
         width: auto;
@@ -101,11 +105,6 @@
     }
     .custom-file-input {
         display: none;
-    }
-    .btn-attach {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
     }
     .button-container form,
     .button-container a {
@@ -126,7 +125,7 @@
                 <a href="{{ url_for('admin.repair_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-warning btn-sm">Send to Repair</a>
                 {% endif %}
             {% endif %}
-        </div>        
+        </div>
     </div>
     <div class="ticket-info">
         <h3>{{ ticket.titre }}</h3>
@@ -174,10 +173,10 @@
         {{ comment_form.hidden_tag() }}
         <div class="form-group">
             {{ comment_form.comment_text(class="form-control", placeholder="Type your comment...") }}
-            <input type="file" id="comment_form_photo" class="custom-file-input" name="photo">
-            <label for="comment_form_photo" class="btn btn-attach">
+            <label for="comment_form_photo" class="btn btn-attach btn-icon">
                 <span class="material-symbols-outlined">attach_file</span>
             </label>
+            <input type="file" id="comment_form_photo" class="custom-file-input" name="photo">
             <button type="submit" class="btn btn-send btn-icon">
                 <span class="material-symbols-outlined">send</span>
             </button>
