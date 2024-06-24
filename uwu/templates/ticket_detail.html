@@ -104,13 +104,10 @@
         cursor: pointer;
     }
     .btn-send {
-
         color: rgb(0, 0, 0);
     }
     .btn-browse {
-
         color: rgb(0, 0, 0);
-
     }
     .btn span {
         margin-right: 0.3rem;
@@ -120,8 +117,14 @@
         flex-direction: column;
         gap: 0.5rem;
     }
-    #btn{
+    #btn {
         width: 100%;
+    }
+    .comment-photo img {
+        width: 100px;
+        height: auto;
+        cursor: pointer;
+        display: block;
     }
 </style>
 
@@ -133,7 +136,7 @@
             <p><strong>Catégorie :</strong> {{ ticket.category.category_name }}</p>
             <p><strong>Urgence :</strong> {{ ticket.urgent }}</p>
         </div>
-        <div class="button-container" >
+        <div class="button-container">
             {% if current_user.role.name == 'admin' and ticket.statut != 'clos' %}
                 <form method="post">
                     {{ close_form.hidden_tag() }}
@@ -154,7 +157,27 @@
                     <p class="small text-muted">By: {{ comment.user.username }} on {{ comment.created_at }}</p>
                     {% for photo in comment.photos %}
                     <div class="comment-photo">
-                        <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" style="max-width: 100%;">
+                        <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" data-toggle="modal" data-target="#photoModal-{{ photo.photo_id }}">
+                    </div>
+
+                    <!-- Modal for displaying the image -->
+                    <div class="modal fade" id="photoModal-{{ photo.photo_id }}" tabindex="-1" role="dialog" aria-labelledby="photoModalLabel-{{ photo.photo_id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="photoModalLabel-{{ photo.photo_id }}">Photo</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" class="img-fluid">
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" download="comment_photo.jpg" class="btn btn-primary">Download</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -168,8 +191,8 @@
                 {{ comment_form.comment_text(class="form-control", placeholder="Type your comment...") }}
                 <div class="btn btn-browse">
                     <span class="material-symbols-outlined">attach_file</span>
-                    {{ comment_form.photo(class="form-control-file", style="display: none;") }}
-                    <label for="comment_form_photo" style="cursor: pointer;"></label>
+                    {{ comment_form.photo(class="form-control-file d-none", id="comment_form_photo") }}
+                    <label for="comment_form_photo" style="cursor: pointer;">Browse</label>
                 </div>
                 <button type="submit" class="btn btn-send btn-icon">
                     <span class="material-symbols-outlined">send</span>
@@ -179,4 +202,24 @@
         {% endif %}
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const browseBtn = document.querySelector('.btn-browse');
+        const fileInput = document.getElementById('comment_form_photo');
+        const fileLabel = document.querySelector('.btn-browse label');
+
+        browseBtn.addEventListener('click', function () {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function () {
+            if (fileInput.files.length > 0) {
+                fileLabel.textContent = fileInput.files[0].name;
+            } else {
+                fileLabel.textContent = 'Browse';
+            }
+        });
+    });
+</script>
 {% endblock %}

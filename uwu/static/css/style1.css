@@ -350,3 +350,23 @@ button.dropdown-item:hover {
     opacity: 1;
     transform: translateX(0);
 }
+
+.comment-photo img {
+    width: 100px;
+    height: auto;
+    cursor: pointer;
+}
+
+.modal-lg {
+    max-width: 80%;
+}
+
+.modal-body img {
+    width: 100%;
+    height: auto;
+}
+
+
+/* :::::::::::::::::::::::::: */
+
+
