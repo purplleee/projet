@@ -27,36 +27,21 @@ def login():
 
             if not user:
                 flash('Username does not exist', 'danger')
-                current_app.logger.info(f"Login attempt for non-existent username: {username}")
                 return render_template('login.html')
 
             if not user.check_password(password):
                 flash('Incorrect password', 'danger')
-                current_app.logger.info(f"Incorrect password for username: {username}")
                 return render_template('login.html')
 
             login_user(user)
-            current_app.logger.debug(f"User {username} logged in with role: {user.role.name}")
-            if user.role.name == 'admin':
-                current_app.logger.debug("Redirecting to admin.index")
-                return redirect(url_for('admin.index'))
-            elif user.role.name == 'employee':
-                current_app.logger.debug("Redirecting to employee.index")
-                return redirect(url_for('employee.index'))
-            elif user.role.name == 'super_admin':
-                current_app.logger.debug("Redirecting to super_admin.index")
-                return redirect(url_for('super_admin.index'))
-            else:
-                flash('No roles assigned to this user.', 'warning')
-                return redirect(url_for('auth.register'))
+            temp_role = session.get('temp_role', user.role.name)
+            return redirect(url_for(f"{temp_role}.index"))
 
     except Exception as e:
         flash('An error occurred during login', 'danger')
         current_app.logger.error(f"An error occurred during login: {str(e)}")
 
-    finally:
-        if request.method == 'GET':
-            return render_template('login.html')
+    return render_template('login.html')
 
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
@@ -71,14 +56,22 @@ def logout():
 @login_required
 def switch_role():
     new_role_name = request.form.get('role')
-    current_app.logger.debug(f"Attempting to switch role to: {new_role_name}")
-    if current_user.switch_role(new_role_name):
+    current_role_name = current_user.get_temp_role()
+
+    if new_role_name == 'original_role':
+        session.pop('temp_role', None)
+        flash('Switched back to original role.', 'success')
+        return redirect(url_for(f"{current_user.role.name}.index"))
+
+    allowed_transitions = [role.name for role in current_user.role.allowed_transitions]
+    
+    if new_role_name in allowed_transitions:
+        session['temp_role'] = new_role_name
         flash('Role switched successfully!', 'success')
-        current_app.logger.debug(f"Role switched to: {new_role_name}")
         return redirect(url_for(f"{new_role_name}.index"))
     else:
         flash('Transition to the selected role is not allowed.', 'error')
-        current_app.logger.debug(f"Role switch to {new_role_name} not allowed.")
+
     return redirect(url_for('auth.login'))
 
 

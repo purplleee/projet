@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 from sqlalchemy import Table, Integer, ForeignKey, Column, String, Enum, DateTime,LargeBinary
 from sqlalchemy.orm import relationship
+from flask import session
 
 
 role_transitions = Table('role_transitions', db.Model.metadata,
@@ -73,18 +74,26 @@ class User(db.Model, UserMixin):
 
     def get_id(self):
         return str(self.user_id)
+    
+    def get_temp_role(self):
+        return session.get('temp_role', self.role.name)
+
+    @property
+    def current_role(self):
+        temp_role_name = self.get_temp_role()
+        return Role.query.filter_by(name=temp_role_name).first()
 
     @property
     def is_admin(self):
-        return self.role.name == 'admin' if self.role else False
+        return self.get_temp_role() == 'admin'
 
     @property
     def is_employee(self):
-        return self.role.name == 'employee' if self.role else False
+        return self.get_temp_role() == 'employee'
 
     @property
     def is_super_admin(self):
-        return self.role.name == 'super_admin' if self.role else False
+        return self.get_temp_role() == 'super_admin'
 
 
 class Structure(db.Model):
