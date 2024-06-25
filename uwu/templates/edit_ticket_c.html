@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <h2 class="mb-4">Modifier Ticket - {{ ticket.titre }}</h2>
     <p class="mb-4">{{ ticket.description_ticket }}</p>
-    <form method="POST" action="{{ url_for('admin.edit_ticket', ticket_id=ticket.id_ticket) if current_user.role.name == 'admin' else url_for('super_admin.edit_ticket', ticket_id=ticket.id_ticket) }}" novalidate>
+    <form method="POST" action="{{ url_for('admin.edit_ticket', ticket_id=ticket.id_ticket) if current_user.get_temp_role() == 'admin' else url_for('super_admin.edit_ticket', ticket_id=ticket.id_ticket) }}" novalidate>
         {{ form.hidden_tag() }}
         {{ form.csrf_token }}
         

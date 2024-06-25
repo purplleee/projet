@@ -89,13 +89,13 @@ def view_ticket(ticket_id):
     add_repair_details_form.fournisseur.choices = [(f.fournisseur_id, f.fournisseur_name) for f in Fournisseur.query.order_by(Fournisseur.fournisseur_name)]
 
     if close_form.close.data and close_form.validate_on_submit():
-        if current_user.role.name == 'admin':
+        if current_user.get_temp_role() == 'admin':
             ticket.close_ticket()
             flash('Ticket closed successfully.', 'success')
             return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
     if add_repair_details_form.add_repair_details.data and add_repair_details_form.validate_on_submit():
-        if current_user.role.name == 'admin':
+        if current_user.get_temp_role() == 'admin':
             ticket.send_to_repair(add_repair_details_form.fournisseur.data, ticket.material_id)
             panne = Panne.query.filter_by(material_id=ticket.material_id).first()
             panne.date_parti_reparation = add_repair_details_form.date_parti_reparation.data
@@ -103,7 +103,7 @@ def view_ticket(ticket_id):
             flash('Repair details added successfully.', 'success')
             return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
-    if comment_form.validate_on_submit() and current_user.role.name != 'super_admin' and ticket.statut != 'clos':
+    if comment_form.validate_on_submit() and current_user.get_temp_role() != 'super_admin' and ticket.statut != 'clos':
         comment = Comment(
             ticket_id=ticket_id,
             user_id=current_user.user_id,
@@ -125,14 +125,15 @@ def view_ticket(ticket_id):
     return render_template('ticket_detail.html', ticket=ticket, comments=comments, comment_form=comment_form, close_form=close_form, add_repair_details_form=add_repair_details_form)
 
 
+
 @admin_bp.route('/edit_ticket/<int:ticket_id>', methods=['GET', 'POST'])
 @login_required
 def edit_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
 
-    if current_user.role.name not in ['admin', 'super_admin']:
+    if current_user.get_temp_role() not in ['admin', 'super_admin']:
         flash('Access denied.', 'error')
-        return redirect(url_for('admin.index'))
+        return abort(403)
 
     form = EditTicketForm(obj=ticket)
     form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
@@ -163,7 +164,7 @@ def repair_ticket(ticket_id):
     form.fournisseur.choices = [(f.fournisseur_id, f.fournisseur_name) for f in Fournisseur.query.order_by(Fournisseur.fournisseur_name)]
 
     if form.validate_on_submit():
-        if current_user.role.name == 'admin':
+        if current_user.get_temp_role() == 'admin':
             ticket.send_to_repair(form.fournisseur.data, ticket.material_id)
             ticket.statut = 'en_reparation'  # Ensure the status is updated
             # Manually update the repair details
@@ -184,7 +185,7 @@ def repair_ticket(ticket_id):
 @admin_bp.route('/users/')
 @login_required
 def admin_users():
-    if current_user.role.name != 'admin':
+    if current_user.get_temp_role() != 'admin':
         flash('Access denied', 'error')
         abort(403)
 
@@ -205,7 +206,7 @@ def admin_users():
 @admin_bp.route('/create_faq', methods=['GET', 'POST'])
 @login_required
 def create_faq():
-    if current_user.role.name != 'admin':
+    if current_user.get_temp_role() != 'admin':
         flash('Access denied. Only admins can create FAQs.', 'danger')
         return redirect(url_for('admin.list_faqs'))
     
@@ -246,7 +247,7 @@ def view_faq(faq_id):
 @login_required
 def edit_faq(faq_id):
     faq = FAQ.query.get_or_404(faq_id)
-    if current_user.role.name == 'admin' and faq.created_by_user_id != current_user.user_id:
+    if current_user.get_temp_role() == 'admin' and faq.created_by_user_id != current_user.user_id:
         flash('Access denied. You can only edit your own FAQs.', 'danger')
         return redirect(url_for('admin.list_faqs'))
     
@@ -268,7 +269,7 @@ def edit_faq(faq_id):
 @login_required
 def delete_faq(faq_id):
     faq = FAQ.query.get_or_404(faq_id)
-    if current_user.role.name == 'admin' and faq.created_by_user_id != current_user.user_id:
+    if current_user.get_temp_role() == 'admin' and faq.created_by_user_id != current_user.user_id:
         flash('Access denied. You can only delete your own FAQs.', 'danger')
         return redirect(url_for('admin.list_faqs'))
     
@@ -460,7 +461,7 @@ def structure_materiel(structure_id):
 @admin_bp.route('/cree_mat_admin/<int:structure_id>', methods=['GET', 'POST'])
 @login_required
 def cree_mat_admin(structure_id):
-    if not current_user.is_admin:
+    if not current_user.get_temp_role() == 'admin':
         abort(403)  # Forbidden
 
     form = MaterielForm()
@@ -508,7 +509,7 @@ def cree_mat_admin(structure_id):
 @admin_bp.route('/edit_mat/<int:materiel_id>', methods=['GET', 'POST'])
 @login_required
 def edit_mat(materiel_id):
-    if not (current_user.is_admin or current_user.is_employee):
+    if not (current_user.get_temp_role()=='admin' or current_user.get_temp_role()=='employee'):
         abort(403)  # Forbidden
     materiel = Materiel.query.get_or_404(materiel_id)
     form = MaterielForm(obj=materiel)
@@ -538,7 +539,7 @@ def edit_mat(materiel_id):
 @admin_bp.route('/delete_mat/<int:materiel_id>', methods=['POST'])
 @login_required
 def delete_mat(materiel_id):
-    if not current_user.is_admin:
+    if not current_user.get_temp_role()=='admin':
         abort(403)  # Forbidden
     materiel = Materiel.query.get_or_404(materiel_id)
     db.session.delete(materiel)

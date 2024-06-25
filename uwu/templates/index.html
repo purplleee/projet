@@ -4,7 +4,7 @@
 {% block content %}
 <div class="centerise">
     <!-- Afficher tous les statuts pour le super admin -->
-    {% if current_user.role.name == 'super_admin' %}
+    {% if current_user.get_temp_role() == 'super_admin' %}
     <div class="row">
         <div class="ticket-status nouveau">
             <button onclick="window.location.href='{{ url_for('super_admin.view_tickets_by_status', status='nouveau') }}'">{{ new_tickets }} <br>nouveau</button>
@@ -23,7 +23,7 @@
     </div>
 
     <!-- Afficher tous les statuts sauf 'nouveau' pour l'admin -->
-    {% elif current_user.role.name == 'admin' %}
+    {% elif current_user.get_temp_role() == 'admin' %}
     <div class="row">
         <div class="ticket-status en-cours">
             <button onclick="location.href='{{ url_for('admin.view_tickets_by_status', status='en_cours') }}'">{{ in_progress_tickets }}<br>en cours</button>
@@ -37,7 +37,7 @@
     </div>
 
     <!-- Afficher tous les statuts pour les employés -->
-    {% else %}
+    {% elif current_user.get_temp_role() == 'employee' %}
     <div class="row">
         <div class="ticket-status nouveau">
             <button onclick="window.location.href='{{ url_for('employee.view_tickets_by_status', status='nouveau') }}'">{{ new_tickets }} <br>nouveau</button>

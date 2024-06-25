@@ -3,9 +3,9 @@
 {% block content %}
 <div class="container">
     <h1>Utilisateurs</h1>
-    {% if current_user.role.name in ['admin', 'super_admin'] %}
+    {% if current_user.get_temp_role() in ['admin', 'super_admin'] %}
     <div class="d-flex justify-content-end mb-4">
-        <a href="{{ url_for(current_user.role.name + '.add_user') }}" class="btn btn-success">Ajouter un utilisateur</a>
+        <a href="{{ url_for(current_user.get_temp_role() + '.add_user') }}" class="btn btn-success">Ajouter un utilisateur</a>
     </div>
     {% endif %}
     {% if users %}
@@ -15,7 +15,7 @@
                 <th>Nom d'utilisateur</th>
                 <th>Rôle</th>
                 <th>Structure</th>
-                {% if current_user.role.name in ['admin', 'super_admin'] %}
+                {% if current_user.get_temp_role() in ['admin', 'super_admin'] %}
                 <th>Actions</th>
                 {% endif %}
             </tr>
@@ -26,10 +26,10 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.role.name }}</td>
                 <td>{{ structure_names[user.structure_id] if user.structure_id in structure_names else 'Structure inconnue' }}</td>
-                {% if current_user.role.name in ['admin', 'super_admin'] %}
+                {% if current_user.get_temp_role() in ['admin', 'super_admin'] %}
                 <td>
                     <div class="btn-group">
-                        <a href="{{ url_for(current_user.role.name + '.edit_user', user_id=user.user_id) }}" class="btn btn-warning btn-sm">Modifier</a>
+                        <a href="{{ url_for(current_user.get_temp_role() + '.edit_user', user_id=user.user_id) }}" class="btn btn-warning btn-sm">Modifier</a>
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal" data-user-id="{{ user.user_id }}">Supprimer</button>
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#resetPasswordModal" data-user-id="{{ user.user_id }}">Réinitialiser le mot de passe</button>
                     </div>
@@ -95,7 +95,7 @@
         var button = $(event.relatedTarget);
         var userId = button.data('user-id');
         var form = $('#delete-form');
-        var actionUrl = "{{ url_for(current_user.role.name + '.delete_user', user_id=0) }}".replace('0', userId);
+        var actionUrl = "{{ url_for(current_user.get_temp_role() + '.delete_user', user_id=0) }}".replace('0', userId);
         form.attr('action', actionUrl);
     });
 
@@ -104,7 +104,7 @@
         var userId = button.data('user-id');
         var form = $('#reset-password-form');
         var actionUrl;
-        if ("{{ current_user.role.name }}" == "super_admin") {
+        if ("{{ current_user.get_temp_role() }}" == "super_admin") {
             actionUrl = "{{ url_for('super_admin.reset_password_super_admin', user_id=0) }}";
         } else {
             actionUrl = "{{ url_for('admin.reset_password_admin', user_id=0) }}";

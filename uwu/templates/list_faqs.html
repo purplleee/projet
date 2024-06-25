@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Foire aux questions</h2>
-    {% if current_user.role.name == 'admin' %}
+    {% if current_user.get_temp_role() == 'admin' %}
     <div class="d-flex justify-content-end mb-4">
         <a href="{{ url_for('admin.create_faq') }}" class="btn btn-success">Ajouter une FAQ</a>
     </div>
@@ -22,7 +22,7 @@
                 <div class="card-footer">
                     <div class="btn-group d-flex">
                         <a href="{{ url_for('admin.view_faq', faq_id=faq.faq_id) }}" class="btn btn-primary flex-fill">Voir</a>
-                        {% if current_user.role.name == 'admin' or current_user.role.name =='super_admin' %}
+                        {% if current_user.get_temp_role() == 'admin' or current_user.get_temp_role() =='super_admin' %}
                         <a href="{{ url_for('admin.edit_faq', faq_id=faq.faq_id) }}" class="btn btn-warning flex-fill">Modifier</a>
                         <button type="button" class="btn btn-danger flex-fill" data-toggle="modal" data-target="#deleteModal" data-faq-id="{{ faq.faq_id }}">Supprimer</button>
                         {% else %}

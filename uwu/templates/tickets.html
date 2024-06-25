@@ -10,7 +10,7 @@
                 <th>Catégorie</th>
                 <th>Urgence</th>
                 <th>Matériel</th>
-                {% if current_user.role.name in ['admin', 'super_admin'] %}
+                {% if current_user.get_temp_role() in ['admin', 'super_admin'] %}
                 <th>Créateur</th>
                 {% if status != 'nouveau' %}
                 <th>Admin Assigné</th>
@@ -32,7 +32,7 @@
                 <td>{{ ticket.category_name }}</td>
                 <td>{{ ticket.urgent }}</td>
                 <td>{{ ticket.material_name or 'N/A' }}</td>
-                {% if current_user.role.name in ['admin', 'super_admin'] %}
+                {% if current_user.get_temp_role() in ['admin', 'super_admin'] %}
                 <td>{{ ticket.creator_username }}</td>
                 {% if status != 'nouveau' %}
                 <td>{{ ticket.assigned_admin_username or 'N/A' }}</td>
@@ -45,26 +45,26 @@
                 {% endif %}
                 {% endif %}
                 <td>
-                    {% if current_user.role.name == 'super_admin' %}
+                    {% if current_user.get_temp_role() == 'super_admin' %}
                     <a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Voir le Ticket">
                         <span class="material-symbols-outlined bt">visibility</span>
                     </a>
-                    {% elif ticket.statut != 'nouveau' and (current_user.role.name == 'admin' or current_user.role.name == 'employee') %}
+                    {% elif ticket.statut != 'nouveau' and (current_user.get_temp_role() == 'admin' or current_user.get_temp_role() == 'employee') %}
                     <a href="{{ url_for('admin.view_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Voir le Ticket">
                         <span class="material-symbols-outlined bt">visibility</span>
                     </a>
                     {% endif %}
-                    {% if (ticket.statut == 'nouveau' or ticket.statut == 'en_cours') and current_user.role.name == 'super_admin' %}
+                    {% if (ticket.statut == 'nouveau' or ticket.statut == 'en_cours') and current_user.get_temp_role() == 'super_admin' %}
                     <a href="{{ url_for('super_admin.assign_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Affecter">
                         <span class="material-symbols-outlined bt">assignment_add</span>
                     </a>
-                    {% elif ticket.statut == 'nouveau' and current_user.role.name == 'employee' %}
+                    {% elif ticket.statut == 'nouveau' and current_user.get_temp_role() == 'employee' %}
                     <a href="{{ url_for('employee.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Éditer">
                         <span class="material-symbols-outlined bt">edit</span>
                     </a>
                     {% endif %}
-                    {% if current_user.role.name == 'admin' %}
-                    <a href="{{ url_for(current_user.role.name +'.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Éditer">
+                    {% if current_user.get_temp_role() == 'admin' %}
+                    <a href="{{ url_for(current_user.get_temp_role() +'.edit_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-action" title="Éditer">
                         <span class="material-symbols-outlined bt">edit</span>
                     </a>
                     {% endif %}

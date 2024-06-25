@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Matériel{% if current_user.is_admin %} - {{ structure.structure_name }}{% endif %}{% endblock %}
+{% block title %}Matériel{% if current_user.get_temp_role()== 'admin' %} - {{ structure.structure_name }}{% endif %}{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Matériel{% if current_user.is_admin %} pour {{ structure.structure_name }}{% endif %}</h2>
+    <h2>Matériel{% if current_user.get_temp_role()== 'admin' %} pour {{ structure.structure_name }}{% endif %}</h2>
     <div class="d-flex justify-content-end mb-4">
-        {% if current_user.is_employee %}
+        {% if current_user.get_temp_role()== 'employee' %}
         <a href="{{ url_for('employee.cree_mat') }}" class="btn btn-success">Ajouter Matériel</a>
-        {% elif current_user.is_admin %}
+        {% elif current_user.get_temp_role()== 'admin' %}
         <a href="{{ url_for('admin.cree_mat_admin', structure_id=structure.structure_id) }}" class="btn btn-success">Ajouter Matériel</a>
         {% endif %}
     </div>
@@ -29,10 +29,10 @@
                 <td>{{ materiel.type.type_name if materiel.type else 'N/A' }}</td>
                 <td>{{ materiel.marque.marque_name if materiel.marque else 'N/A' }}</td>
                 <td>{{ materiel.modele.modele_name if materiel.modele else 'N/A' }}</td>
-                {% if current_user.is_admin or current_user.is_employee %}
+                {% if current_user.get_temp_role()== 'admin' or current_user.get_temp_role()== 'employee' %}
                 <td>
                     <a href="{{ url_for('admin.edit_mat', materiel_id=materiel.material_id) }}" class="btn btn-warning btn-sm">Modifier</a>
-                    {% if current_user.is_admin %}
+                    {% if current_user.get_temp_role()== 'admin' %}
                     <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteMaterielModal{{ materiel.material_id }}">Supprimer</button>
                     {% endif %}
                 </td>

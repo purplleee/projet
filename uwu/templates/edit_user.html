@@ -27,11 +27,11 @@
         <div class="form-group">
             <label for="roles">Type</label>
             <select class="form-control" id="roles" name="roles">
-                {% if current_user.is_super_admin %}
+                {% if current_user.get_temp_role() =='super_admin' %}
                     <option value="employee" {% if user.role.name == 'employee' %}selected{% endif %}>Employé</option>
                     <option value="admin" {% if user.role.name == 'admin' %}selected{% endif %}>Admin</option>
                     <option value="super_admin" {% if user.role.name == 'super_admin' %}selected{% endif %}>Super Admin</option>
-                {% elif current_user.is_admin %}
+                {% elif current_user.get_temp_role() == 'admin' %}
                     <option value="employee" {% if user.role.name == 'employee' %}selected{% endif %}>Employé</option>
                     <option value="admin" {% if user.role.name == 'admin' %}selected{% endif %}>Admin</option>
                 {% endif %}

@@ -82,7 +82,6 @@ def assign_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
     form = AssignTicketForm(obj=ticket)
 
-    # Ensure current_user is attached to the session
     user = User.query.get(current_user.user_id)
 
     # Populate choices for category and admin assignment
@@ -127,7 +126,7 @@ def assign_ticket(ticket_id):
 def edit_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
 
-    if current_user.role.name != 'super_admin':
+    if current_user.get_temp_role() != 'super_admin':
         flash('Access denied.', 'error')
         return redirect(url_for('super_admin.index'))
 
