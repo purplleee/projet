@@ -60,6 +60,7 @@ def switch_role():
 
     if new_role_name == 'original_role':
         session.pop('temp_role', None)
+        session['role_switched'] = True  # Indicate a role switch occurred
         flash('Switched back to original role.', 'success')
         return redirect(url_for(f"{current_user.role.name}.index"))
 
@@ -67,8 +68,9 @@ def switch_role():
     
     if new_role_name in allowed_transitions:
         session['temp_role'] = new_role_name
+        session['role_switched'] = True  # Indicate a role switch occurred
         flash('Role switched successfully!', 'success')
-        return redirect(url_for(f"{new_role_name}.index"))
+        return redirect(url_for(f"{new_role_name}.index"))  
     else:
         flash('Transition to the selected role is not allowed.', 'error')
 

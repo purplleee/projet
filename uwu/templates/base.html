@@ -13,8 +13,8 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="nav">
-  <a class="navbar-brand" href="{% if 'super_admin' in current_user.roles %}{{ url_for('super_admin.index') }}
-  {% elif 'admin' in current_user.roles %}{{ url_for('admin.index') }}
+  <a class="navbar-brand" href="{% if 'super_admin' in current_user.get_temp_role() %}{{ url_for('super_admin.index') }}
+  {% elif 'admin' in current_user.get_temp_role() %}{{ url_for('admin.index') }}
   {% else %}{{ url_for('employee.index') }}
   {% endif %}">
     <img class="logo" src="{{ url_for('static', filename='img/sonelgaz.png') }}" alt="sonelgaz_logo">
@@ -25,12 +25,12 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav">
-      {% if current_user.role.name == 'super_admin' %}
+      {% if current_user.get_temp_role() == 'super_admin' %}
         <a class="nav-item nav-link" href="{{ url_for('super_admin.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.super_admin_users') }}">Utilisateurs</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.stats') }}">Statistiques</a>
         <a class="nav-item nav-link" href="{{ url_for('super_admin.list_faqs') }}">FAQ</a>
-      {% elif current_user.role.name == 'admin' %}
+      {% elif current_user.get_temp_role() == 'admin' %}
         <a class="nav-item nav-link" href="{{ url_for('admin.index') }}">Accueil</a>
         <a class="nav-item nav-link" href="{{ url_for('admin.admin_users') }}">Utilisateurs</a>
         <a class="nav-item nav-link" href="{{ url_for('admin.parametrage') }}">Paramétrage</a>
@@ -77,11 +77,9 @@
     
         <a class="dropdown-item" href="{{ url_for('auth.change_password') }}">Changer le mot de passe</a>
       </div>
-     
     </div>
   </div>
 </nav>
-
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -107,13 +105,19 @@
               alert.classList.remove('show');
           }, 5000);
       });
-  });
+
   $('#deleteModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget);
       var userId = button.data('user-id');
       var form = $('#delete-form');
       var actionUrl = "{{ url_for('admin' + '.delete_user', user_id=0) }}".replace('0', userId);
       form.attr('action', actionUrl);
+  });
+      // Check for the role switch flag and reload the page if set
+      const roleSwitched = {{ session.pop('role_switched', False) | tojson }};
+      if (roleSwitched) {
+          window.location.reload();
+      }
   });
 </script>
 
