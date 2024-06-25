@@ -86,7 +86,7 @@ def assign_ticket(ticket_id):
 
     # Populate choices for category and admin assignment
     form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
-    form.admin_assign.choices = [(a.user_id, a.username) for a in User.query.join(Role).filter(Role.name == 'admin').order_by(User.username)]
+    form.admin_assign.choices = [(a.user_id, a.username) for a in User.query.join(Role).filter(Role.name.in_(['admin', 'super_admin'])).order_by(User.username)]
 
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -105,14 +105,14 @@ def assign_ticket(ticket_id):
             except Exception as e:
                 db.session.rollback()
                 logging.error(f'Error assigning the ticket: {str(e)}')
-                flash(f'Error assigning the ticket: {str(e)}', 'error')
+                flash(f'Error assigning the ticket: {str(e)}', 'warning')
         else:
             # Log form validation errors
             for field, errors in form.errors.items():
                 for error in errors:
                     logging.error(f"Error in {field}: {error}")
                     flash(f"Error in {field}: {error}", 'error')
-            flash('Error assigning the ticket. Please check the form data.', 'error')
+            flash('Error assigning the ticket. Please check the form data.', 'warning')
 
     # Set initial form values
     form.categorie.data = ticket.category_id
