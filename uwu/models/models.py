@@ -43,6 +43,14 @@ class User(db.Model, UserMixin):
     role = relationship('Role', backref='users')
     comments = relationship('Comment', backref='comment_user', lazy='dynamic')
 
+    def switch_role(self, new_role_name):
+        new_role = Role.query.filter_by(name=new_role_name).first()
+        if new_role and new_role in self.role.allowed_transitions:
+            self.role = new_role
+            db.session.commit()
+            return True
+        return False
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

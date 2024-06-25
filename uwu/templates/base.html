@@ -52,21 +52,27 @@
       <div class="dropdown-menu dropdown-menu-right">
         <a class="dropdown-item" href="{{ url_for('auth.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Déconnexion</a>
         <form id="logout-form" action="{{ url_for('auth.logout') }}" method="POST" style="display: none;"></form>
-
-        {% for role in current_user.roles %}
-        <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
-          <input type="hidden" name="role" value="{{ role.name }}">
-          <button class="dropdown-item" type="submit" {% if current_user.current_role == role.name %}disabled{% endif %}>
-            Passer à {{ role.name | capitalize }}
-          </button>
-        </form>
-        {% endfor %}
-
+    
+        {% if current_user.role %}
+            {% for role in current_user.role.allowed_transitions %}
+                <form action="{{ url_for('auth.switch_role') }}" method="POST" class="dropdown-item">
+                    <input type="hidden" name="role" value="{{ role.name }}">
+                    <button class="dropdown-item" type="submit" {% if current_user.role.name == role.name %}disabled{% endif %}>
+                        Passer à {{ role.name | capitalize }}
+                    </button>
+                </form>
+            {% endfor %}
+        {% else %}
+            <p>No roles available to switch.</p>
+        {% endif %}
+    
         <a class="dropdown-item" href="{{ url_for('auth.change_password') }}">Changer le mot de passe</a>
-      </div>  
+      </div>
+     
     </div>
   </div>
 </nav>
+
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
