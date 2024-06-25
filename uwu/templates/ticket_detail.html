@@ -65,10 +65,10 @@
         <h1>Détails du Ticket</h1>
         <div class="button-container d-flex">
             {% if current_user.get_temp_role() == 'admin' and ticket.statut != 'clos' %}
-                <form method="post">
+                <form method="post" action="{{ url_for('admin.close_ticket', ticket_id=ticket.id_ticket) }}">
                     {{ close_form.hidden_tag() }}
                     <button type="submit" class="btn btn-danger btn-sm">Close Ticket</button>
-                </form>
+                </form>            
                 {% if ticket.statut != 'en_reparation' and (ticket.category.category_name == 'Panne Hard' or ticket.material_id) %}
                 <a href="{{ url_for('admin.repair_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-warning btn-sm">Send to Repair</a>
                 {% endif %}
