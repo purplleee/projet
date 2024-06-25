@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2 class="mb-4">Créer un ticket</h2>
-    <form method="POST" action="{{ url_for('employee.cree_ticket') }}" novalidate>
+    <form method="POST" action="{{ url_for('employee.cree_ticket') }}" novalidate enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         {{ form.csrf_token }}
 
@@ -58,6 +58,13 @@
                     </label>
                 {% endfor %}
             </div>
+            {% if form.urgent.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.urgent.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="form-group" id="materiel-field" style="display: none;">
@@ -74,6 +81,19 @@
             {% endif %}
         </div>
 
+        <div class="form-group">
+            <label for="ticket-photos" class="form-control-label">Attach Photos (Max 6)</label>
+            <input type="file" id="ticket-photos" class="form-control-file" name="photos" accept="image/*" multiple>
+            <div id="photos-preview" class="mt-2 d-flex flex-wrap"></div>
+            {% if form.photos.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.photos.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
         <div class="text-right">
             <button type="reset" class="btn btn-secondary">Annuler</button>
             <button type="submit" class="btn btn-success">Valider</button>
@@ -83,21 +103,63 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const categorySelect = document.getElementById('category-select');
-        const materielField = document.getElementById('materiel-field');
+        const fileInput = document.getElementById('ticket-photos');
+        const photosPreview = document.getElementById('photos-preview');
+        let filesList = [];
 
-        categorySelect.addEventListener('change', function () {
-            const selectedCategory = categorySelect.options[categorySelect.selectedIndex].text;
+        fileInput.addEventListener('change', function () {
+            // Add new files to the existing list
+            const newFiles = Array.from(fileInput.files);
+            filesList = filesList.concat(newFiles);
 
-            if (selectedCategory === 'Panne Hard' || selectedCategory === 'General') {
-                materielField.style.display = 'block';
-            } else {
-                materielField.style.display = 'none';
+            if (filesList.length > 6) {
+                alert('You can only upload a maximum of 6 photos.');
+                filesList = filesList.slice(0, 6); // Keep only the first 6 files
             }
+
+            updateFileInput(filesList);
+            updatePreview(filesList);
         });
 
-        // Trigger change event to set initial state
-        categorySelect.dispatchEvent(new Event('change'));
+        function updatePreview(files) {
+            photosPreview.innerHTML = '';
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'img-container position-relative m-2';
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'img-thumbnail';
+                    img.style.maxWidth = '150px';
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'btn btn-danger btn-sm position-absolute';
+                    removeBtn.style.top = '5px';
+                    removeBtn.style.right = '5px';
+                    removeBtn.innerHTML = '&times;';
+                    removeBtn.addEventListener('click', function () {
+                        filesList.splice(index, 1);
+                        updateFileInput(filesList);
+                        updatePreview(filesList);
+                    });
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(removeBtn);
+                    photosPreview.appendChild(imgContainer);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function updateFileInput(files) {
+            const dataTransfer = new DataTransfer();
+            files.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            fileInput.files = dataTransfer.files;
+        }
     });
 </script>
 {% endblock %}

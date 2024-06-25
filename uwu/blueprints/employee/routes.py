@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
+from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort, flash
+from sqlalchemy.orm import joinedload
 from uwu.models import Ticket, Materiel 
-from uwu.models.models import  Category,Marque,Modele,Type_m,Role,Structure,Category, FAQ, User
+from uwu.models.models import  Category,Marque,Modele,Type_m,Role,Structure,Category, FAQ, User, Photo
 from ...forms import TicketForm, MaterielForm ,DeleteFAQForm
 from uwu.database import db
 from flask_login import login_required , LoginManager
@@ -29,31 +30,40 @@ def index():
 @login_required
 def cree_ticket():
     form = TicketForm()
-    # Correct the attribute references to match your database schema
     form.categorie.choices = [(c.category_id, c.category_name) for c in Category.query.order_by(Category.category_name)]
     form.materiel.choices = [(0, 'None')] + [(m.material_id, m.code_a_barre) for m in Materiel.query.order_by(Materiel.code_a_barre)]
 
     if form.validate_on_submit():
-        # Convert '0' or any non-valid choice to None for database storage
         material_id = None if form.materiel.data == 0 else form.materiel.data
         new_ticket = Ticket(
             titre=form.titre.data,
             description_ticket=form.description_ticket.data,
             urgent=form.urgent.data,
             category_id=form.categorie.data,
-            material_id=material_id,  # Use the corrected material_id variable
-            creator_user_id=current_user.user_id  # Set the creator user ID
+            material_id=material_id,
+            creator_user_id=current_user.user_id
         )
         db.session.add(new_ticket)
         try:
             db.session.commit()
+            if form.photos.data:
+                for photo_data in form.photos.data:
+                    new_photo = Photo(
+                        image_data=photo_data.read(),
+                        ticket_id=new_ticket.id_ticket  # Attach photo to the ticket
+                    )
+                    db.session.add(new_photo)
+                db.session.commit()
             flash('Ticket créé avec succès! Statut: nouveau', 'success')
             return redirect(url_for('employee.view_tickets_by_status', status='nouveau'))
         except Exception as e:
             db.session.rollback()
-            flash(f'Erreur lors de la création du ticket: {str(e)}', 'error')
+            flash(f'Erreur lors de la création du ticket: {str(e)}', 'warning')
         finally:
             db.session.close()
+    else:
+        flash('Erreur de validation du formulaire', 'warning')
+
     return render_template('creat_ticket.html', form=form)
 
     

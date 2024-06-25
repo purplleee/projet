@@ -422,9 +422,34 @@ button.dropdown-item:hover {
     max-width: 60%;
     word-break: break-word;
 }
-.current-user {
-    background-color: #cce5ff; /* Light blue for current user */
+
+
+.comment-body {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
 }
-.other-user {
-    background-color: #e2e3e5; /* Light gray for other users */
+.comment-photo img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 0.5rem;
+    border-radius: 5px;
+}
+.attachment-preview {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
+.attachment-preview img {
+    max-width: 100px;
+    height: auto;
+    margin-right: 1rem;
+}
+.remove-attachment {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
 }

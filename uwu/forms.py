@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import (StringField, TextAreaField, IntegerField, BooleanField, RadioField, FieldList, SelectField, DateField, FileField)
+from wtforms import (StringField, TextAreaField, IntegerField, BooleanField, RadioField, FieldList, SelectField, DateField, FileField, MultipleFileField)
 from wtforms.validators import InputRequired, Length, Regexp, DataRequired, ValidationError
 from wtforms import HiddenField, SubmitField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
@@ -11,6 +11,7 @@ class TicketForm(FlaskForm):
     urgent = RadioField('Urgence', validators=[InputRequired()], choices=[
         ('Faible', 'Faible'), ('Moyen', 'Moyen'), ('Élevé', 'Élevé')])
     materiel = SelectField('Matériel', coerce=int)
+    photos = MultipleFileField('Photos', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     creator_user_id = HiddenField('Créé par')
 
 class CloseTicketForm(FlaskForm):
