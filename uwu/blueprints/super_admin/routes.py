@@ -149,7 +149,7 @@ def edit_ticket(ticket_id):
 
 @super_admin_bp.route('/users/')
 @login_required
-def super_admin_users():
+def users():
     try:
         # Fetch all structures and create a dictionary mapping IDs to names
         structures = Structure.query.all()
@@ -266,7 +266,7 @@ def add_user():
             db.session.add(new_user)
             db.session.commit()
             flash('User registered successfully.')
-            return redirect(url_for('super_admin.super_admin_users'))
+            return redirect(url_for('super_admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
@@ -301,7 +301,7 @@ def edit_user(user_id):
         try:
             db.session.commit()
             flash('User updated successfully.')
-            return redirect(url_for('super_admin.super_admin_users'))
+            return redirect(url_for('super_admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'An error occurred while updating the user. Error: {str(e)}', 'error')
@@ -325,7 +325,7 @@ def delete_user(user_id):
         flash(f'An error occurred while deleting the user. Error: {str(e)}', 'error')
         current_app.logger.error(f"Error during user deletion: {str(e)}")
 
-    return redirect(url_for('super_admin.super_admin_users'))
+    return redirect(url_for('super_admin.users'))
 
 
 @super_admin_bp.route('/reset_password/<int:user_id>', methods=['POST'])
@@ -343,7 +343,7 @@ def reset_password_super_admin(user_id):
         flash(f'An error occurred while resetting the password. Error: {str(e)}', 'error')
         current_app.logger.error(f"Error during password reset: {str(e)}")
 
-    return redirect(url_for('super_admin.super_admin_users'))
+    return redirect(url_for('super_admin.users'))
 
 
 

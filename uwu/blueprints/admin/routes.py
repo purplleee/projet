@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from uwu.models import Ticket, Materiel
-from ...forms import TicketForm, MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm,MarqueForm,ModeleForm, CommentForm,EditTicketForm,CloseTicketForm,AddRepairDetailsForm
+from ...forms import MaterielForm,FAQForm,DeleteFAQForm,StructureForm, TypeForm,MarqueForm,ModeleForm, CommentForm,EditTicketForm,CloseTicketForm,AddRepairDetailsForm
 from uwu.database import db
 from flask_login import login_required
 from uwu.models import Ticket, Materiel, User
@@ -177,6 +177,17 @@ def repair_ticket(ticket_id):
     return render_template('repair_ticket.html', ticket=ticket, form=form)
 
 
+@admin_bp.route('/ticket/close/<int:ticket_id>', methods=['POST'])
+@login_required
+def close_ticket(ticket_id):
+    ticket = Ticket.query.get_or_404(ticket_id)
+    if current_user.get_temp_role() == 'admin':
+        ticket.close_ticket()
+        flash('Ticket closed successfully.', 'success')
+        return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
+    else:
+        flash('You do not have permission to close this ticket.', 'error')
+        return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
 
 
@@ -184,7 +195,7 @@ def repair_ticket(ticket_id):
 
 @admin_bp.route('/users/')
 @login_required
-def admin_users():
+def users():
     if current_user.get_temp_role() != 'admin':
         flash('Access denied', 'error')
         abort(403)
@@ -307,7 +318,7 @@ def add_user():
             db.session.add(new_user)
             db.session.commit()
             flash('User registered successfully.')
-            return redirect(url_for('admin.admin_users'))
+            return redirect(url_for('admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
@@ -348,7 +359,7 @@ def edit_user(user_id):
         try:
             db.session.commit()
             flash('User updated successfully.')
-            return redirect(url_for('admin.admin_users'))
+            return redirect(url_for('admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'An error occurred while updating the user. Error: {str(e)}', 'error')
@@ -372,7 +383,7 @@ def delete_user(user_id):
         flash(f'An error occurred while deleting the user. Error: {str(e)}', 'error')
         current_app.logger.error(f"Error during user deletion: {str(e)}")
 
-    return redirect(url_for('admin.admin_users'))
+    return redirect(url_for(f"{current_user.get_temp_role()}.users"))
 
 
 @admin_bp.route('/reset_password/<int:user_id>', methods=['POST'])
@@ -390,7 +401,7 @@ def reset_password_admin(user_id):
         flash(f'An error occurred while resetting the password. Error: {str(e)}', 'error')
         current_app.logger.error(f"Error during password reset: {str(e)}")
 
-    return redirect(url_for('admin.admin_users'))
+    return redirect(url_for('admin.users'))
 
 
 @admin_bp.route('/parametrage/')
