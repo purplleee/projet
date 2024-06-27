@@ -9,7 +9,7 @@
     <div class="d-flex justify-content-end mb-4">
         <a href="{{ url_for('admin.create_faq') }}" class="btn btn-success">Ajouter une FAQ</a>
     </div>
-    {% endif %}    
+    {% endif %}
     <div class="row no-gutters">
         {% for faq in faqs %}
         <div class="col-xs-12 col-sm-6 col-md-3">
@@ -22,10 +22,11 @@
                 <div class="card-footer">
                     <div class="btn-group d-flex">
                         <a href="{{ url_for('admin.view_faq', faq_id=faq.faq_id) }}" class="btn btn-primary flex-fill">Voir</a>
-                        {% if current_user.get_temp_role() == 'admin' or current_user.get_temp_role() =='super_admin' %}
+                        {% if current_user.user_id == faq.created_by_user_id or current_user.get_temp_role() == 'super_admin' %}
                         <a href="{{ url_for('admin.edit_faq', faq_id=faq.faq_id) }}" class="btn btn-warning flex-fill">Modifier</a>
+                        {% if current_user.user_id == faq.created_by_user_id or current_user.get_temp_role() == 'super_admin' %}
                         <button type="button" class="btn btn-danger flex-fill" data-toggle="modal" data-target="#deleteModal" data-faq-id="{{ faq.faq_id }}">Supprimer</button>
-                        {% else %}
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -34,6 +35,9 @@
         {% endfor %}
     </div>
 </div>
+
+<!-- Hidden element to store the user's role -->
+<div id="user-role" data-role="{{ current_user.get_temp_role() }}"></div>
 
 <!-- Modal de Confirmation de Suppression -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -63,7 +67,21 @@
         var button = $(event.relatedTarget);
         var faqId = button.data('faq-id');
         var form = $('#delete-form');
-        form.attr('action', '/faq/delete/' + faqId);
+        var userRole = $('#user-role').data('role'); // Get the user's role from the hidden element
+
+        if (faqId) {
+            if (userRole === 'super_admin') {
+                var actionUrl = "{{ url_for('super_admin.delete_faq', faq_id=0) }}".replace('0', faqId);
+            } else if (userRole === 'admin') {
+                var actionUrl = "{{ url_for('admin.delete_faq', faq_id=0) }}".replace('0', faqId);
+            } else {
+                console.error('User does not have permission to delete this FAQ');
+                return; // Do not set form action URL
+            }
+            form.attr('action', actionUrl);
+        } else {
+            console.error('FAQ ID is undefined');
+        }
     });
 </script>
 {% endblock %}

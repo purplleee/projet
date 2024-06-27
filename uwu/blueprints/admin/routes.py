@@ -283,10 +283,16 @@ def delete_faq(faq_id):
     if current_user.get_temp_role() == 'admin' and faq.created_by_user_id != current_user.user_id:
         flash('Access denied. You can only delete your own FAQs.', 'danger')
         return redirect(url_for('admin.list_faqs'))
-    
-    db.session.delete(faq)
-    db.session.commit()
-    flash('FAQ deleted successfully.', 'success')
+
+    try:
+        db.session.delete(faq)
+        db.session.commit()
+        flash('FAQ deleted successfully.', 'success')
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        flash(f'An error occurred while deleting the FAQ. Error: {str(e)}', 'danger')
+        current_app.logger.error(f"Error during FAQ deletion: {str(e)}")
+
     return redirect(url_for('admin.list_faqs'))
 
 

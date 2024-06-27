@@ -109,10 +109,27 @@
   $('#deleteModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget);
       var userId = button.data('user-id');
+      var faqId = button.data('faq-id');
       var form = $('#delete-form');
-      var actionUrl = "{{ url_for('admin' + '.delete_user', user_id=0) }}".replace('0', userId);
-      form.attr('action', actionUrl);
-  });
+      var userRole = $('#user-role').data('role'); // Get the user's role from the hidden element
+
+      if (userId !== undefined) {
+          var actionUrl = "{{ url_for('admin.delete_user', user_id=0) }}".replace('0', userId);
+          form.attr('action', actionUrl);
+      } else if (faqId !== undefined) {
+          if (userRole === 'super_admin') {
+              var actionUrl = "{{ url_for('super_admin.delete_faq', faq_id=0) }}".replace('0', faqId);
+          } else if (userRole === 'admin') {
+              var actionUrl = "{{ url_for('admin.delete_faq', faq_id=0) }}".replace('0', faqId);
+          } else {
+              console.error('User does not have permission to delete this FAQ');
+              return; // Do not set form action URL
+          }
+          form.attr('action', actionUrl);
+      }
+});
+
+
       // Check for the role switch flag and reload the page if set
       const roleSwitched = {{ session.pop('role_switched', False) | tojson }};
       if (roleSwitched) {

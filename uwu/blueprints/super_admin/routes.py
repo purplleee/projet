@@ -238,9 +238,15 @@ def edit_faq(faq_id):
 @login_required
 def delete_faq(faq_id):
     faq = FAQ.query.get_or_404(faq_id)
-    db.session.delete(faq)
-    db.session.commit()
-    flash('FAQ deleted successfully.', 'success')
+    try:
+        db.session.delete(faq)
+        db.session.commit()
+        flash('FAQ deleted successfully.', 'success')
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        flash(f'An error occurred while deleting the FAQ. Error: {str(e)}', 'danger')
+        current_app.logger.error(f"Error during FAQ deletion: {str(e)}")
+
     return redirect(url_for('super_admin.list_faqs'))
 
 
