@@ -67,10 +67,22 @@ def view_tickets_by_status(status):
             Panne, Panne.material_id == Ticket.material_id  # Ensure this join is correct for your schema
         ).filter(
             Ticket.statut == status,
-            Ticket.assigned_user_id == current_user.user_id if current_user.role.name != 'super_admin' else True  # Filter by logged-in admin's ID unless super_admin
+            Ticket.assigned_user_id == current_user.user_id
+        ).group_by(
+            Ticket.titre,
+            Category.category_name,
+            Ticket.urgent,
+            Materiel.code_a_barre,
+            Ticket.statut,
+            Ticket.id_ticket,
+            creator_alias.username,
+            assigned_alias.username,
+            Panne.fournisseur_id,
+            Panne.date_parti_reparation,
+            Ticket.statut
         ).all()
         
-        current_date = datetime.utcnow()  # Get the current date
+        current_date = datetime.now()  # Get the current date
         
         return render_template('tickets.html', tickets_list=tickets_list, status=status, current_date=current_date)
     except Exception as e:
