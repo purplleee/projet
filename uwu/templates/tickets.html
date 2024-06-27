@@ -19,8 +19,6 @@
                 {% if status == 'en_reparation' %}
                 <th>Fournisseur</th>
                 <th>Jours en Réparation</th>
-                {% elif status == 'clos' %}
-                <th>Était en Réparation</th>
                 {% endif %}
                 {% endif %}
                 <th>Actions</th>
@@ -41,8 +39,6 @@
                 {% if status == 'en_reparation' %}
                 <td>{{ ticket.fournisseur_name or 'N/A' }}</td>
                 <td>{{ (current_date - ticket.date_parti_reparation).days if ticket.date_parti_reparation else 'N/A' }}</td>
-                {% elif status == 'clos' %}
-                <td>{{ 'Oui' if ticket.was_in_repair else 'Non' }}</td>
                 {% endif %}
                 {% endif %}
                 <td>
