@@ -61,9 +61,7 @@ def cree_ticket():
             flash(f'Erreur lors de la création du ticket: {str(e)}', 'warning')
         finally:
             db.session.close()
-    else:
-        flash('Erreur de validation du formulaire', 'warning')
-
+            
     return render_template('creat_ticket.html', form=form)
 
     
