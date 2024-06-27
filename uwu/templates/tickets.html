@@ -3,6 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Tickets - {{ status }}</h2>
+    {% if tickets_list %}
     <table class="table table-hover">
         <thead>
             <tr>
@@ -73,5 +74,8 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <p class="mt-5">Aucun ticket disponible pour le moment.</p>
+    {% endif %}
 </div>
 {% endblock %}
