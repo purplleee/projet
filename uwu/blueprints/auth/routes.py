@@ -72,7 +72,7 @@ def switch_role():
         flash('Rôle échangé avec succès !', 'success')
         return redirect(url_for(f"{new_role_name}.index"))  
     else:
-        flash('La transition vers le rôle sélectionné n\'est pas autorisée.', 'error')
+        flash('La transition vers le rôle sélectionné n\'est pas autorisée.', 'warning')
 
     return redirect(url_for('auth.login'))
 

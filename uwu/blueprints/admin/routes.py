@@ -86,7 +86,7 @@ def view_tickets_by_status(status):
         
         return render_template('tickets.html', tickets_list=tickets_list, status=status, current_date=current_date)
     except Exception as e:
-        flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
+        flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'warning')
         current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')
         return render_template('tickets.html', tickets_list=[], status=status)
 
@@ -144,7 +144,7 @@ def edit_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
 
     if current_user.get_temp_role() not in ['admin', 'super_admin']:
-        flash('Accès non autorisé..', 'error')
+        flash('Accès non autorisé.', 'danger')
         return abort(403)
 
     form = EditTicketForm(obj=ticket)
@@ -159,7 +159,7 @@ def edit_ticket(ticket_id):
             return redirect(url_for('admin.view_tickets_by_status', status=ticket.statut))
         except Exception as e:
             db.session.rollback()
-            flash(f'Erreur lors de la mise à jour du ticket: {str(e)}', 'error')
+            flash(f'Erreur lors de la mise à jour du ticket: {str(e)}', 'warning')
 
     return render_template('edit_ticket_c.html', form=form, ticket=ticket)
 
@@ -169,7 +169,7 @@ def edit_ticket(ticket_id):
 def repair_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
     if ticket.category.category_name != 'Panne Hard' and not ticket.material_id:
-        flash('Ce ticket ne peut pas être envoyé en réparation.', 'error')
+        flash('Ce ticket ne peut pas être envoyé en réparation.', 'warning')
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
     
     form = AddRepairDetailsForm()
@@ -198,7 +198,7 @@ def close_ticket(ticket_id):
         flash('Ticket fermé avec succès.', 'success')
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
     else:
-        flash('Vous n\'avez pas la permission de fermer ce ticket.', 'error')
+        flash('Vous n\'avez pas la permission de fermer ce ticket.', 'warning')
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
 
@@ -209,7 +209,7 @@ def close_ticket(ticket_id):
 @login_required
 def users():
     if current_user.get_temp_role() != 'admin':
-        flash('Accès non autorisé.', 'error')
+        flash('Accès non autorisé.', 'danger')
         abort(403)
 
     try:
@@ -222,7 +222,7 @@ def users():
         return render_template('users.html', users=users, structure_names=structure_names)
     except Exception as e:
         current_app.logger.error(f'Failed to fetch user list: {e}')
-        flash(f'Erreur lors de la récupération des utilisateurs: {str(e)}', 'error')
+        flash(f'Erreur lors de la récupération des utilisateurs: {str(e)}', 'warning')
         return render_template('users.html', users=[], structure_names={})
 
 
@@ -319,13 +319,13 @@ def add_user():
 
         # Check role permissions
         if role_name not in ['employee', 'admin']:
-            flash('Les administrateurs ne peuvent créer des utilisateurs qu\'avec des rôles d\'employé ou d\'administrateur.', 'error')
+            flash('Les administrateurs ne peuvent créer des utilisateurs qu\'avec des rôles d\'employé ou d\'administrateur.', 'warning')
             return redirect(request.url)
 
         # Fetch role from the database
         role = Role.query.filter_by(name=role_name).first()
         if not role:
-            flash('Le rôle spécifié n\'est pas valide', 'error')
+            flash('Le rôle spécifié n\'est pas valide', 'warning')
             return redirect(request.url)
 
         # Create new user instance with the specified role
@@ -339,7 +339,7 @@ def add_user():
             return redirect(url_for('admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(f'Une erreur s\'est produite lors de l\'enregistrement de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
+            flash(f'Une erreur s\'est produite lors de l\'enregistrement de l\'utilisateur. l\'Erreur : {str(e)}', 'warning')
             current_app.logger.error(f"Error during user registration: {str(e)}")
         finally:
             db.session.close()
@@ -360,12 +360,12 @@ def edit_user(user_id):
         structure_id = int(request.form['structure_id'])
 
         if role_name not in ['employee', 'admin']:
-            flash('Les administrateurs ne peuvent attribuer que des rôles d\'employé ou d\'administrateur.', 'error')
+            flash('Les administrateurs ne peuvent attribuer que des rôles d\'employé ou d\'administrateur.', 'warning')
             return redirect(request.url)
 
         role = Role.query.filter_by(name=role_name).first()
         if not role:
-            flash('Le rôle spécifié n\'est pas valide', 'error')
+            flash('Le rôle spécifié n\'est pas valide', 'warning')
             return redirect(request.url)
 
         user.role = role
@@ -380,7 +380,7 @@ def edit_user(user_id):
             return redirect(url_for('admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(f'Une erreur s\'est produite lors de la mise à jour de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
+            flash(f'Une erreur s\'est produite lors de la mise à jour de l\'utilisateur. l\'Erreur : {str(e)}', 'warning')
             current_app.logger.error(f"Error during user update: {str(e)}")
 
     structures = Structure.query.all()
@@ -398,7 +398,7 @@ def delete_user(user_id):
         flash('L\'utilisateur a été supprimé avec succès.')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'Une erreur s\'est produite lors de la suppression de l\'utilisateur. l\'Erreur: {str(e)}', 'error')
+        flash(f'Une erreur s\'est produite lors de la suppression de l\'utilisateur. l\'Erreur: {str(e)}', 'warning')
         current_app.logger.error(f"Error during user deletion: {str(e)}")
 
     return redirect(url_for(f"{current_user.get_temp_role()}.users"))
@@ -416,7 +416,7 @@ def reset_password_admin(user_id):
         flash('Réinitialisation du mot de passe réussie.', 'success')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'Une erreur s\'est produite lors de la réinitialisation du mot de passe. l\'Erreur: {str(e)}', 'error')
+        flash(f'Une erreur s\'est produite lors de la réinitialisation du mot de passe. l\'Erreur: {str(e)}', 'warning')
         current_app.logger.error(f"Error during password reset: {str(e)}")
 
     return redirect(url_for('admin.users'))
@@ -491,6 +491,7 @@ def structure_materiel(structure_id):
 @login_required
 def cree_mat_admin(structure_id):
     if not current_user.get_temp_role() == 'admin':
+        # current_app.logger.warning(f"Access denied for user {current_user.username} with role {current_user.get_temp_role()}")
         abort(403)  # Forbidden
 
     form = MaterielForm()
@@ -508,7 +509,7 @@ def cree_mat_admin(structure_id):
     if form.validate_on_submit():
         # Check if the code_a_barre already exists
         existing_materiel = Materiel.query.filter_by(code_a_barre=form.code_a_barre.data).first()
-        if existing_materiel:
+        if (existing_materiel):
             flash('Erreur: Code à barre existe déjà!', 'warning')
             return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
         
@@ -526,7 +527,7 @@ def cree_mat_admin(structure_id):
             return redirect(url_for('admin.structure_materiel', structure_id=structure_id))
         except Exception as e:
             db.session.rollback()
-            flash(f'Erreur lors de la création du matériel: {str(e)}', 'error')
+            flash(f'Erreur lors de la création du matériel: {str(e)}', 'warning')
             current_app.logger.error(f'Error creating material: {e}')
             return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
         finally:

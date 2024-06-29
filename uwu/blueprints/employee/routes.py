@@ -92,15 +92,16 @@ def view_tickets_by_status(status):
         
         return render_template('tickets.html', tickets_list=tickets_list, status=status)
     except Exception as e:
-        flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
-        current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')
+        flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'warning')
+        current_app.logger.warning(f'Failed to fetch tickets by status {status}: {e}')
         return render_template('tickets.html', tickets_list=[], status=status)
 
 
 @employee_bp.route('/cree_mat/', methods=['GET', 'POST'])
 @login_required
 def cree_mat():
-    if not (current_user.is_employee ):
+    if not current_user.get_temp_role() == 'employee':
+        # current_app.logger.warning(f"Access denied for user {current_user.username} with role {current_user.get_temp_role()}")
         abort(403)  # Forbidden
 
     form = MaterielForm()
@@ -118,8 +119,8 @@ def cree_mat():
     if form.validate_on_submit():
         # Check if the code_a_barre already exists
         existing_materiel = Materiel.query.filter_by(code_a_barre=form.code_a_barre.data).first()
-        if existing_materiel:
-            flash('Erreur: Code à barre existe déjà!', 'error')
+        if (existing_materiel):
+            flash('Erreur: Code à barre existe déjà!', 'warning')
             return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
         
         try:
@@ -136,7 +137,7 @@ def cree_mat():
             return redirect(url_for('employee.materiel'))
         except Exception as e:
             db.session.rollback()
-            flash(f'Erreur lors de la création du matériel: {str(e)}', 'error')
+            flash(f'Erreur lors de la création du matériel: {str(e)}', 'warning')
             current_app.logger.error(f'Error creating material: {e}')
             return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
         finally:
@@ -156,7 +157,7 @@ def materiel():
 
         return render_template('materiel.html', structure=structure, materiel_list=materiel_list, delete_form=delete_form)
     except Exception as e:
-        flash(f'Erreur lors de la récupération du matériel: {str(e)}', 'error')
+        flash(f'Erreur lors de la récupération du matériel: {str(e)}', 'warning')
         current_app.logger.error(f'Failed to fetch material: {e}')
         return render_template('materiel.html', structure=None, materiel_list=[], delete_form=None)  # Pass delete_form=None
     
@@ -186,10 +187,10 @@ def edit_ticket(ticket_id):
                 return redirect(url_for('employee.index'))
             else:
                 # If POST but form is not valid, flash an error
-                flash('Erreur lors de la mise à jour du ticket. Veuillez vérifier les données du formulaire.', 'error')
+                flash('Erreur lors de la mise à jour du ticket. Veuillez vérifier les données du formulaire.', 'warning')
         except Exception as e:
             db.session.rollback()
-            flash(f'Erreur lors de la mise à jour du ticket: {str(e)}', 'error')
+            flash(f'Erreur lors de la mise à jour du ticket: {str(e)}', 'warning')
         finally:
             db.session.close()
     

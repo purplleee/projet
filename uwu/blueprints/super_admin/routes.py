@@ -88,12 +88,12 @@ def view_tickets_by_status(status):
             
             return render_template('tickets.html', tickets_list=tickets_list, status=status, current_date=current_date)
         except Exception as e:
-            flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'error')
+            flash(f'Erreur lors de la récupération des tickets: {str(e)}', 'warning')
             current_app.logger.error(f'Failed to fetch tickets by status {status}: {e}')
             return render_template('tickets.html', tickets_list=[], status=status)
     else:
         # Handle other roles or cases as needed
-        flash('Accès non autorisé', 'error')
+        flash('Accès non autorisé', 'danger')
         return redirect(url_for('home'))
 
 
@@ -132,7 +132,7 @@ def assign_ticket(ticket_id):
             for field, errors in form.errors.items():
                 for error in errors:
                     logging.error(f"Erreur dans {field}: {error}")
-                    flash(f"Erreur dans {field}: {error}", 'error')
+                    flash(f"Erreur dans {field}: {error}", 'warning')
             flash('Erreur lors de l\'affectation du ticket. Veuillez vérifier les données du formulaire.', 'warning')
 
     # Set initial form values
@@ -148,7 +148,7 @@ def edit_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
 
     if current_user.get_temp_role() != 'super_admin':
-        flash('Accès non autorisé.', 'error')
+        flash('Accès non autorisé.', 'danger')
         return redirect(url_for('super_admin.index'))
 
     form = EditTicketForm(obj=ticket)
@@ -163,7 +163,7 @@ def edit_ticket(ticket_id):
             return redirect(url_for('super_admin.view_tickets_by_status', status=ticket.statut))
         except Exception as e:
             db.session.rollback()
-            flash(f'Erreur lors de la mise à jour du ticket : {str(e)}', 'error')
+            flash(f'Erreur lors de la mise à jour du ticket : {str(e)}', 'warning')
 
     return render_template('edit_ticket_c.html', form=form, ticket=ticket)
 
@@ -181,7 +181,7 @@ def users():
         return render_template('users.html', users=users, structure_names=structure_names)
     except Exception as e:
         current_app.logger.error(f'Failed to fetch user list: {e}')
-        flash(f'Erreur lors de la récupération des utilisateurs: {str(e)}', 'error')
+        flash(f'Erreur lors de la récupération des utilisateurs: {str(e)}', 'warning')
         return render_template('users.html', users=[], structure_names={})
 
 
@@ -283,7 +283,7 @@ def add_user():
         # Fetch role within the same session context
         role = Role.query.filter_by(name=role_name).first()
         if not role:
-            flash('Le rôle spécifié n\'est pas valide', 'error')
+            flash('Le rôle spécifié n\'est pas valide', 'warning')
             return redirect(request.url)
 
         new_user = User(username=username, password=password, role=role)
@@ -296,7 +296,7 @@ def add_user():
             return redirect(url_for('super_admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(f'Une erreur s\'est produite lors de l\'enregistrement de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
+            flash(f'Une erreur s\'est produite lors de l\'enregistrement de l\'utilisateur. l\'Erreur : {str(e)}', 'warning')
             current_app.logger.error(f"Error during user registration: {str(e)}")
 
     structures = Structure.query.all()
@@ -316,7 +316,7 @@ def edit_user(user_id):
 
         role = Role.query.filter_by(name=role_name).first()
         if not role:
-            flash('Le rôle spécifié n\'est pas valide', 'error')
+            flash('Le rôle spécifié n\'est pas valide', 'warning')
             return redirect(request.url)
 
         user.role = role
@@ -331,7 +331,7 @@ def edit_user(user_id):
             return redirect(url_for('super_admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(f'Une erreur s\'est produite lors de la mise à jour de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
+            flash(f'Une erreur s\'est produite lors de la mise à jour de l\'utilisateur. l\'Erreur : {str(e)}', 'warning')
             current_app.logger.error(f"Error during user update: {str(e)}")
 
     structures = Structure.query.all()
@@ -349,7 +349,7 @@ def delete_user(user_id):
         flash('L\'utilisateur a été supprimé avec succès.')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'Une erreur s\'est produite lors de la suppression de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
+        flash(f'Une erreur s\'est produite lors de la suppression de l\'utilisateur. l\'Erreur : {str(e)}', 'warning')
         current_app.logger.error(f"Error during user deletion: {str(e)}")
 
     return redirect(url_for('super_admin.users'))
@@ -367,7 +367,7 @@ def reset_password_super_admin(user_id):
         flash('Réinitialisation du mot de passe réussie.', 'success')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'Une erreur s\'est produite lors de la réinitialisation du mot de passe. L\'erreur : {str(e)}', 'error')
+        flash(f'Une erreur s\'est produite lors de la réinitialisation du mot de passe. L\'erreur : {str(e)}', 'warning')
         current_app.logger.error(f"Error during password reset: {str(e)}")
 
     return redirect(url_for('super_admin.users'))
