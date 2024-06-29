@@ -121,19 +121,19 @@ def assign_ticket(ticket_id):
                 ticket.assigned_user_id = form.admin_assign.data
                 ticket.statut = 'en_cours'
                 db.session.commit()
-                flash('Ticket assigned successfully!', 'success')
+                flash('Ticket affectée avec succès !', 'success')
                 return redirect(url_for('super_admin.index'))
             except Exception as e:
                 db.session.rollback()
-                logging.error(f'Error assigning the ticket: {str(e)}')
-                flash(f'Error assigning the ticket: {str(e)}', 'warning')
+                logging.error(f'Erreur lors de l\'affectation du ticket : {str(e)}')
+                flash(f'Erreur lors de l\'affectation du ticket : {str(e)}', 'warning')
         else:
             # Log form validation errors
             for field, errors in form.errors.items():
                 for error in errors:
-                    logging.error(f"Error in {field}: {error}")
-                    flash(f"Error in {field}: {error}", 'error')
-            flash('Error assigning the ticket. Please check the form data.', 'warning')
+                    logging.error(f"Erreur dans {field}: {error}")
+                    flash(f"Erreur dans {field}: {error}", 'error')
+            flash('Erreur lors de l\'affectation du ticket. Veuillez vérifier les données du formulaire.', 'warning')
 
     # Set initial form values
     form.categorie.data = ticket.category_id
@@ -148,7 +148,7 @@ def edit_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
 
     if current_user.get_temp_role() != 'super_admin':
-        flash('Access denied.', 'error')
+        flash('Accès non autorisé.', 'error')
         return redirect(url_for('super_admin.index'))
 
     form = EditTicketForm(obj=ticket)
@@ -159,11 +159,11 @@ def edit_ticket(ticket_id):
             ticket.category_id = form.categorie.data
             ticket.urgent = form.urgent.data
             db.session.commit()
-            flash('Ticket updated successfully!', 'success')
+            flash('Ticket mis à jour avec succès !', 'success')
             return redirect(url_for('super_admin.view_tickets_by_status', status=ticket.statut))
         except Exception as e:
             db.session.rollback()
-            flash(f'Error updating the ticket: {str(e)}', 'error')
+            flash(f'Erreur lors de la mise à jour du ticket : {str(e)}', 'error')
 
     return render_template('edit_ticket_c.html', form=form, ticket=ticket)
 
@@ -249,7 +249,7 @@ def edit_faq(faq_id):
         faq.contenu = form.contenu.data
         faq.category_id = form.category_id.data
         db.session.commit()
-        flash('FAQ updated successfully.', 'success')
+        flash('FAQ mise à jour avec succès.', 'success')
         return redirect(url_for('super_admin.list_faqs'))
     
     return render_template('edit_faq.html', form=form, faq=faq)
@@ -262,10 +262,10 @@ def delete_faq(faq_id):
     try:
         db.session.delete(faq)
         db.session.commit()
-        flash('FAQ deleted successfully.', 'success')
+        flash('FAQ supprimée avec succès.', 'success')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'An error occurred while deleting the FAQ. Error: {str(e)}', 'danger')
+        flash(f'Une erreur s\'est produite lors de la suppression de la FAQ. l\'Erreur : {str(e)}', 'danger')
         current_app.logger.error(f"Error during FAQ deletion: {str(e)}")
 
     return redirect(url_for('super_admin.list_faqs'))
@@ -283,7 +283,7 @@ def add_user():
         # Fetch role within the same session context
         role = Role.query.filter_by(name=role_name).first()
         if not role:
-            flash('Specified role is invalid', 'error')
+            flash('Le rôle spécifié n\'est pas valide', 'error')
             return redirect(request.url)
 
         new_user = User(username=username, password=password, role=role)
@@ -292,11 +292,11 @@ def add_user():
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash('User registered successfully.')
+            flash('Utilisateur enregistré avec succès.')
             return redirect(url_for('super_admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
+            flash(f'Une erreur s\'est produite lors de l\'enregistrement de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
             current_app.logger.error(f"Error during user registration: {str(e)}")
 
     structures = Structure.query.all()
@@ -316,7 +316,7 @@ def edit_user(user_id):
 
         role = Role.query.filter_by(name=role_name).first()
         if not role:
-            flash('Specified role is invalid', 'error')
+            flash('Le rôle spécifié n\'est pas valide', 'error')
             return redirect(request.url)
 
         user.role = role
@@ -327,11 +327,11 @@ def edit_user(user_id):
 
         try:
             db.session.commit()
-            flash('User updated successfully.')
+            flash('L\'utilisateur a été mis à jour avec succès.')
             return redirect(url_for('super_admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(f'An error occurred while updating the user. Error: {str(e)}', 'error')
+            flash(f'Une erreur s\'est produite lors de la mise à jour de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
             current_app.logger.error(f"Error during user update: {str(e)}")
 
     structures = Structure.query.all()
@@ -346,10 +346,10 @@ def delete_user(user_id):
     try:
         db.session.delete(user)
         db.session.commit()
-        flash('User deleted successfully.')
+        flash('L\'utilisateur a été supprimé avec succès.')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'An error occurred while deleting the user. Error: {str(e)}', 'error')
+        flash(f'Une erreur s\'est produite lors de la suppression de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
         current_app.logger.error(f"Error during user deletion: {str(e)}")
 
     return redirect(url_for('super_admin.users'))
@@ -364,10 +364,10 @@ def reset_password_super_admin(user_id):
 
     try:
         db.session.commit()
-        flash('Password reset successfully.', 'success')
+        flash('Réinitialisation du mot de passe réussie.', 'success')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'An error occurred while resetting the password. Error: {str(e)}', 'error')
+        flash(f'Une erreur s\'est produite lors de la réinitialisation du mot de passe. L\'erreur : {str(e)}', 'error')
         current_app.logger.error(f"Error during password reset: {str(e)}")
 
     return redirect(url_for('super_admin.users'))

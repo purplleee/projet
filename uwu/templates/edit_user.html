@@ -3,7 +3,6 @@
 {% block content %}
 <div class="container">
     <h2>Modifier un compte</h2>
-    <!-- Afficher les messages flash -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}

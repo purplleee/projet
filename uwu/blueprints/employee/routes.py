@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort, flash
+from flask import Blueprint, render_template, request, url_for, flash, redirect, current_app,abort
 from sqlalchemy.orm import joinedload
 from uwu.models import Ticket, Materiel 
 from uwu.models.models import  Category,Marque,Modele,Type_m,Role,Structure,Category, FAQ, User, Photo
@@ -182,14 +182,14 @@ def edit_ticket(ticket_id):
                 # Handle nullable material_id
                 ticket.material_id = form.materiel.data if form.materiel.data != 0 else None
                 db.session.commit()
-                flash('Ticket updated successfully!', 'success')
+                flash('Ticket mis à jour avec succès !', 'success')
                 return redirect(url_for('employee.index'))
             else:
                 # If POST but form is not valid, flash an error
-                flash('Error updating the ticket. Please check the form data.', 'error')
+                flash('Erreur lors de la mise à jour du ticket. Veuillez vérifier les données du formulaire.', 'error')
         except Exception as e:
             db.session.rollback()
-            flash(f'Error updating the ticket: {str(e)}', 'error')
+            flash(f'Erreur lors de la mise à jour du ticket: {str(e)}', 'error')
         finally:
             db.session.close()
     

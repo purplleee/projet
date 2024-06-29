@@ -103,7 +103,7 @@ def view_ticket(ticket_id):
     if close_form.close.data and close_form.validate_on_submit():
         if current_user.get_temp_role() == 'admin':
             ticket.close_ticket()
-            flash('Ticket closed successfully.', 'success')
+            flash('Ticket fermé avec succès.', 'success')
             return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
     if add_repair_details_form.add_repair_details.data and add_repair_details_form.validate_on_submit():
@@ -112,7 +112,7 @@ def view_ticket(ticket_id):
             panne = Panne.query.filter_by(material_id=ticket.material_id).first()
             panne.date_parti_reparation = add_repair_details_form.date_parti_reparation.data
             db.session.commit()
-            flash('Repair details added successfully.', 'success')
+            flash('Les détails de réparation ont été ajoutés avec succès.', 'success')
             return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
     if comment_form.validate_on_submit() and current_user.get_temp_role() != 'super_admin' and ticket.statut != 'clos':
@@ -130,7 +130,7 @@ def view_ticket(ticket_id):
             db.session.add(photo)
             db.session.commit()
 
-        flash('Comment and photo added successfully.', 'success')
+        flash('Commentaire ajouté avec succès.', 'success')
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
     comments = Comment.query.filter_by(ticket_id=ticket_id).order_by(Comment.created_at.asc()).all()
@@ -144,7 +144,7 @@ def edit_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
 
     if current_user.get_temp_role() not in ['admin', 'super_admin']:
-        flash('Access denied.', 'error')
+        flash('Accès non autorisé..', 'error')
         return abort(403)
 
     form = EditTicketForm(obj=ticket)
@@ -155,11 +155,11 @@ def edit_ticket(ticket_id):
             ticket.category_id = form.categorie.data
             ticket.urgent = form.urgent.data
             db.session.commit()
-            flash('Ticket updated successfully!', 'success')
+            flash('Ticket mis à jour avec succès !', 'success')
             return redirect(url_for('admin.view_tickets_by_status', status=ticket.statut))
         except Exception as e:
             db.session.rollback()
-            flash(f'Error updating the ticket: {str(e)}', 'error')
+            flash(f'Erreur lors de la mise à jour du ticket: {str(e)}', 'error')
 
     return render_template('edit_ticket_c.html', form=form, ticket=ticket)
 
@@ -169,7 +169,7 @@ def edit_ticket(ticket_id):
 def repair_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
     if ticket.category.category_name != 'Panne Hard' and not ticket.material_id:
-        flash('This ticket cannot be sent for repair.', 'error')
+        flash('Ce ticket ne peut pas être envoyé en réparation.', 'error')
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
     
     form = AddRepairDetailsForm()
@@ -183,7 +183,7 @@ def repair_ticket(ticket_id):
             panne = Panne.query.filter_by(material_id=ticket.material_id).first()
             panne.date_parti_reparation = form.date_parti_reparation.data
             db.session.commit()
-            flash('Repair details added successfully.', 'success')
+            flash('Les détails de réparation ont été ajoutés avec succès.', 'success')
             return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
     return render_template('repair_ticket.html', ticket=ticket, form=form)
@@ -195,10 +195,10 @@ def close_ticket(ticket_id):
     ticket = Ticket.query.get_or_404(ticket_id)
     if current_user.get_temp_role() == 'admin':
         ticket.close_ticket()
-        flash('Ticket closed successfully.', 'success')
+        flash('Ticket fermé avec succès.', 'success')
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
     else:
-        flash('You do not have permission to close this ticket.', 'error')
+        flash('Vous n\'avez pas la permission de fermer ce ticket.', 'error')
         return redirect(url_for('admin.view_ticket', ticket_id=ticket_id))
 
 
@@ -209,7 +209,7 @@ def close_ticket(ticket_id):
 @login_required
 def users():
     if current_user.get_temp_role() != 'admin':
-        flash('Access denied', 'error')
+        flash('Accès non autorisé.', 'error')
         abort(403)
 
     try:
@@ -230,7 +230,7 @@ def users():
 @login_required
 def create_faq():
     if current_user.get_temp_role() != 'admin':
-        flash('Access denied. Only admins can create FAQs.', 'danger')
+        flash('Accès non autorisé. Seuls les administrateurs peuvent créer des FAQ.', 'danger')
         return redirect(url_for('admin.list_faqs'))
     
     form = FAQForm()
@@ -245,7 +245,7 @@ def create_faq():
         )
         db.session.add(new_faq)
         db.session.commit()
-        flash('FAQ created successfully!', 'success')
+        flash('FAQ créée avec succès !', 'success')
         return redirect(url_for('admin.list_faqs'))
 
     return render_template('create_faq.html', form=form)
@@ -271,7 +271,7 @@ def view_faq(faq_id):
 def edit_faq(faq_id):
     faq = FAQ.query.get_or_404(faq_id)
     if current_user.get_temp_role() == 'admin' and faq.created_by_user_id != current_user.user_id:
-        flash('Access denied. You can only edit your own FAQs.', 'danger')
+        flash('Accès non autorisé. Vous ne pouvez modifier que vos propres FAQ.', 'danger')
         return redirect(url_for('admin.list_faqs'))
     
     form = FAQForm(obj=faq)
@@ -282,7 +282,7 @@ def edit_faq(faq_id):
         faq.contenu = form.contenu.data
         faq.category_id = form.category_id.data
         db.session.commit()
-        flash('FAQ updated successfully.', 'success')
+        flash('FAQ mise à jour avec succès.', 'success')
         return redirect(url_for('admin.list_faqs'))
     
     return render_template('edit_faq.html', form=form, faq=faq)
@@ -293,16 +293,16 @@ def edit_faq(faq_id):
 def delete_faq(faq_id):
     faq = FAQ.query.get_or_404(faq_id)
     if current_user.get_temp_role() == 'admin' and faq.created_by_user_id != current_user.user_id:
-        flash('Access denied. You can only delete your own FAQs.', 'danger')
+        flash('Accès non autorisé. Vous ne pouvez supprimer que vos propres FAQ.', 'danger')
         return redirect(url_for('admin.list_faqs'))
 
     try:
         db.session.delete(faq)
         db.session.commit()
-        flash('FAQ deleted successfully.', 'success')
+        flash('FAQ supprimée avec succès.', 'success')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'An error occurred while deleting the FAQ. Error: {str(e)}', 'danger')
+        flash(f'Une erreur s\'est produite lors de la suppression de la FAQ. l\'Erreur:{str(e)}', 'danger')
         current_app.logger.error(f"Error during FAQ deletion: {str(e)}")
 
     return redirect(url_for('admin.list_faqs'))
@@ -319,13 +319,13 @@ def add_user():
 
         # Check role permissions
         if role_name not in ['employee', 'admin']:
-            flash('Admins can only create users with Employee or Admin roles.', 'error')
+            flash('Les administrateurs ne peuvent créer des utilisateurs qu\'avec des rôles d\'employé ou d\'administrateur.', 'error')
             return redirect(request.url)
 
         # Fetch role from the database
         role = Role.query.filter_by(name=role_name).first()
         if not role:
-            flash('Specified role is invalid', 'error')
+            flash('Le rôle spécifié n\'est pas valide', 'error')
             return redirect(request.url)
 
         # Create new user instance with the specified role
@@ -335,11 +335,11 @@ def add_user():
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash('User registered successfully.')
+            flash('Utilisateur enregistré avec succès.')
             return redirect(url_for('admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(f'An error occurred while registering the user. Error: {str(e)}', 'error')
+            flash(f'Une erreur s\'est produite lors de l\'enregistrement de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
             current_app.logger.error(f"Error during user registration: {str(e)}")
         finally:
             db.session.close()
@@ -360,12 +360,12 @@ def edit_user(user_id):
         structure_id = int(request.form['structure_id'])
 
         if role_name not in ['employee', 'admin']:
-            flash('Admins can only assign Employee or Admin roles.', 'error')
+            flash('Les administrateurs ne peuvent attribuer que des rôles d\'employé ou d\'administrateur.', 'error')
             return redirect(request.url)
 
         role = Role.query.filter_by(name=role_name).first()
         if not role:
-            flash('Specified role is invalid', 'error')
+            flash('Le rôle spécifié n\'est pas valide', 'error')
             return redirect(request.url)
 
         user.role = role
@@ -376,11 +376,11 @@ def edit_user(user_id):
 
         try:
             db.session.commit()
-            flash('User updated successfully.')
+            flash('L\'utilisateur a été mis à jour avec succès.')
             return redirect(url_for('admin.users'))
         except SQLAlchemyError as e:
             db.session.rollback()
-            flash(f'An error occurred while updating the user. Error: {str(e)}', 'error')
+            flash(f'Une erreur s\'est produite lors de la mise à jour de l\'utilisateur. l\'Erreur : {str(e)}', 'error')
             current_app.logger.error(f"Error during user update: {str(e)}")
 
     structures = Structure.query.all()
@@ -395,10 +395,10 @@ def delete_user(user_id):
     try:
         db.session.delete(user)
         db.session.commit()
-        flash('User deleted successfully.')
+        flash('L\'utilisateur a été supprimé avec succès.')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'An error occurred while deleting the user. Error: {str(e)}', 'error')
+        flash(f'Une erreur s\'est produite lors de la suppression de l\'utilisateur. l\'Erreur: {str(e)}', 'error')
         current_app.logger.error(f"Error during user deletion: {str(e)}")
 
     return redirect(url_for(f"{current_user.get_temp_role()}.users"))
@@ -413,10 +413,10 @@ def reset_password_admin(user_id):
 
     try:
         db.session.commit()
-        flash('Password reset successfully.', 'success')
+        flash('Réinitialisation du mot de passe réussie.', 'success')
     except SQLAlchemyError as e:
         db.session.rollback()
-        flash(f'An error occurred while resetting the password. Error: {str(e)}', 'error')
+        flash(f'Une erreur s\'est produite lors de la réinitialisation du mot de passe. l\'Erreur: {str(e)}', 'error')
         current_app.logger.error(f"Error during password reset: {str(e)}")
 
     return redirect(url_for('admin.users'))
@@ -437,7 +437,7 @@ def structures():
         structure = Structure(structure_name=form.structure_name.data)
         db.session.add(structure)
         db.session.commit()
-        flash('Structure added successfully!', 'success')
+        flash('Structure ajoutée avec succès !', 'success')
         return redirect(url_for('admin.structures'))
     structures = Structure.query.all()
     return render_template('structures.html', structures=structures, form=form, delete_form=delete_form)
@@ -451,7 +451,7 @@ def add_structure():
         structure = Structure(structure_name=form.structure_name.data)
         db.session.add(structure)
         db.session.commit()
-        flash('Structure added successfully!', 'success')
+        flash('Structure ajoutée avec succès !', 'success')
     return redirect(url_for('admin.structures'))
 
 
@@ -463,7 +463,7 @@ def edit_structure(id):
     if form.validate_on_submit():
         structure.structure_name = form.structure_name.data
         db.session.commit()
-        flash('Structure updated successfully!', 'success')
+        flash('Structure mise à jour avec succès !', 'success')
         return redirect(url_for('admin.structures'))
     return render_template('edit_structure.html', form=form, structure=structure)
 
@@ -474,7 +474,7 @@ def delete_structure(id):
     structure = Structure.query.get_or_404(id)
     db.session.delete(structure)
     db.session.commit()
-    flash('Structure deleted successfully!', 'success')
+    flash('Structure supprimée avec succès !', 'success')
     return redirect(url_for('admin.structures'))
 
 
@@ -509,7 +509,7 @@ def cree_mat_admin(structure_id):
         # Check if the code_a_barre already exists
         existing_materiel = Materiel.query.filter_by(code_a_barre=form.code_a_barre.data).first()
         if existing_materiel:
-            flash('Erreur: Code à barre existe déjà!', 'error')
+            flash('Erreur: Code à barre existe déjà!', 'warning')
             return render_template('creat_materiel.html', form=form, marques=marques, types=types, modeles=modeles)
         
         try:
@@ -559,7 +559,7 @@ def edit_mat(materiel_id):
         materiel.marque_id = form.marque_id.data
         materiel.modele_id = form.modele_id.data
         db.session.commit()
-        flash('Materiel updated successfully!', 'success')
+        flash('Matériel mis à jour avec succès !', 'success')
         return redirect(url_for('admin.structure_materiel', structure_id=materiel.structure_id))
 
     return render_template('edit_materiel.html', form=form, marques=marques, types=types, modeles=modeles, materiel=materiel)
@@ -573,7 +573,7 @@ def delete_mat(materiel_id):
     materiel = Materiel.query.get_or_404(materiel_id)
     db.session.delete(materiel)
     db.session.commit()
-    flash('Materiel deleted successfully!', 'success')
+    flash('Matériel supprimé avec succès !', 'success')
     return redirect(url_for('admin.structure_materiel', structure_id=materiel.structure_id))
 
 
@@ -585,7 +585,7 @@ def marques():
         marque = Marque(marque_name=add_form.marque_name.data)
         db.session.add(marque)
         db.session.commit()
-        flash('Marque added successfully!', 'success')
+        flash('Marque ajoutée avec succès !', 'success')
         return redirect(url_for('admin.marques'))
     
     marques = Marque.query.all()
@@ -602,7 +602,7 @@ def add_marque():
         marque = Marque(marque_name=form.marque_name.data)
         db.session.add(marque)
         db.session.commit()
-        flash('Marque added successfully!', 'success')
+        flash('Marque ajoutée avec succès !', 'success')
     return redirect(url_for('admin.marques'))
 
 
@@ -614,7 +614,7 @@ def edit_marque(id):
     if form.validate_on_submit():
         marque.marque_name = form.marque_name.data
         db.session.commit()
-        flash('Marque updated successfully!', 'success')
+        flash('Marque mise à jour avec succès !', 'success')
         return redirect(url_for('admin.marques'))
     return render_template('edit_marque.html', form=form, marque=marque)
 
@@ -625,7 +625,7 @@ def delete_marque(id):
     marque = Marque.query.get_or_404(id)
     db.session.delete(marque)
     db.session.commit()
-    flash('Marque deleted successfully!', 'success')
+    flash('Marque supprimée avec succès !', 'success')
     return redirect(url_for('admin.marques'))
 
 
@@ -652,7 +652,7 @@ def add_model(marque_id):
         model = Modele(modele_name=marque.marque_name +"_"+ form.modele_name.data, marque_id=marque_id)
         db.session.add(model)
         db.session.commit()
-        flash('Model added successfully!', 'success')
+        flash('Modèle ajouté avec succès !', 'success')
         return redirect(url_for('admin.models_by_marque', marque_id=marque_id))
     return render_template('add_model.html', form=form, marque_id=marque_id, marque_name=marque.marque_name)
 
@@ -665,7 +665,7 @@ def edit_model(model_id):
     if form.validate_on_submit():
         model.modele_name = form.modele_name.data
         db.session.commit()
-        flash('Model updated successfully!', 'success')
+        flash('Modèle mis à jour avec succès !', 'success')
         return redirect(url_for('admin.models_by_marque', marque_id=model.marque_id))
     return render_template('edit_model.html', form=form, model=model)
 
@@ -677,7 +677,7 @@ def delete_model(model_id):
     marque_id = model.marque_id
     db.session.delete(model)
     db.session.commit()
-    flash('Model deleted successfully!', 'success')
+    flash('Modèle supprimé avec succès !', 'success')
     return redirect(url_for('admin.models_by_marque', marque_id=marque_id))
 
 
@@ -689,7 +689,7 @@ def types():
         type_m = Type_m(type_name=add_form.type_name.data)
         db.session.add(type_m)
         db.session.commit()
-        flash('Type added successfully!', 'success')
+        flash('Type ajouté avec succès !', 'success')
         return redirect(url_for('admin.types'))
     
     types = Type_m.query.all()
@@ -706,7 +706,7 @@ def add_type():
         type_m = Type_m(type_name=form.type_name.data)
         db.session.add(type_m)
         db.session.commit()
-        flash('Type added successfully!', 'success')
+        flash('Type ajouté avec succès !', 'success')
     return redirect(url_for('admin.types'))
 
 
@@ -718,7 +718,7 @@ def edit_type(id):
     if form.validate_on_submit():
         type_m.type_name = form.type_name.data
         db.session.commit()
-        flash('Type updated successfully!', 'success')
+        flash('Type mis à jour avec succès!', 'success')
     return redirect(url_for('admin.types'))
 
 
@@ -728,6 +728,6 @@ def delete_type(id):
     type_m = Type_m.query.get_or_404(id)
     db.session.delete(type_m)
     db.session.commit()
-    flash('Type deleted successfully!', 'success')
+    flash('Type supprimé avec succès !', 'success')
     return redirect(url_for('admin.types'))
 

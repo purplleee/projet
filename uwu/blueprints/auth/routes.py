@@ -26,11 +26,11 @@ def login():
             user = User.query.filter_by(username=username).first()
 
             if not user:
-                flash('Username does not exist', 'danger')
+                flash('Le nom d\'utilisateur n\'existe pas', 'danger')
                 return render_template('login.html')
 
             if not user.check_password(password):
-                flash('Incorrect password', 'danger')
+                flash('Mot de passe incorrect', 'danger')
                 return render_template('login.html')
 
             login_user(user)
@@ -61,7 +61,7 @@ def switch_role():
     if new_role_name == 'original_role':
         session.pop('temp_role', None)
         session['role_switched'] = True  # Indicate a role switch occurred
-        flash('Switched back to original role.', 'success')
+        flash('Revenu au rôle d\'origine.', 'success')
         return redirect(url_for(f"{current_user.role.name}.index"))
 
     allowed_transitions = [role.name for role in current_user.role.allowed_transitions]
@@ -69,10 +69,10 @@ def switch_role():
     if new_role_name in allowed_transitions:
         session['temp_role'] = new_role_name
         session['role_switched'] = True  # Indicate a role switch occurred
-        flash('Role switched successfully!', 'success')
+        flash('Rôle échangé avec succès !', 'success')
         return redirect(url_for(f"{new_role_name}.index"))  
     else:
-        flash('Transition to the selected role is not allowed.', 'error')
+        flash('La transition vers le rôle sélectionné n\'est pas autorisée.', 'error')
 
     return redirect(url_for('auth.login'))
 
@@ -89,16 +89,16 @@ def change_password():
         confirm_password = request.form['confirm_password']
 
         if not current_user.check_password(current_password):
-            flash('Current password is incorrect', 'danger')
+            flash('Mot de passe actuel est incorrect', 'danger')
             return redirect(url_for('auth.change_password'))
 
         if new_password != confirm_password:
-            flash('New passwords do not match', 'danger')
+            flash('Les nouveaux mots de passe ne correspondent pas', 'danger')
             return redirect(url_for('auth.change_password'))
 
         current_user.set_password(new_password)
         db.session.commit()
-        flash('Password has been updated', 'success')
+        flash('Le mot de passe a été mis à jour', 'success')
         return redirect(url_for(current_user.role.name + '.index'))
 
     return render_template('change_password.html', structure=structure)
