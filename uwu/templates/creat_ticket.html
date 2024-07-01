@@ -82,7 +82,7 @@
         </div>
 
         <div class="form-group">
-            <label for="ticket-photos" class="form-control-label">Attach Photos</label>
+            <label for="ticket-photos" class="form-control-label">Ajouter une pièce jointe</label>
             <input type="file" id="ticket-photos" class="form-control-file" name="photos" accept="image/*" multiple>
             <div id="photos-preview" class="mt-2 d-flex flex-wrap"></div>
             {% if form.photos.errors %}
@@ -131,8 +131,8 @@
             filesList = filesList.concat(newFiles);
 
             if (filesList.length > 6) {
-                alert('You can only upload a maximum of 6 photos.');
-                filesList = filesList.slice(0, 6); // Keep only the first 6 files
+                alert('Vous ne pouvez télécharger qu\'un maximum de 6 photos.');
+                filesList = filesList.slice(0, 6); 
             }
 
             updateFileInput(filesList);

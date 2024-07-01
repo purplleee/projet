@@ -67,10 +67,10 @@
             {% if current_user.get_temp_role() == 'admin' and ticket.statut != 'clos' %}
                 <form method="post" action="{{ url_for('admin.close_ticket', ticket_id=ticket.id_ticket) }}">
                     {{ close_form.hidden_tag() }}
-                    <button type="submit" class="btn btn-danger btn-sm">Close Ticket</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Fermer le Ticket</button>
                 </form>            
                 {% if ticket.statut != 'en_reparation' and (ticket.category.category_name == 'Panne Hard' or ticket.material_id) %}
-                <a href="{{ url_for('admin.repair_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-warning btn-sm">Send to Repair</a>
+                <a href="{{ url_for('admin.repair_ticket', ticket_id=ticket.id_ticket) }}" class="btn btn-warning btn-sm">Envoyer en Réparation</a>
                 {% endif %}
             {% endif %}
         </div>
@@ -81,32 +81,32 @@
         <p><strong>Catégorie :</strong> {{ ticket.category.category_name }}</p>
         <p><strong>Urgence :</strong> {{ ticket.urgent }}</p>
         
-        <!-- Display attached photos -->
+        <!-- Afficher les pièces jointes -->
         {% if ticket.photos %}
         <div class="ticket-photos">
-            <p><strong>Attached Photos:</strong></p>
+            <p><strong>Les pièces jointes:</strong></p>
             <div class="container">
                 {% for photo in ticket.photos %}
                 <div class="coll">
                     <div class="ticket-photo">
-                        <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to ticket" class="img-thumbnail" data-toggle="modal" data-target="#ticketPhotoModal-{{ photo.photo_id }}">
+                        <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Pièces jointe au ticket" class="img-thumbnail" data-toggle="modal" data-target="#ticketPhotoModal-{{ photo.photo_id }}">
                     </div>
 
-                    <!-- Modal for displaying the image -->
+                    <!-- Modal pour afficher l'image -->
                     <div class="modal fade" id="ticketPhotoModal-{{ photo.photo_id }}" tabindex="-1" role="dialog" aria-labelledby="ticketPhotoModalLabel-{{ photo.photo_id }}" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="ticketPhotoModalLabel-{{ photo.photo_id }}">Photo</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to ticket" class="img-fluid">
+                                    <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Pièces jointe au ticket" class="img-fluid">
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" download="ticket_photo.jpg" class="btn btn-primary">Download</a>
+                                    <a href="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" download="ticket_photo.jpg" class="btn btn-primary">Télécharger</a>
                                 </div>
                             </div>
                         </div>
@@ -127,30 +127,30 @@
                     <p>{{ comment.comment_text }}</p>
                     {% for photo in comment.photos %}
                     <div class="comment-photo">
-                        <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" class="img-thumbnail" data-toggle="modal" data-target="#commentPhotoModal-{{ photo.photo_id }}">
+                        <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Pièces jointe au commentaire" class="img-thumbnail" data-toggle="modal" data-target="#commentPhotoModal-{{ photo.photo_id }}">
                     </div>
 
-                    <!-- Modal for displaying the image -->
+                    <!-- Modal pour afficher l'image -->
                     <div class="modal fade" id="commentPhotoModal-{{ photo.photo_id }}" tabindex="-1" role="dialog" aria-labelledby="commentPhotoModalLabel-{{ photo.photo_id }}" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="commentPhotoModalLabel-{{ photo.photo_id }}">Photo</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Photo attached to comment" class="img-fluid">
+                                    <img src="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" alt="Pièces jointe au commentaire" class="img-fluid">
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" download="comment_photo.jpg" class="btn btn-primary">Download</a>
+                                    <a href="data:image/jpeg;base64,{{ photo.image_data | b64encode }}" download="comment_photo.jpg" class="btn btn-primary">Télécharger</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
-                    <p class="small text-muted">By: {{ comment.user.username }} on {{ comment.created_at }}</p>
+                    <p class="small text-muted">Par : {{ comment.user.username }} le {{ comment.created_at }}</p>
                 </div>
             </div>
         </div>
@@ -163,10 +163,10 @@
         {{ comment_form.hidden_tag() }}
         <div class="attachment-preview" id="attachment-preview" style="display: none;">
             <button type="button" class="remove-attachment" id="remove-attachment">&times;</button>
-            <img id="attachment-preview-img" src="#" alt="Attachment Preview" class="img-thumbnail">
-        </div> <!-- Placeholder for attachment preview -->
+            <img id="attachment-preview-img" src="#" alt="Aperçu de la pièce jointe" class="img-thumbnail">
+        </div> <!-- Placeholder pour l'aperçu de la pièce jointe -->
         <div class="form-group">
-            {{ comment_form.comment_text(class="form-control", placeholder="Type your comment...") }}
+            {{ comment_form.comment_text(class="form-control", placeholder="Tapez votre commentaire...") }}
             <label for="comment_form_photo" class="btn btn-attach btn-icon">
                 <span class="material-symbols-outlined">attach_file</span>
             </label>
