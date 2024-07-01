@@ -79,7 +79,7 @@ def file_size_limit(max_size_in_mb):
     def _file_size_limit(form, field):
         if field.data:
             if len(field.data.read()) > max_bytes:
-                raise ValidationError(f'File size must be less than {max_size_in_mb}MB')
+                raise ValidationError(f'La taille du fichier doit être inférieure à {max_size_in_mb}MB')
             field.data.seek(0)  # Reset file pointer after read
 
     return _file_size_limit
